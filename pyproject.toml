@@ -1,6 +1,6 @@
 [project]
 name = "tofuref"
-description = "Add your description here"
+description = "A terminal application to browse OpenTofu provider documentation."
 requires-python = ">=3.9"
 dependencies = [
     "textual>=3.1.1",
