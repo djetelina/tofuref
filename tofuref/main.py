@@ -83,7 +83,6 @@ class TofuRefApp(App):
     ) -> None:
         if event.control == navigation_providers:
             provider_selected = registry.providers[event.option.prompt]
-            log_widget.write(provider_selected)
             await provider_selected.load_resources()
             content_markdown.document.update(await provider_selected.overview())
             content_markdown.border_subtitle = f"{provider_selected.display_name}"
