@@ -1,0 +1,39 @@
+Screen {
+    layout: grid;
+    grid-size: 2;
+    grid-columns: 3fr 5fr;
+    grid-rows: 9fr 1fr;
+}
+
+#sidebar {
+    height: 100%;
+}
+
+#navigation {
+    layout: grid;
+    grid-size: 2;
+    grid-columns: 1fr 1fr;
+    grid-rows: 1fr;
+}
+
+#log {
+    width: 100%;
+    height: 100%;
+    column-span: 2;
+}
+
+.bordered {
+    border: ascii $primary;
+}
+
+.bordered:focus {
+    border: ascii $accent;
+}
+
+.content {
+    height: 100%;
+}
+
+.nav-selector {
+    height: 100%;
+}

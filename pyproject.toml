@@ -1,0 +1,59 @@
+[project]
+name = "tofuref"
+description = "Add your description here"
+requires-python = ">=3.9"
+dependencies = [
+    "textual>=3.1.1",
+    "appdirs>=1.4.4",
+    "pyyaml>=6.0.2",
+]
+authors = [
+    { name = "David Jetelina" }
+]
+readme = "README.md"
+license = "MIT"
+keywords = ["opentofu", "tofu", "terraform", "cli", "tool", "sre", "platform", "infra"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Software Development :: User Interfaces",
+    "Topic :: System :: Systems Administration",
+    "Topic :: System :: Installation/Setup",
+    "Topic :: Utilities",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/DJetelina/tofuref"
+Repository = "https://github.com/DJetelina/tofuref.git"
+Issues = "https://github.com/DJetelina/tofuref/issues"
+
+[dependency-groups]
+dev = [
+    "textual-dev>=1.7.0",
+    "pytest>=7.0.0",
+    "black>=25.1.0",
+]
+
+[project.scripts]
+tofuref = "tofuref.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["tofuref"]
+
+[tool.hatch.version]
+path = "tofuref/__init__.py"
