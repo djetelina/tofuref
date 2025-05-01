@@ -37,18 +37,7 @@ content_markdown = CustomMarkdownViewer(
 
 Contributions (issues, prs, docs) welcome: [GitHub](https://github.com/djetelina/tofuref)
 
-* No support for:
-    * Guides
-    * Functions
-* Many providers might be causing tofuref to crash, feel free to create a GitHub issue or a pull request
-    * This is due to documentation folder handling and all the possible formats it can have
 * It's impossible to search in Resources
-* It's hard to tell apart Data Sources and Resources in the Resources widget
-* Registry contains too many providers, some UX solutions being considered
-    * Better sorting, based on GitHub stars
-    * Custom sort by "favorites"
-    * Show already fetched providers first
-
 """,
     classes="content bordered",
     show_table_of_contents=False,

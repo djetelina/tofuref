@@ -1,39 +1,17 @@
 import re
-from pathlib import Path
-from typing import Tuple
+from functools import lru_cache
+from typing import Tuple, Union
 
-import appdirs
+import httpx
 from yaml import safe_load
 from yaml.scanner import ScannerError
 
-
-def get_app_data_dir() -> Path:
-    # Get the user data directory for this application
-    data_dir = Path(appdirs.user_data_dir("tofuref"))
-
-    # Create the directory if it doesn't exist
-    data_dir.mkdir(parents=True, exist_ok=True)
-
-    return data_dir
-
-
-def get_repo_dir(repo_name: str) -> Path:
-    safe_name = (
-        repo_name.replace("/", "_")
-        .replace("\\", "_")
-        .replace(":", "_")
-        .replace(".", "_")
-    )
-
-    # Get the path to the repository directory
-    repo_dir = get_app_data_dir() / safe_name
-
-    return repo_dir
+from tofuref.widgets import log_widget
 
 
 def header_markdown_split(contents: str) -> Tuple[dict, str]:
     header = {}
-    if "---" in contents:
+    if re.match(r"^---$", contents, re.MULTILINE):
         split_contents = re.split(r"^---$", contents, 3, re.MULTILINE)
         try:
             header = safe_load(split_contents[1])
@@ -43,3 +21,15 @@ def header_markdown_split(contents: str) -> Tuple[dict, str]:
     else:
         markdown_content = contents
     return header, markdown_content
+
+
+async def get_registry_api(endpoint: str, json=True) -> Union[dict, str]:
+    uri = f"https://api.opentofu.org/registry/docs/providers/{endpoint}"
+    async with httpx.AsyncClient() as client:
+        r = await client.get(uri)
+
+    log_widget.write(f"GET [cyan]{endpoint}[/] [bold]{r.status_code}[/]")
+    if json:
+        return r.json()
+    else:
+        return r.text

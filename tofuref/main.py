@@ -11,7 +11,7 @@ from textual.widgets import (
 from rich.markdown import Markdown
 
 from tofuref.data.providers import populate_providers, Provider
-from tofuref.data.registry import ensure_registry, registry
+from tofuref.data.registry import registry
 from tofuref.widgets import (
     log_widget,
     content_markdown,
@@ -55,9 +55,7 @@ class TofuRefApp(App):
         self.app.run_worker(self._preload, name="preload")
 
     async def _preload(self):
-        registry_dir = await ensure_registry()
-        log_widget.write(Markdown(f"Registry loaded (`{registry_dir}`)"))
-        registry.providers = populate_providers(registry_dir)
+        registry.providers = await populate_providers()
         log_widget.write(f"Providers loaded ([cyan bold]{len(registry.providers)}[/])")
         _populate_providers()
         log_widget.write(Markdown("---"))
@@ -85,25 +83,16 @@ class TofuRefApp(App):
     ) -> None:
         if event.control == navigation_providers:
             provider_selected = registry.providers[event.option.prompt]
-            log_widget.write(
-                f"Fetching documentation for {provider_selected.organization}/{provider_selected.name} (v{provider_selected.version})"
-            )
+            log_widget.write(provider_selected)
             await provider_selected.load_resources()
-            log_widget.write(
-                Markdown(
-                    f"Documentation fetched and loaded ({provider_selected.repo_dir})"
-                )
-            )
-            content_markdown.document.update(provider_selected.index)
-            content_markdown.border_subtitle = (
-                f"{provider_selected.organization}/{provider_selected.name}"
-            )
+            content_markdown.document.update(await provider_selected.overview())
+            content_markdown.border_subtitle = f"{provider_selected.display_name}"
             _populate_resources(provider_selected)
             navigation_resources.focus()
         elif event.control == navigation_resources:
             resource_selected = event.option.prompt
-            content_markdown.document.update(resource_selected.content)
-            content_markdown.border_subtitle = f"{resource_selected.type} - {resource_selected.provider.name}_{resource_selected.name}"
+            content_markdown.document.update(await resource_selected.content())
+            content_markdown.border_subtitle = f"{resource_selected.type.value} - {resource_selected.provider.name}_{resource_selected.name}"
             content_markdown.focus()
 
 
@@ -112,7 +101,7 @@ def _populate_providers(providers: Optional[Iterable[str]] = None) -> None:
         providers = registry.providers.keys()
     navigation_providers.clear_options()
     navigation_providers.border_subtitle = f"{len(providers)}/{len(registry.providers)}"
-    for name in sorted(providers):
+    for name in providers:
         navigation_providers.add_option(name)
 
 
@@ -121,23 +110,12 @@ def _populate_resources(provider: Optional[Provider] = None) -> None:
     if provider is None:
         return
     i = 0
-    navigation_resources.border_subtitle = f"{provider.organization}/{provider.name}"
+    navigation_resources.border_subtitle = (
+        f"{provider.organization}/{provider.name} {provider.active_version}"
+    )
 
-    navigation_resources.add_option("Resources")
-    navigation_resources.disable_option_at_index(i)
-    i += 1
-    for resource in sorted(provider.resources.values()):
+    for resource in provider.resources:
         navigation_resources.add_option(resource)
-        i += 1
-
-    if provider.data_sources:
-        navigation_resources.add_option(None)
-        navigation_resources.add_option("Data sources")
-        navigation_resources.disable_option_at_index(i)
-        i += 1
-        for data_source in sorted(provider.data_sources.values()):
-            navigation_resources.add_option(data_source)
-            i += 1
 
 
 def main():

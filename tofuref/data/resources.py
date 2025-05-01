@@ -1,17 +1,26 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from enum import Enum
+from typing import TYPE_CHECKING, Optional
+
+from tofuref.data.helpers import get_registry_api, header_markdown_split
 
 if TYPE_CHECKING:
     from tofuref.data.providers import Provider
 
 
+class ResourceType(Enum):
+    RESOURCE = "resource"
+    DATASOURCE = "datasource"
+    GUIDE = "guide"
+    FUNCTION = "function"
+
+
 @dataclass
 class Resource:
-    provider: "Provider"
     name: str
-    description: str
-    type: str
-    content: str
+    provider: "Provider"
+    type: ResourceType
+    _content: Optional[str] = None
 
     def __lt__(self, other: "Resource") -> bool:
         return self.name < other.name
@@ -20,10 +29,19 @@ class Resource:
         return self.name > other.name
 
     def __str__(self):
-        return self.name
+        return f"[cyan]{self.type.value[0].upper()}[/] {self.name}"
 
     def __rich__(self):
-        return self.name
+        return str(self)
 
     def __hash__(self):
         return hash(f"{self.provider.name}_{self.type}_{self.name}")
+
+    async def content(self):
+        if self._content is None:
+            doc_data = await get_registry_api(
+                f"{self.provider.organization}/{self.provider.name}/{self.provider._active_version}/{self.type.value}s/{self.name}.md",
+                json=False,
+            )
+            _, self._content = header_markdown_split(doc_data)
+        return self._content

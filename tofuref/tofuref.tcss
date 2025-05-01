@@ -1,7 +1,7 @@
 Screen {
     layout: grid;
     grid-size: 2;
-    grid-columns: 3fr 5fr;
+    grid-columns: 4fr 5fr;
     grid-rows: 9fr 1fr;
 }
 
@@ -12,7 +12,7 @@ Screen {
 #navigation {
     layout: grid;
     grid-size: 2;
-    grid-columns: 1fr 1fr;
+    grid-columns: 2fr 3fr;
     grid-rows: 1fr;
 }
 
