@@ -2,7 +2,7 @@
 
 A terminal application to browse OpenTofu provider documentation from the terminal.
 
-![Screenshot](./screenshots/welcome.png)
+![Screenshot](https://github.com/djetelina/tofuref/blob/main/screenshots/welcome.png?raw=true)
 
 ## Installation
 
