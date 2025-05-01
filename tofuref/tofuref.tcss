@@ -2,7 +2,7 @@ Screen {
     layout: grid;
     grid-size: 2;
     grid-columns: 4fr 5fr;
-    grid-rows: 9fr 1fr;
+    grid-rows: 4fr 4fr;
 }
 
 #sidebar {
