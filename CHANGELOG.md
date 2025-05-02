@@ -7,12 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2025-05-02
+
 ### Added
 
 - Providers now has a version picker, when one is selected, press `v`
 - Loading indicators
+- Fullscreen mode
+- Content now reacts to page up, page down, home and end
 
-## [0.3.0]
+## [0.3.0] - 2025-05-01
 
 ### Added
 
@@ -26,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Search now works per window, separately for providers and resources
 - Log is now toggle-able, off by default
 
-## [0.2.0]
+## [0.2.0] - 2025-05-01
 
 ### Added
 

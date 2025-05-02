@@ -1,6 +1,7 @@
 import asyncio
 from typing import Iterable, Optional, List
 
+import textual.app
 from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import Container
@@ -35,11 +36,11 @@ class TofuRefApp(App):
         ("p", "providers", "Providers"),
         ("r", "resources", "Resources"),
         ("c", "content", "Content"),
+        ("f", "fullscreen", "Fullscreen Mode"),
         ("l", "log", "Show Log"),
     ]
 
     def compose(self) -> ComposeResult:
-        """Create child widgets for the app."""
         # Navigation
         with Container(id="sidebar"):
             with Container(id="navigation"):
@@ -55,11 +56,17 @@ class TofuRefApp(App):
         yield Footer()
 
     async def on_ready(self) -> None:
-        """Set up the application when it starts."""
         log_widget.write("Populating providers from the registry API")
         content_markdown.document.classes = "bordered content"
         content_markdown.document.border_title = "Content"
         content_markdown.document.border_subtitle = "Welcome"
+        if self.size.width < 125:
+            registry.fullscreen_mode = True
+        if registry.fullscreen_mode:
+            navigation_providers.styles.column_span = 2
+            navigation_resources.styles.column_span = 2
+            content_markdown.styles.column_span = 2
+            self.screen.maximize(navigation_providers)
         navigation_providers.loading = True
         self.screen.refresh()
         await asyncio.sleep(0.1)
@@ -83,22 +90,42 @@ class TofuRefApp(App):
                 search.value = ""
                 searchable.mount(search)
                 search.focus()
-                search.offset = navigation_providers.offset + (
+                search.offset = searchable.offset + (
                     0,
-                    navigation_providers.size.height - 3,
+                    searchable.size.height - 3,
                 )
 
     def action_log(self) -> None:
         log_widget.display = not log_widget.display
 
     def action_providers(self):
+        if registry.fullscreen_mode:
+            self.screen.maximize(navigation_providers)
         navigation_providers.focus()
 
     def action_resources(self):
+        if registry.fullscreen_mode:
+            self.screen.maximize(navigation_resources)
         navigation_resources.focus()
 
     def action_content(self):
+        if registry.fullscreen_mode:
+            self.screen.maximize(content_markdown)
         content_markdown.document.focus()
+
+    def action_fullscreen(self):
+        if registry.fullscreen_mode:
+            registry.fullscreen_mode = False
+            navigation_providers.styles.column_span = 1
+            navigation_resources.styles.column_span = 1
+            content_markdown.styles.column_span = 1
+            self.screen.minimize()
+        else:
+            registry.fullscreen_mode = True
+            navigation_providers.styles.column_span = 2
+            navigation_resources.styles.column_span = 2
+            content_markdown.styles.column_span = 2
+            self.screen.maximize(self.screen.focused)
 
     async def action_version(self):
         if registry.active_provider is None:
@@ -161,9 +188,13 @@ class TofuRefApp(App):
         if event.control == navigation_providers:
             provider_selected = registry.providers[event.option.prompt]
             registry.active_provider = provider_selected
+            if registry.fullscreen_mode:
+                self.screen.maximize(navigation_resources)
             await _load_provider_resources(provider_selected)
         elif event.control == navigation_resources:
             resource_selected = event.option.prompt
+            if registry.fullscreen_mode:
+                self.screen.maximize(content_markdown)
             content_markdown.loading = True
             content_markdown.document.update(await resource_selected.content())
             content_markdown.document.border_subtitle = f"{resource_selected.type.value} - {resource_selected.provider.name}_{resource_selected.name}"
@@ -181,6 +212,7 @@ async def _load_provider_resources(provider: Provider):
     )
     _populate_resources(provider)
     navigation_resources.focus()
+    navigation_resources.highlighted = 0
     content_markdown.loading = False
     navigation_resources.loading = False
 

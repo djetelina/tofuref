@@ -3,6 +3,11 @@ Screen {
     grid-size: 2;
     grid-columns: 4fr 5fr;
     grid-rows: 4fr 4fr;
+    layers: top normal;
+}
+
+#windows {
+    column-span: 2;
 }
 
 #sidebar {
