@@ -26,7 +26,7 @@ class CustomMarkdownViewer(MarkdownViewer):
     def action_down(self) -> None:
         self.document.scroll_down()
 
-    # Without this the markdown viewer would try to open a file on a disk, while the markdown itself will open a browser link (desired)
+    # Without this, the Markdown viewer would try to open a file on a disk, while the Markdown itself will open a browser link (desired)
     async def go(self, location):
         return None
 
@@ -51,6 +51,8 @@ content_markdown = CustomMarkdownViewer(
 Contributions (issues, prs, docs) welcome: [GitHub](https://github.com/djetelina/tofuref)
 
 * Navigating content is difficult (search doesn't work despite the footer suggesting otherwise
+* tofuref experience isn't the best in smaller terminal windows
+    * Plan: Add "fullscreen mode", where only one window is visible at a time
 """,
     classes="content",
     show_table_of_contents=False,

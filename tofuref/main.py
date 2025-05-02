@@ -1,13 +1,14 @@
 import asyncio
 from typing import Iterable, Optional, List
 
+from textual import on
 from textual.app import App, ComposeResult
-from textual.binding import Binding
 from textual.containers import Container
 from textual.widgets import (
     Footer,
     Input,
     OptionList,
+    Select,
 )
 from rich.markdown import Markdown
 
@@ -30,6 +31,7 @@ class TofuRefApp(App):
         ("q", "quit", "Quit"),
         ("s", "search", "Search"),
         ("/", "search", "Search"),
+        ("v", "version", "Provider Version"),
         ("p", "providers", "Providers"),
         ("r", "resources", "Resources"),
         ("c", "content", "Content"),
@@ -54,18 +56,21 @@ class TofuRefApp(App):
 
     async def on_ready(self) -> None:
         """Set up the application when it starts."""
-        log_widget.write("Fetching OpenTofu registry")
+        log_widget.write("Populating providers from the registry API")
         content_markdown.document.classes = "bordered content"
         content_markdown.document.border_title = "Content"
         content_markdown.document.border_subtitle = "Welcome"
+        navigation_providers.loading = True
         self.screen.refresh()
         await asyncio.sleep(0.1)
         self.app.run_worker(self._preload, name="preload")
 
-    async def _preload(self):
+    @staticmethod
+    async def _preload():
         registry.providers = await populate_providers()
         log_widget.write(f"Providers loaded ([cyan bold]{len(registry.providers)}[/])")
         _populate_providers()
+        navigation_providers.loading = False
         navigation_providers.highlighted = 0
         log_widget.write(Markdown("---"))
 
@@ -94,6 +99,35 @@ class TofuRefApp(App):
 
     def action_content(self):
         content_markdown.document.focus()
+
+    async def action_version(self):
+        if registry.active_provider is None:
+            self.notify(
+                "Provider Version can only be changed after one is selected.",
+                title="No provider selected",
+                severity="warning",
+            )
+            return
+        if navigation_resources.children:
+            navigation_resources.remove_children("#version-select")
+        else:
+            version_select = Select.from_values(
+                (v["id"] for v in registry.active_provider.versions),
+                prompt="Select Provider Version",
+                allow_blank=False,
+                value=registry.active_provider.active_version,
+                id="version-select",
+            )
+            navigation_resources.mount(version_select)
+            await asyncio.sleep(0.1)
+            version_select.action_show_overlay()
+
+    @on(Select.Changed, "#version-select")
+    async def change_provider_version(self, event: Select.Changed) -> None:
+        if event.value != registry.active_provider.active_version:
+            registry.active_provider.active_version = event.value
+            await _load_provider_resources(registry.active_provider)
+            navigation_resources.remove_children("#version-select")
 
     def on_input_changed(self, event: Input.Changed) -> None:
         if event.input.id != "search":
@@ -127,16 +161,28 @@ class TofuRefApp(App):
         if event.control == navigation_providers:
             provider_selected = registry.providers[event.option.prompt]
             registry.active_provider = provider_selected
-            await provider_selected.load_resources()
-            content_markdown.document.update(await provider_selected.overview())
-            content_markdown.border_subtitle = f"{provider_selected.display_name}"
-            _populate_resources(provider_selected)
-            navigation_resources.focus()
+            await _load_provider_resources(provider_selected)
         elif event.control == navigation_resources:
             resource_selected = event.option.prompt
+            content_markdown.loading = True
             content_markdown.document.update(await resource_selected.content())
             content_markdown.document.border_subtitle = f"{resource_selected.type.value} - {resource_selected.provider.name}_{resource_selected.name}"
             content_markdown.document.focus()
+            content_markdown.loading = False
+
+
+async def _load_provider_resources(provider: Provider):
+    navigation_resources.loading = True
+    content_markdown.loading = True
+    await provider.load_resources()
+    content_markdown.document.update(await provider.overview())
+    content_markdown.document.border_subtitle = (
+        f"{provider.display_name} {provider.active_version} Overview"
+    )
+    _populate_resources(provider)
+    navigation_resources.focus()
+    content_markdown.loading = False
+    navigation_resources.loading = False
 
 
 def _populate_providers(providers: Optional[Iterable[str]] = None) -> None:
