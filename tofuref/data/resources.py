@@ -40,7 +40,7 @@ class Resource:
     async def content(self):
         if self._content is None:
             doc_data = await get_registry_api(
-                f"{self.provider.organization}/{self.provider.name}/{self.provider._active_version}/{self.type.value}s/{self.name}.md",
+                f"{self.provider.organization}/{self.provider.name}/{self.provider.active_version}/{self.type.value}s/{self.name}.md",
                 json=False,
             )
             _, self._content = header_markdown_split(doc_data)

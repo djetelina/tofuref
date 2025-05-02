@@ -1,5 +1,5 @@
 import re
-from typing import Tuple, Union
+from typing import Tuple, Union, Dict
 
 import httpx
 from yaml import safe_load
@@ -22,7 +22,7 @@ def header_markdown_split(contents: str) -> Tuple[dict, str]:
     return header, markdown_content
 
 
-async def get_registry_api(endpoint: str, json=True) -> Union[dict, str]:
+async def get_registry_api(endpoint: str, json=True) -> Union[Dict[str, dict], str]:
     uri = f"https://api.opentofu.org/registry/docs/providers/{endpoint}"
     async with httpx.AsyncClient() as client:
         r = await client.get(uri)

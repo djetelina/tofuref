@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Providers now has a version picker, when one is selected, press `v`
+- Loading indicators
+
 ## [0.3.0]
 
 ### Added

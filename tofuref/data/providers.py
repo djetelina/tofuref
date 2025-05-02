@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Dict, Optional, List
-from rich.json import JSON as rich_json
+from rich.json import JSON as RICH_JSON
 import json
 
 from tofuref.data.resources import Resource, ResourceType
@@ -52,6 +52,12 @@ class Provider:
             self._active_version = self.versions[0]["id"]
         return self._active_version
 
+    @active_version.setter
+    def active_version(self, value):
+        self._active_version = value
+        self.resources = []
+        self._overview = None
+
     @property
     def _endpoint(self) -> str:
         return f"{self.organization}/{self.name}/{self.active_version}"
@@ -65,6 +71,8 @@ class Provider:
         return self._overview
 
     async def load_resources(self):
+        if self.resources:
+            return
         resource_data = await get_registry_api(
             f"{self.organization}/{self.name}/{self.active_version}/index.json"
         )
@@ -81,7 +89,7 @@ class Provider:
             self.resources.append(Resource(f["name"], self, type=ResourceType.FUNCTION))
 
     def __rich__(self):
-        return rich_json(
+        return RICH_JSON(
             json.dumps(
                 {
                     k: v
