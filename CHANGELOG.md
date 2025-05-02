@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Providers now has a version picker, when one is selected, press `v`
+- Providers now have a version picker, when one is selected, press `v`
 - Loading indicators
 - Fullscreen mode
 - Content now reacts to page up, page down, home and end
