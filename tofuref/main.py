@@ -1,7 +1,5 @@
 import asyncio
-from typing import Iterable, Optional, List
 
-import textual.app
 from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import Container
@@ -13,9 +11,13 @@ from textual.widgets import (
 )
 from rich.markdown import Markdown
 
-from tofuref.data.resources import Resource
-from tofuref.data.providers import populate_providers, Provider
+from tofuref.data.providers import populate_providers
 from tofuref.data.registry import registry
+from tofuref.ui_logic import (
+    load_provider_resources,
+    populate_providers as ui_populate_providers,
+    populate_resources,
+)
 from tofuref.widgets import (
     log_widget,
     content_markdown,
@@ -73,10 +75,10 @@ class TofuRefApp(App):
         self.app.run_worker(self._preload, name="preload")
 
     @staticmethod
-    async def _preload():
+    async def _preload() -> None:
         registry.providers = await populate_providers()
         log_widget.write(f"Providers loaded ([cyan bold]{len(registry.providers)}[/])")
-        _populate_providers()
+        ui_populate_providers()
         navigation_providers.loading = False
         navigation_providers.highlighted = 0
         log_widget.write(Markdown("---"))
@@ -98,22 +100,22 @@ class TofuRefApp(App):
     def action_log(self) -> None:
         log_widget.display = not log_widget.display
 
-    def action_providers(self):
+    def action_providers(self) -> None:
         if registry.fullscreen_mode:
             self.screen.maximize(navigation_providers)
         navigation_providers.focus()
 
-    def action_resources(self):
+    def action_resources(self) -> None:
         if registry.fullscreen_mode:
             self.screen.maximize(navigation_resources)
         navigation_resources.focus()
 
-    def action_content(self):
+    def action_content(self) -> None:
         if registry.fullscreen_mode:
             self.screen.maximize(content_markdown)
         content_markdown.document.focus()
 
-    def action_fullscreen(self):
+    def action_fullscreen(self) -> None:
         if registry.fullscreen_mode:
             registry.fullscreen_mode = False
             navigation_providers.styles.column_span = 1
@@ -127,7 +129,7 @@ class TofuRefApp(App):
             content_markdown.styles.column_span = 2
             self.screen.maximize(self.screen.focused)
 
-    async def action_version(self):
+    async def action_version(self) -> None:
         if registry.active_provider is None:
             self.notify(
                 "Provider Version can only be changed after one is selected.",
@@ -153,7 +155,7 @@ class TofuRefApp(App):
     async def change_provider_version(self, event: Select.Changed) -> None:
         if event.value != registry.active_provider.active_version:
             registry.active_provider.active_version = event.value
-            await _load_provider_resources(registry.active_provider)
+            await load_provider_resources(registry.active_provider)
             navigation_resources.remove_children("#version-select")
 
     def on_input_changed(self, event: Input.Changed) -> None:
@@ -163,16 +165,16 @@ class TofuRefApp(App):
         query = event.value.strip()
         if search.parent == navigation_providers:
             if not query:
-                _populate_providers()
+                ui_populate_providers()
             else:
-                _populate_providers(
+                ui_populate_providers(
                     [p for p in registry.providers.keys() if query in p]
                 )
         elif search.parent == navigation_resources:
             if not query:
-                _populate_resources(registry.active_provider)
+                populate_resources(registry.active_provider)
             else:
-                _populate_resources(
+                populate_resources(
                     registry.active_provider,
                     [r for r in registry.active_provider.resources if query in r.name],
                 )
@@ -190,7 +192,7 @@ class TofuRefApp(App):
             registry.active_provider = provider_selected
             if registry.fullscreen_mode:
                 self.screen.maximize(navigation_resources)
-            await _load_provider_resources(provider_selected)
+            await load_provider_resources(provider_selected)
         elif event.control == navigation_resources:
             resource_selected = event.option.prompt
             if registry.fullscreen_mode:
@@ -202,48 +204,7 @@ class TofuRefApp(App):
             content_markdown.loading = False
 
 
-async def _load_provider_resources(provider: Provider):
-    navigation_resources.loading = True
-    content_markdown.loading = True
-    await provider.load_resources()
-    content_markdown.document.update(await provider.overview())
-    content_markdown.document.border_subtitle = (
-        f"{provider.display_name} {provider.active_version} Overview"
-    )
-    _populate_resources(provider)
-    navigation_resources.focus()
-    navigation_resources.highlighted = 0
-    content_markdown.loading = False
-    navigation_resources.loading = False
-
-
-def _populate_providers(providers: Optional[Iterable[str]] = None) -> None:
-    if providers is None:
-        providers = registry.providers.keys()
-    navigation_providers.clear_options()
-    navigation_providers.border_subtitle = f"{len(providers)}/{len(registry.providers)}"
-    for name in providers:
-        navigation_providers.add_option(name)
-
-
-def _populate_resources(
-    provider: Optional[Provider] = None, resources: Optional[List[Resource]] = None
-) -> None:
-    navigation_resources.clear_options()
-    if provider is None:
-        return
-    navigation_resources.border_subtitle = (
-        f"{provider.organization}/{provider.name} {provider.active_version}"
-    )
-
-    if resources is None:
-        for resource in provider.resources:
-            navigation_resources.add_option(resource)
-    else:
-        navigation_resources.add_options(resources)
-
-
-def main():
+def main() -> None:
     TofuRefApp().run()
 
 

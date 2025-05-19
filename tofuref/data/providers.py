@@ -47,13 +47,13 @@ class Provider:
         return f"{self.organization}/{self.name}"
 
     @property
-    def active_version(self):
+    def active_version(self) -> str:
         if self._active_version is None:
             self._active_version = self.versions[0]["id"]
         return self._active_version
 
     @active_version.setter
-    def active_version(self, value):
+    def active_version(self, value: str) -> None:
         self._active_version = value
         self.resources = []
         self._overview = None
@@ -62,7 +62,7 @@ class Provider:
     def _endpoint(self) -> str:
         return f"{self.organization}/{self.name}/{self.active_version}"
 
-    async def overview(self):
+    async def overview(self) -> str:
         if self._overview is None:
             self._overview = await get_registry_api(
                 f"{self._endpoint}/index.md", json=False
@@ -70,7 +70,7 @@ class Provider:
             _, self._overview = header_markdown_split(self._overview)
         return self._overview
 
-    async def load_resources(self):
+    async def load_resources(self) -> None:
         if self.resources:
             return
         resource_data = await get_registry_api(
