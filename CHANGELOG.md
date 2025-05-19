@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2025-05-19
+
 ### Added 
 
 - Use command (`u` or `y`) to copy provider configuration for `required_providers` block
