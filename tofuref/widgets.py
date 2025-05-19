@@ -13,10 +13,20 @@ from tofuref import __version__
 LOGGER = logging.getLogger(__name__)
 LOGGER.info("Importing widgets")
 
-log_widget = RichLog(id="log", markup=True, wrap=True, classes="bordered hidden")
-log_widget.border_title = "Log"
-log_widget.border_subtitle = f"tofuref v{__version__}"
-log_widget.display = False
+class CustomRichLog(RichLog):
+    """A customized RichLog widget with predefined properties."""
+
+    def __init__(self, **kwargs):
+        super().__init__(
+            id="log",
+            markup=True,
+            wrap=True,
+            classes="bordered hidden",
+            **kwargs
+        )
+        self.border_title = "Log"
+        self.border_subtitle = f"tofuref v{__version__}"
+        self.display = False
 
 
 class CustomMarkdownViewer(MarkdownViewer):
@@ -54,8 +64,11 @@ class CustomMarkdownViewer(MarkdownViewer):
         return None
 
 
-content_markdown = CustomMarkdownViewer(
-    f"""
+class WelcomeMarkdownViewer(CustomMarkdownViewer):
+    """A customized MarkdownViewer with welcome content."""
+
+    def __init__(self, **kwargs):
+        welcome_content = f"""
 # Welcome to tofuref {__version__}!
 
 Changelog: https://github.com/djetelina/tofuref/blob/main/CHANGELOG.md
@@ -81,22 +94,53 @@ Navigate with arrows/page up/page down/home/end or your mouse.
 ---
 
 # Get in touch
-* GitHub: https://github.com/djetelina/tofuref""",
-    classes="content",
-    show_table_of_contents=False,
-)
+* GitHub: https://github.com/djetelina/tofuref"""
+
+        super().__init__(
+            welcome_content,
+            classes="content",
+            show_table_of_contents=False,
+            id="content",
+            **kwargs
+        )
 
 
-search = Input(placeholder="Search...", id="search", classes="bordered")
-search.border_title = "Search"
+class SearchInput(Input):
+    """A customized Input widget for search functionality."""
 
-navigation_providers = OptionList(
-    name="Providers", id="nav-provider", classes="nav-selector bordered"
-)
-navigation_providers.border_title = "Providers"
-navigation_resources = OptionList(
-    name="Resources", id="nav-resources", classes="nav-selector bordered"
-)
-navigation_resources.border_title = "Resources"
+    def __init__(self, **kwargs):
+        super().__init__(
+            placeholder="Search...",
+            id="search",
+            classes="bordered",
+            **kwargs
+        )
+        self.border_title = "Search"
+
+
+class ProvidersOptionList(OptionList):
+    """A customized OptionList for providers."""
+
+    def __init__(self, **kwargs):
+        super().__init__(
+            name="Providers",
+            id="nav-provider",
+            classes="nav-selector bordered",
+            **kwargs
+        )
+        self.border_title = "Providers"
+
+
+class ResourcesOptionList(OptionList):
+    """A customized OptionList for resources."""
+
+    def __init__(self, **kwargs):
+        super().__init__(
+            name="Resources",
+            id="nav-resources",
+            classes="nav-selector bordered",
+            **kwargs
+        )
+        self.border_title = "Resources"
 
 LOGGER.info("Importing widgets done")

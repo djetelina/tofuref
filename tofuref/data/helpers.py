@@ -1,12 +1,13 @@
 import re
-from typing import Tuple, Union, Dict
+from typing import Tuple, Union, Dict, Any, Optional
 import logging
 
 import httpx
+from async_lru import alru_cache
 from yaml import safe_load
 from yaml.scanner import ScannerError
 
-from tofuref.widgets import log_widget
+from tofuref import __version__
 
 LOGGER = logging.getLogger(__name__)
 
@@ -30,8 +31,9 @@ def header_markdown_split(contents: str) -> Tuple[dict, str]:
     return header, markdown_content
 
 
+@alru_cache(maxsize=64)
 async def get_registry_api(
-    endpoint: str, json: bool = True
+    endpoint: str, json: bool = True, app: Optional[Any] = None
 ) -> Union[Dict[str, dict], str]:
     """
     Sends GET request to opentofu providers registry to a given endpoint
@@ -39,17 +41,19 @@ async def get_registry_api(
     """
     uri = f"https://api.opentofu.org/registry/docs/providers/{endpoint}"
     LOGGER.info("Starting async client")
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(headers={"User-Agent": f"tofuref {__version__}"}) as client:
         LOGGER.info("Client started, sending request")
         try:
             r = await client.get(uri)
             LOGGER.info("Request sent, response received")
         except Exception as e:
             LOGGER.error("Something went wrong", exc_info=e)
-            log_widget.write(f"Something went wrong: {e}")
+            if app is not None:
+                app.log_widget.write(f"Something went wrong: {e}")
             return ""
 
-    log_widget.write(f"GET [cyan]{endpoint}[/] [bold]{r.status_code}[/]")
+    if app is not None:
+        app.log_widget.write(f"GET [cyan]{endpoint}[/] [bold]{r.status_code}[/]")
 
     if json:
         return r.json()

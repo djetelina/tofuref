@@ -42,6 +42,7 @@ class Resource:
             doc_data = await get_registry_api(
                 f"{self.provider.organization}/{self.provider.name}/{self.provider.active_version}/{self.type.value}s/{self.name}.md",
                 json=False,
+                app=self.provider.app
             )
             _, self._content = header_markdown_split(doc_data)
         return self._content
