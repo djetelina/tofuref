@@ -67,6 +67,7 @@ Navigate with arrows/page up/page down/home/end or your mouse.
 | `s`, `/` | **search** in the context of providers and resources |
 | `v` | change active provider **version** |
 | `p` | focus **providers** window |
+| `u`, `y` | copy ready-to-use provider version constraint |
 | `r` | focus **resources** window |
 | `c` | focus **content** window |
 | `f` | toggle **fullscreen** mode |

@@ -36,6 +36,8 @@ class TofuRefApp(App):
         ("/", "search", "Search"),
         ("v", "version", "Provider Version"),
         ("p", "providers", "Providers"),
+        ("u", "use", "Use provider"),
+        ("y", "use", "Use provider"),
         ("r", "resources", "Resources"),
         ("c", "content", "Content"),
         ("f", "fullscreen", "Fullscreen Mode"),
@@ -96,6 +98,11 @@ class TofuRefApp(App):
                     0,
                     searchable.size.height - 3,
                 )
+
+    def action_use(self) -> None:
+        if registry.active_provider:
+            self.copy_to_clipboard(registry.active_provider.use_configuration)
+            self.notify(registry.active_provider.use_configuration, title="Copied")
 
     def action_log(self) -> None:
         log_widget.display = not log_widget.display
