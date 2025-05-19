@@ -33,27 +33,31 @@ def header_markdown_split(contents: str) -> Tuple[dict, str]:
 
 @alru_cache(maxsize=64)
 async def get_registry_api(
-    endpoint: str, json: bool = True, app: Optional[Any] = None
+    endpoint: str, json: bool = True, log_widget: Optional[Any] = None
 ) -> Union[Dict[str, dict], str]:
     """
     Sends GET request to opentofu providers registry to a given endpoint
     and returns the response either as a JSON or as a string. It also "logs" the request.
+
+    The function is cached because of tests. In practice, the cache will never get used.
     """
     uri = f"https://api.opentofu.org/registry/docs/providers/{endpoint}"
-    LOGGER.info("Starting async client")
-    async with httpx.AsyncClient(headers={"User-Agent": f"tofuref {__version__}"}) as client:
-        LOGGER.info("Client started, sending request")
+    LOGGER.debug("Starting async client")
+    async with httpx.AsyncClient(
+        headers={"User-Agent": f"tofuref v{__version__}"}
+    ) as client:
+        LOGGER.debug("Client started, sending request")
         try:
             r = await client.get(uri)
-            LOGGER.info("Request sent, response received")
+            LOGGER.debug("Request sent, response received")
         except Exception as e:
             LOGGER.error("Something went wrong", exc_info=e)
-            if app is not None:
-                app.log_widget.write(f"Something went wrong: {e}")
+            if log_widget is not None:
+                log_widget.write(f"Something went wrong: {e}")
             return ""
 
-    if app is not None:
-        app.log_widget.write(f"GET [cyan]{endpoint}[/] [bold]{r.status_code}[/]")
+    if log_widget is not None:
+        log_widget.write(f"GET [cyan]{endpoint}[/] [bold]{r.status_code}[/]")
 
     if json:
         return r.json()
