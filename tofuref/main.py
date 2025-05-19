@@ -26,6 +26,10 @@ from tofuref.widgets import (
     search,
 )
 
+import logging
+
+LOGGER = logging.getLogger(__name__)
+
 
 class TofuRefApp(App):
     CSS_PATH = "tofuref.tcss"
@@ -45,6 +49,7 @@ class TofuRefApp(App):
     ]
 
     def compose(self) -> ComposeResult:
+        LOGGER.info("Composing UI")
         # Navigation
         with Container(id="sidebar"):
             with Container(id="navigation"):
@@ -58,8 +63,10 @@ class TofuRefApp(App):
         yield log_widget
 
         yield Footer()
+        LOGGER.info("Composing UI done")
 
     async def on_ready(self) -> None:
+        LOGGER.info("Starting on ready")
         log_widget.write("Populating providers from the registry API")
         content_markdown.document.classes = "bordered content"
         content_markdown.document.border_title = "Content"
@@ -73,17 +80,20 @@ class TofuRefApp(App):
             self.screen.maximize(navigation_providers)
         navigation_providers.loading = True
         self.screen.refresh()
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.001)
+        LOGGER.info("Starting on ready done, running preload worker")
         self.app.run_worker(self._preload, name="preload")
 
     @staticmethod
     async def _preload() -> None:
+        LOGGER.info("preload start")
         registry.providers = await populate_providers()
         log_widget.write(f"Providers loaded ([cyan bold]{len(registry.providers)}[/])")
         ui_populate_providers()
         navigation_providers.loading = False
         navigation_providers.highlighted = 0
         log_widget.write(Markdown("---"))
+        LOGGER.info("preload done")
 
     def action_search(self) -> None:
         """Focus the search input."""
@@ -212,6 +222,7 @@ class TofuRefApp(App):
 
 
 def main() -> None:
+    LOGGER.info("Starting tofuref")
     TofuRefApp().run()
 
 
