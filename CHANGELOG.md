@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2025-05-20
+
+### Fixed
+
+- Use provider configuration had `v` prefix in the version number 
+- Use provider configuration was missing a quote at the beginning of source
+- Use provider configuration has a proper format (aligned `=`)
+
 ## [1.0.0] - 2025-05-19
 
 ### Added 
