@@ -23,6 +23,24 @@ Run the application:
 tofuref
 ```
 
+### Controls
+Navigate with arrows/page up/page down/home/end or your mouse.
+
+| keybindings   | action                                               |
+|---------------|------------------------------------------------------|
+| `tab`         | focus next window                                    |
+| `shift+tab`   | focus previous window                                |
+| `enter`       | choose selected or finish search                     |
+| `q`, `ctrl+q` | **quit** tofuref                                     |
+| `s`, `/`      | **search** in the context of providers and resources |
+| `v`           | change active provider **version**                   |
+| `p`           | focus **providers** window                           |
+| `u`, `y`      | copy ready-to-**use** provider version constraint    |
+| `r`           | focus **resources** window                           |
+| `c`           | focus **content** window                             |
+| `f`           | toggle **fullscreen** mode                           |
+| `l`           | display **log** window                               |
+
 ## Upgrade
 
 ```bash
