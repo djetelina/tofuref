@@ -1,3 +1,5 @@
+import logging
+
 from textual.binding import Binding
 from textual.widgets import (
     Input,
@@ -7,6 +9,9 @@ from textual.widgets import (
 )
 
 from tofuref import __version__
+
+LOGGER = logging.getLogger(__name__)
+LOGGER.info("Importing widgets")
 
 log_widget = RichLog(id="log", markup=True, wrap=True, classes="bordered hidden")
 log_widget.border_title = "Log"
@@ -93,3 +98,5 @@ navigation_resources = OptionList(
     name="Resources", id="nav-resources", classes="nav-selector bordered"
 )
 navigation_resources.border_title = "Resources"
+
+LOGGER.info("Importing widgets done")

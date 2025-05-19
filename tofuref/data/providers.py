@@ -2,12 +2,15 @@ from dataclasses import dataclass, field
 from typing import Dict, Optional, List
 from rich.json import JSON as RICH_JSON
 import json
+import logging
 
 from tofuref.data.resources import Resource, ResourceType
 from tofuref.data.helpers import (
     get_registry_api,
     header_markdown_split,
 )
+
+LOGGER = logging.getLogger(__name__)
 
 
 @dataclass
@@ -108,9 +111,12 @@ class Provider:
 
 
 async def populate_providers() -> Dict[str, Provider]:
+    LOGGER.info("Populating providers")
     providers = {}
 
     data = await get_registry_api("index.json")
+
+    LOGGER.info("Got API response")
 
     for provider_json in data["providers"]:
         provider = Provider.from_json(provider_json)

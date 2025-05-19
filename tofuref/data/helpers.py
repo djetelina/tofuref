@@ -1,11 +1,14 @@
 import re
 from typing import Tuple, Union, Dict
+import logging
 
 import httpx
 from yaml import safe_load
 from yaml.scanner import ScannerError
 
 from tofuref.widgets import log_widget
+
+LOGGER = logging.getLogger(__name__)
 
 
 def header_markdown_split(contents: str) -> Tuple[dict, str]:
@@ -35,8 +38,16 @@ async def get_registry_api(
     and returns the response either as a JSON or as a string. It also "logs" the request.
     """
     uri = f"https://api.opentofu.org/registry/docs/providers/{endpoint}"
+    LOGGER.info("Starting async client")
     async with httpx.AsyncClient() as client:
-        r = await client.get(uri)
+        LOGGER.info("Client started, sending request")
+        try:
+            r = await client.get(uri)
+            LOGGER.info("Request sent, response received")
+        except Exception as e:
+            LOGGER.error("Something went wrong", exc_info=e)
+            log_widget.write(f"Something went wrong: {e}")
+            return ""
 
     log_widget.write(f"GET [cyan]{endpoint}[/] [bold]{r.status_code}[/]")
 
