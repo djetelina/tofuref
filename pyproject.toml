@@ -1,6 +1,6 @@
 [project]
 name = "tofuref"
-description = "A terminal application to browse OpenTofu provider documentation."
+description = "TUI for OpenTofu provider registry."
 requires-python = ">=3.9"
 dependencies = [
     "textual>=3.1.1",
@@ -12,9 +12,10 @@ authors = [
 ]
 readme = "README.md"
 license = "MIT"
-keywords = ["opentofu", "tofu", "terraform", "cli", "tool", "sre", "platform", "infra"]
+keywords = ["opentofu", "tofu", "terraform", "tui", "tool", "sre", "platform", "infra"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
     "Intended Audience :: Developers",
     "Intended Audience :: System Administrators",
     "Topic :: Software Development",
@@ -41,8 +42,7 @@ Issues = "https://github.com/DJetelina/tofuref/issues"
 [dependency-groups]
 dev = [
     "textual-dev>=1.7.0",
-    "pytest>=7.0.0",
-    "black>=25.1.0",
+    "ruff>=0.11.9",
 ]
 
 [project.scripts]

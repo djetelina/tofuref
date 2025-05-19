@@ -35,7 +35,7 @@ class CustomMarkdownViewer(MarkdownViewer):
     def action_page_down(self) -> None:
         self.document.action_page_down()
 
-    def action_page_up(self):
+    def action_page_up(self) -> None:
         self.document.action_page_up()
 
     def action_scroll_home(self) -> None:
