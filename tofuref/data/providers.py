@@ -62,6 +62,13 @@ class Provider:
     def _endpoint(self) -> str:
         return f"{self.organization}/{self.name}/{self.active_version}"
 
+    @property
+    def use_configuration(self) -> str:
+        return f"""    {self.name} = {{
+      source = {self.organization}/{self.name}"
+      version = "{self.active_version}"
+    }}"""
+
     async def overview(self) -> str:
         if self._overview is None:
             self._overview = await get_registry_api(
