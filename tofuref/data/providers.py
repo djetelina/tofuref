@@ -69,8 +69,8 @@ class Provider:
     @property
     def use_configuration(self) -> str:
         return f"""    {self.name} = {{
-      source = {self.organization}/{self.name}"
-      version = "{self.active_version}"
+      source  = "{self.organization}/{self.name}"
+      version = "{self.active_version.lstrip('v')}"
     }}"""
 
     async def overview(self) -> str:
