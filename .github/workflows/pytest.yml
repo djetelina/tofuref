@@ -25,3 +25,10 @@ jobs:
           enable-cache: true
       - name: Run pytest
         run: uv run pytest tests -v
+      - name: Upload snapshot report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: snapshot_report_textual
+          path: snapshot_report.html
+          overwrite: true

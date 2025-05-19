@@ -1,5 +1,3 @@
-import logging
-
 from textual.binding import Binding
 from textual.widgets import (
     Input,
@@ -10,26 +8,18 @@ from textual.widgets import (
 
 from tofuref import __version__
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.info("Importing widgets")
 
 class CustomRichLog(RichLog):
-    """A customized RichLog widget with predefined properties."""
-
     def __init__(self, **kwargs):
         super().__init__(
-            id="log",
-            markup=True,
-            wrap=True,
-            classes="bordered hidden",
-            **kwargs
+            id="log", markup=True, wrap=True, classes="bordered hidden", **kwargs
         )
         self.border_title = "Log"
         self.border_subtitle = f"tofuref v{__version__}"
         self.display = False
 
 
-class CustomMarkdownViewer(MarkdownViewer):
+class WelcomeMarkdownViewer(MarkdownViewer):
     ALLOW_MAXIMIZE = True
 
     BINDINGS = [
@@ -41,33 +31,7 @@ class CustomMarkdownViewer(MarkdownViewer):
         Binding("end", "scroll_end", "Bottom", show=False),
     ]
 
-    def action_up(self) -> None:
-        self.document.scroll_up()
-
-    def action_down(self) -> None:
-        self.document.scroll_down()
-
-    def action_page_down(self) -> None:
-        self.document.action_page_down()
-
-    def action_page_up(self) -> None:
-        self.document.action_page_up()
-
-    def action_scroll_home(self) -> None:
-        self.document.scroll_home()
-
-    def action_scroll_end(self) -> None:
-        self.document.scroll_end()
-
-    # Without this, the Markdown viewer would try to open a file on a disk, while the Markdown itself will open a browser link (desired)
-    async def go(self, location):
-        return None
-
-
-class WelcomeMarkdownViewer(CustomMarkdownViewer):
-    """A customized MarkdownViewer with welcome content."""
-
-    def __init__(self, **kwargs):
+    def __init__(self, content=None, **kwargs):
         welcome_content = f"""
 # Welcome to tofuref {__version__}!
 
@@ -97,50 +61,61 @@ Navigate with arrows/page up/page down/home/end or your mouse.
 * GitHub: https://github.com/djetelina/tofuref"""
 
         super().__init__(
-            welcome_content,
+            content if content is not None else welcome_content,
             classes="content",
             show_table_of_contents=False,
             id="content",
-            **kwargs
+            **kwargs,
         )
+
+    def action_up(self) -> None:
+        self.document.scroll_up()
+
+    def action_down(self) -> None:
+        self.document.scroll_down()
+
+    def action_page_down(self) -> None:
+        self.document.action_page_down()
+
+    def action_page_up(self) -> None:
+        self.document.action_page_up()
+
+    def action_scroll_home(self) -> None:
+        self.document.scroll_home()
+
+    def action_scroll_end(self) -> None:
+        self.document.scroll_end()
+
+    # Without this, the Markdown viewer would try to open a file on a disk, while the Markdown itself will open a browser link (desired)
+    async def go(self, location):
+        return None
 
 
 class SearchInput(Input):
-    """A customized Input widget for search functionality."""
-
     def __init__(self, **kwargs):
         super().__init__(
-            placeholder="Search...",
-            id="search",
-            classes="bordered",
-            **kwargs
+            placeholder="Search...", id="search", classes="bordered", **kwargs
         )
         self.border_title = "Search"
 
 
 class ProvidersOptionList(OptionList):
-    """A customized OptionList for providers."""
-
     def __init__(self, **kwargs):
         super().__init__(
             name="Providers",
             id="nav-provider",
             classes="nav-selector bordered",
-            **kwargs
+            **kwargs,
         )
         self.border_title = "Providers"
 
 
 class ResourcesOptionList(OptionList):
-    """A customized OptionList for resources."""
-
     def __init__(self, **kwargs):
         super().__init__(
             name="Resources",
             id="nav-resources",
             classes="nav-selector bordered",
-            **kwargs
+            **kwargs,
         )
         self.border_title = "Resources"
-
-LOGGER.info("Importing widgets done")

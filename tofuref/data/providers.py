@@ -30,7 +30,7 @@ class Provider:
     datasources: List[Resource] = field(default_factory=list)
     functions: List[Resource] = field(default_factory=list)
     guides: List[Resource] = field(default_factory=list)
-    app: Optional[Any] = None
+    log_widget: Optional[Any] = None
 
     @classmethod
     def from_json(cls, data: dict) -> "Provider":
@@ -76,7 +76,7 @@ class Provider:
     async def overview(self) -> str:
         if self._overview is None:
             self._overview = await get_registry_api(
-                f"{self._endpoint}/index.md", json=False, app=self.app
+                f"{self._endpoint}/index.md", json=False, log_widget=self.log_widget
             )
             _, self._overview = header_markdown_split(self._overview)
         return self._overview
@@ -86,7 +86,7 @@ class Provider:
             return
         resource_data = await get_registry_api(
             f"{self.organization}/{self.name}/{self.active_version}/index.json",
-            app=self.app
+            log_widget=self.log_widget,
         )
         for g in sorted(resource_data["docs"]["guides"], key=lambda x: x["name"]):
             self.resources.append(Resource(g["name"], self, type=ResourceType.GUIDE))
@@ -112,17 +112,17 @@ class Provider:
         )
 
 
-async def populate_providers(app: Optional[Any] = None) -> Dict[str, Provider]:
-    LOGGER.info("Populating providers")
+async def populate_providers(log_widget: Optional[Any] = None) -> Dict[str, Provider]:
+    LOGGER.debug("Populating providers")
     providers = {}
 
-    data = await get_registry_api("index.json", app=app)
+    data = await get_registry_api("index.json", log_widget=log_widget)
 
-    LOGGER.info("Got API response")
+    LOGGER.debug("Got API response")
 
     for provider_json in data["providers"]:
         provider = Provider.from_json(provider_json)
-        provider.app = app
+        provider.log_widget = log_widget
         filter_in = (
             provider.versions,
             not provider.blocked,
