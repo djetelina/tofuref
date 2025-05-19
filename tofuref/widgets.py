@@ -75,23 +75,8 @@ Navigate with arrows/page up/page down/home/end or your mouse.
 
 ---
 
-# Known issues
-
-Contributions (issues, prs, docs) welcome: [GitHub](https://github.com/djetelina/tofuref)
-
-* *[UX]* Navigating content is difficult (search doesn't work despite the footer suggesting otherwise
-* *[BUG]* Pressing `<esc>` while searching in fullscreen mode breaks the fullscreen and hides the still focused search
-
----
-
 # Get in touch
-* Matrix: #tofuref:jtl.vision
-* GitHub: https://github.com/djetelina/tofuref/issues
-
-## Feedback requests
-* tofuref can start in fullscreen mode depending on the width of your terminal window, is the default good?
-
-""",
+* GitHub: https://github.com/djetelina/tofuref""",
     classes="content",
     show_table_of_contents=False,
 )
