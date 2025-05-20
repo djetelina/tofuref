@@ -1,12 +1,12 @@
 [project]
 name = "tofuref"
 description = "TUI for OpenTofu provider registry."
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "textual>=3.1.1",
     "pyyaml>=6.0.2",
     "httpx>=0.28.1",
-    "async-lru>=2.0.5",
+    "xdg-base-dirs>=6.0.2",
 ]
 authors = [
     { name = "David Jetelina" }
@@ -26,7 +26,6 @@ classifiers = [
     "Topic :: System :: Installation/Setup",
     "Topic :: Utilities",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
