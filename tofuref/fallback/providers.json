@@ -1,0 +1,2345 @@
+{
+  "providers": [
+    {
+      "addr": {
+        "display": "hashicorp/terraform-provider-aws",
+        "namespace": "hashicorp",
+        "name": "aws"
+      },
+      "warnings": [
+        "You are using opentofu/aws instead of hashicorp/aws. This provider is maintained by HashiCorp and the OpenTofu project only builds the provider binaries from the source code. Both the opentofu/ and hashicorp/ namespaces in the OpenTofu Registry contain the OpenTofu-built provider binaries based on the HashiCorp source code. To avoid configuration errors, we recommend using the hashicorp/ namespaced providers."
+      ],
+      "link": "",
+      "canonical_addr": {
+        "display": "opentofu/aws",
+        "namespace": "opentofu",
+        "name": "aws"
+      },
+      "reverse_aliases": [],
+      "description": "The AWS Provider enables Terraform to manage AWS resources.",
+      "popularity": 10302,
+      "fork_count": 9475,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v6.0.0-beta1",
+          "published": "2025-05-07T16:04:24Z"
+        },
+        {
+          "id": "v5.98.0",
+          "published": "2025-05-15T20:51:28Z"
+        },
+        {
+          "id": "v5.97.0",
+          "published": "2025-05-01T17:54:30Z"
+        },
+        {
+          "id": "v5.96.0",
+          "published": "2025-04-24T18:49:36Z"
+        },
+        {
+          "id": "v5.95.0",
+          "published": "2025-04-17T20:53:09Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "hashicorp/terraform-provider-azurerm",
+        "namespace": "hashicorp",
+        "name": "azurerm"
+      },
+      "warnings": [
+        "You are using opentofu/azurerm instead of opentofu/azurerm. This provider is maintained by HashiCorp and the OpenTofu project only builds the provider binaries from the source code. Both the opentofu/ and hashicorp/ namespaces in the OpenTofu Registry contain the OpenTofu-built provider binaries based on the HashiCorp source code. To avoid configuration errors, we recommend using the hashicorp/ namespaced providers."
+      ],
+      "link": "",
+      "canonical_addr": {
+        "display": "opentofu/azurerm",
+        "namespace": "opentofu",
+        "name": "azurerm"
+      },
+      "reverse_aliases": [],
+      "description": "Terraform provider for Azure Resource Manager",
+      "popularity": 4745,
+      "fork_count": 4760,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v4.29.0",
+          "published": "2025-05-16T09:17:47Z"
+        },
+        {
+          "id": "v4.28.0",
+          "published": "2025-05-09T09:06:20Z"
+        },
+        {
+          "id": "v4.27.0",
+          "published": "2025-04-25T07:00:58Z"
+        },
+        {
+          "id": "v4.26.0",
+          "published": "2025-04-04T06:36:39Z"
+        },
+        {
+          "id": "v4.25.0",
+          "published": "2025-03-28T10:41:35Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "hashicorp/terraform-provider-google",
+        "namespace": "hashicorp",
+        "name": "google"
+      },
+      "warnings": [
+        "You are using opentofu/google instead of hashicorp/google. This provider is maintained by HashiCorp and the OpenTofu project only builds the provider binaries from the source code. Both the opentofu/ and hashicorp/ namespaces in the OpenTofu Registry contain the OpenTofu-built provider binaries based on the HashiCorp source code. To avoid configuration errors, we recommend using the hashicorp/ namespaced providers."
+      ],
+      "link": "",
+      "canonical_addr": {
+        "display": "opentofu/google",
+        "namespace": "opentofu",
+        "name": "google"
+      },
+      "reverse_aliases": [],
+      "description": "Terraform Provider for Google Cloud Platform",
+      "popularity": 2475,
+      "fork_count": 1807,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v6.36.0",
+          "published": "2025-05-20T16:51:14Z"
+        },
+        {
+          "id": "v6.35.0",
+          "published": "2025-05-13T17:19:02Z"
+        },
+        {
+          "id": "v6.34.1",
+          "published": "2025-05-12T16:05:55Z"
+        },
+        {
+          "id": "v6.34.0",
+          "published": "2025-05-06T15:59:32Z"
+        },
+        {
+          "id": "v6.33.0",
+          "published": "2025-04-29T17:42:50Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "telmate/proxmox",
+        "namespace": "telmate",
+        "name": "proxmox"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform provider plugin for proxmox",
+      "popularity": 2471,
+      "fork_count": 564,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v3.0.1-rc9",
+          "published": "2025-05-15T00:04:18Z"
+        },
+        {
+          "id": "v3.0.1-rc8",
+          "published": "2025-04-04T19:56:18Z"
+        },
+        {
+          "id": "v3.0.1-rc7",
+          "published": "2025-03-26T23:19:24Z"
+        },
+        {
+          "id": "v3.0.1-rc6",
+          "published": "2024-11-25T21:43:33Z"
+        },
+        {
+          "id": "v3.0.1-rc5",
+          "published": "2024-11-23T23:21:51Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "hashicorp/terraform-provider-kubernetes",
+        "namespace": "hashicorp",
+        "name": "kubernetes"
+      },
+      "warnings": [
+        "You are using opentofu/kubernetes instead of hashicorp/kubernetes. This provider is maintained by HashiCorp and the OpenTofu project only builds the provider binaries from the source code. Both the opentofu/ and hashicorp/ namespaces in the OpenTofu Registry contain the OpenTofu-built provider binaries based on the HashiCorp source code. To avoid configuration errors, we recommend using the hashicorp/ namespaced providers."
+      ],
+      "link": "",
+      "canonical_addr": {
+        "display": "opentofu/kubernetes",
+        "namespace": "opentofu",
+        "name": "kubernetes"
+      },
+      "reverse_aliases": [],
+      "description": "Terraform Kubernetes provider",
+      "popularity": 1645,
+      "fork_count": 1005,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v2.37.0",
+          "published": "2025-05-20T19:38:04Z"
+        },
+        {
+          "id": "v2.36.0",
+          "published": "2025-02-26T17:59:06Z"
+        },
+        {
+          "id": "v2.35.1",
+          "published": "2024-12-20T14:44:58Z"
+        },
+        {
+          "id": "v2.35.0",
+          "published": "2024-12-12T22:02:57Z"
+        },
+        {
+          "id": "v2.34.0",
+          "published": "2024-11-25T21:54:10Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "dmacvicar/libvirt",
+        "namespace": "dmacvicar",
+        "name": "libvirt"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform provider to provision infrastructure with Linux's KVM using libvirt",
+      "popularity": 1644,
+      "fork_count": 469,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v0.8.3",
+          "published": "2025-03-04T10:17:39Z"
+        },
+        {
+          "id": "v0.8.2",
+          "published": "2025-03-02T22:32:49Z"
+        },
+        {
+          "id": "v0.8.1",
+          "published": "2024-10-19T10:05:08Z"
+        },
+        {
+          "id": "v0.8.0",
+          "published": "2024-09-22T22:31:34Z"
+        },
+        {
+          "id": "v0.7.6",
+          "published": "2023-11-19T23:29:12Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "bpg/proxmox",
+        "namespace": "bpg",
+        "name": "proxmox"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform / OpenTofu Provider for Proxmox VE",
+      "popularity": 1262,
+      "fork_count": 174,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v0.78.0",
+          "published": "2025-05-14T02:12:09Z"
+        },
+        {
+          "id": "v0.77.1",
+          "published": "2025-05-06T02:36:55Z"
+        },
+        {
+          "id": "v0.77.0",
+          "published": "2025-04-30T01:21:03Z"
+        },
+        {
+          "id": "v0.76.1",
+          "published": "2025-04-23T01:00:19Z"
+        },
+        {
+          "id": "v0.76.0",
+          "published": "2025-04-17T01:16:32Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "cloudflare/cloudflare",
+        "namespace": "cloudflare",
+        "name": "cloudflare"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [
+        {
+          "display": "opentofu/cloudflare",
+          "namespace": "opentofu",
+          "name": "cloudflare"
+        },
+        {
+          "display": "hashicorp/cloudflare",
+          "namespace": "hashicorp",
+          "name": "cloudflare"
+        }
+      ],
+      "description": "Cloudflare Terraform Provider",
+      "popularity": 1042,
+      "fork_count": 682,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v5.5.0",
+          "published": "2025-05-19T22:20:02Z"
+        },
+        {
+          "id": "v5.4.0",
+          "published": "2025-05-06T00:42:05Z"
+        },
+        {
+          "id": "v5.3.0",
+          "published": "2025-04-09T02:16:14Z"
+        },
+        {
+          "id": "v5.2.0",
+          "published": "2025-03-20T23:25:00Z"
+        },
+        {
+          "id": "v5.1.0",
+          "published": "2025-02-13T04:27:10Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "hashicorp/terraform-provider-helm",
+        "namespace": "hashicorp",
+        "name": "helm"
+      },
+      "warnings": [
+        "You are using opentofu/helm instead of hashicorp/helm. This provider is maintained by HashiCorp and the OpenTofu project only builds the provider binaries from the source code. Both the opentofu/ and hashicorp/ namespaces in the OpenTofu Registry contain the OpenTofu-built provider binaries based on the HashiCorp source code. To avoid configuration errors, we recommend using the hashicorp/ namespaced providers."
+      ],
+      "link": "",
+      "canonical_addr": {
+        "display": "opentofu/helm",
+        "namespace": "opentofu",
+        "name": "helm"
+      },
+      "reverse_aliases": [],
+      "description": "Terraform Helm provider",
+      "popularity": 1015,
+      "fork_count": 377,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v3.0.0-pre2",
+          "published": "2025-02-27T15:35:58Z"
+        },
+        {
+          "id": "v3.0.0-pre1",
+          "published": "2025-01-16T19:40:06Z"
+        },
+        {
+          "id": "v2.17.0",
+          "published": "2024-12-20T13:22:45Z"
+        },
+        {
+          "id": "v2.16.1",
+          "published": "2024-10-15T20:37:53Z"
+        },
+        {
+          "id": "v2.16.0",
+          "published": "2024-10-10T20:02:47Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "mcuadros/helm",
+        "namespace": "mcuadros",
+        "name": "helm"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform Helm provider",
+      "popularity": 1015,
+      "fork_count": 377,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v3.0.0-pre2",
+          "published": "2025-02-27T15:35:58Z"
+        },
+        {
+          "id": "v3.0.0-pre1",
+          "published": "2025-01-16T19:40:06Z"
+        },
+        {
+          "id": "v2.17.0",
+          "published": "2024-12-20T13:22:45Z"
+        },
+        {
+          "id": "v2.16.1",
+          "published": "2024-10-15T20:37:53Z"
+        },
+        {
+          "id": "v2.16.0",
+          "published": "2024-10-10T20:02:47Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "integrations/terraform-provider-github",
+        "namespace": "integrations",
+        "name": "github"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [
+        {
+          "display": "opentofu/github",
+          "namespace": "opentofu",
+          "name": "github"
+        },
+        {
+          "display": "hashicorp/github",
+          "namespace": "hashicorp",
+          "name": "github"
+        }
+      ],
+      "description": "Terraform GitHub provider",
+      "popularity": 946,
+      "fork_count": 783,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v6.6.0",
+          "published": "2025-02-27T23:41:46Z"
+        },
+        {
+          "id": "v6.5.0",
+          "published": "2025-01-17T01:13:24Z"
+        },
+        {
+          "id": "v6.4.0",
+          "published": "2024-11-21T00:33:45Z"
+        },
+        {
+          "id": "v6.3.1",
+          "published": "2024-10-07T21:57:33Z"
+        },
+        {
+          "id": "v6.3.0",
+          "published": "2024-09-13T17:48:15Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "mastercard/restapi",
+        "namespace": "mastercard",
+        "name": "restapi"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "A terraform provider to manage objects in a RESTful API",
+      "popularity": 844,
+      "fork_count": 224,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v2.0.1",
+          "published": "2025-04-09T21:02:08Z"
+        },
+        {
+          "id": "v2.0.0",
+          "published": "2025-04-08T22:23:10Z"
+        },
+        {
+          "id": "v1.20.0",
+          "published": "2024-08-26T15:51:55Z"
+        },
+        {
+          "id": "v1.19.1",
+          "published": "2024-03-05T18:29:15Z"
+        },
+        {
+          "id": "v1.19.0",
+          "published": "2024-03-01T21:46:24Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "oracle/oci",
+        "namespace": "oracle",
+        "name": "oci"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [
+        {
+          "display": "opentofu/oci",
+          "namespace": "opentofu",
+          "name": "oci"
+        },
+        {
+          "display": "hashicorp/oci",
+          "namespace": "hashicorp",
+          "name": "oci"
+        }
+      ],
+      "description": "Terraform Oracle Cloud Infrastructure provider",
+      "popularity": 792,
+      "fork_count": 705,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v7.2.0",
+          "published": "2025-05-20T20:30:33Z"
+        },
+        {
+          "id": "v7.1.0",
+          "published": "2025-05-06T16:10:57Z"
+        },
+        {
+          "id": "v7.0.0",
+          "published": "2025-05-06T16:10:57Z"
+        },
+        {
+          "id": "v6.37.0",
+          "published": "2025-04-30T09:09:55Z"
+        },
+        {
+          "id": "v6.36.0",
+          "published": "2025-04-23T19:20:41Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "keycloak/keycloak",
+        "namespace": "keycloak",
+        "name": "keycloak"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform provider for Keycloak ",
+      "popularity": 772,
+      "fork_count": 337,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v5.2.0",
+          "published": "2025-04-14T13:06:24Z"
+        },
+        {
+          "id": "v5.1.1",
+          "published": "2025-01-31T12:00:49Z"
+        },
+        {
+          "id": "v5.1.0",
+          "published": "2025-01-24T08:31:41Z"
+        },
+        {
+          "id": "v5.0.0",
+          "published": "2025-01-13T12:51:57Z"
+        },
+        {
+          "id": "v4.5.0",
+          "published": "2024-12-06T08:42:40Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "mrparkers/keycloak",
+        "namespace": "mrparkers",
+        "name": "keycloak"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform provider for Keycloak ",
+      "popularity": 772,
+      "fork_count": 337,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v5.2.0",
+          "published": "2025-04-14T13:06:24Z"
+        },
+        {
+          "id": "v5.1.1",
+          "published": "2025-01-31T12:00:49Z"
+        },
+        {
+          "id": "v5.1.0",
+          "published": "2025-01-24T08:31:41Z"
+        },
+        {
+          "id": "v5.0.0",
+          "published": "2025-01-13T12:51:57Z"
+        },
+        {
+          "id": "v4.5.0",
+          "published": "2024-12-06T08:42:40Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "kreuzwerker/docker",
+        "namespace": "kreuzwerker",
+        "name": "docker"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform Docker provider",
+      "popularity": 691,
+      "fork_count": 202,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v3.5.0",
+          "published": "2025-05-06T20:43:06Z"
+        },
+        {
+          "id": "v3.4.0",
+          "published": "2025-04-25T07:22:19Z"
+        },
+        {
+          "id": "v3.3.0",
+          "published": "2025-04-19T12:14:56Z"
+        },
+        {
+          "id": "v3.2.0",
+          "published": "2025-04-16T18:17:55Z"
+        },
+        {
+          "id": "v3.1.2",
+          "published": "2025-04-15T06:39:43Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "gavinbunney/kubectl",
+        "namespace": "gavinbunney",
+        "name": "kubectl"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform provider to handle raw kubernetes manifest yaml files",
+      "popularity": 637,
+      "fork_count": 107,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v1.19.0",
+          "published": "2025-01-10T21:50:21Z"
+        },
+        {
+          "id": "v1.18.0",
+          "published": "2024-12-11T01:12:50Z"
+        },
+        {
+          "id": "v1.17.0",
+          "published": "2024-12-03T16:50:08Z"
+        },
+        {
+          "id": "v1.16.0",
+          "published": "2024-11-26T07:45:12Z"
+        },
+        {
+          "id": "v1.15.0",
+          "published": "2024-11-26T07:21:42Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "hashicorp/terraform-provider-vsphere",
+        "namespace": "hashicorp",
+        "name": "vsphere"
+      },
+      "warnings": [
+        "You are using opentofu/vsphere instead of hashicorp/vsphere. This provider is maintained by HashiCorp and the OpenTofu project only builds the provider binaries from the source code. Both the opentofu/ and hashicorp/ namespaces in the OpenTofu Registry contain the OpenTofu-built provider binaries based on the HashiCorp source code. To avoid configuration errors, we recommend using the hashicorp/ namespaced providers."
+      ],
+      "link": "",
+      "canonical_addr": {
+        "display": "opentofu/vsphere",
+        "namespace": "opentofu",
+        "name": "vsphere"
+      },
+      "reverse_aliases": [],
+      "description": "Terraform Provider for VMware vSphere",
+      "popularity": 637,
+      "fork_count": 463,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v2.12.0",
+          "published": "2025-04-22T18:47:26Z"
+        },
+        {
+          "id": "v2.11.1",
+          "published": "2025-02-03T19:53:11Z"
+        },
+        {
+          "id": "v2.11.0",
+          "published": "2025-01-21T19:08:44Z"
+        },
+        {
+          "id": "v2.10.0",
+          "published": "2024-10-16T18:40:12Z"
+        },
+        {
+          "id": "v2.9.3",
+          "published": "2024-10-08T16:47:51Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "aliyun/alicloud",
+        "namespace": "aliyun",
+        "name": "alicloud"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [
+        {
+          "display": "opentofu/alicloud",
+          "namespace": "opentofu",
+          "name": "alicloud"
+        },
+        {
+          "display": "hashicorp/alicloud",
+          "namespace": "hashicorp",
+          "name": "alicloud"
+        }
+      ],
+      "description": "Terraform AliCloud provider",
+      "popularity": 612,
+      "fork_count": 575,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v1.249.0",
+          "published": "2025-05-15T05:34:02Z"
+        },
+        {
+          "id": "v1.248.0",
+          "published": "2025-04-17T09:40:58Z"
+        },
+        {
+          "id": "v1.247.0",
+          "published": "2025-03-31T11:48:46Z"
+        },
+        {
+          "id": "v1.246.2",
+          "published": "2025-03-24T02:34:43Z"
+        },
+        {
+          "id": "v1.246.1",
+          "published": "2025-03-24T02:34:43Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "chanzuckerberg/snowflake",
+        "namespace": "chanzuckerberg",
+        "name": "snowflake"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform provider for managing Snowflake accounts",
+      "popularity": 606,
+      "fork_count": 438,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v2.1.0",
+          "published": "2025-05-12T11:08:11Z"
+        },
+        {
+          "id": "v2.0.0",
+          "published": "2025-04-23T14:52:30Z"
+        },
+        {
+          "id": "v1.2.1",
+          "published": "2025-04-22T17:26:33Z"
+        },
+        {
+          "id": "v1.2.0",
+          "published": "2025-04-22T16:46:12Z"
+        },
+        {
+          "id": "v1.1.0",
+          "published": "2025-04-11T09:11:01Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "snowflake-labs/snowflake",
+        "namespace": "snowflake-labs",
+        "name": "snowflake"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform provider for managing Snowflake accounts",
+      "popularity": 606,
+      "fork_count": 438,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v2.1.0",
+          "published": "2025-05-12T11:08:11Z"
+        },
+        {
+          "id": "v2.0.0",
+          "published": "2025-04-23T14:52:30Z"
+        },
+        {
+          "id": "v1.2.1",
+          "published": "2025-04-22T17:26:33Z"
+        },
+        {
+          "id": "v1.2.0",
+          "published": "2025-04-22T16:46:12Z"
+        },
+        {
+          "id": "v1.1.0",
+          "published": "2025-04-11T09:11:01Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "snowflakedb/snowflake",
+        "namespace": "snowflakedb",
+        "name": "snowflake"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform provider for managing Snowflake accounts",
+      "popularity": 606,
+      "fork_count": 438,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v2.1.0",
+          "published": "2025-05-12T11:08:11Z"
+        },
+        {
+          "id": "v2.0.0",
+          "published": "2025-04-23T14:52:30Z"
+        },
+        {
+          "id": "v1.2.1",
+          "published": "2025-04-22T17:26:33Z"
+        },
+        {
+          "id": "v1.2.0",
+          "published": "2025-04-22T16:46:12Z"
+        },
+        {
+          "id": "v1.1.0",
+          "published": "2025-04-11T09:11:01Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "hetznercloud/hcloud",
+        "namespace": "hetznercloud",
+        "name": "hcloud"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [
+        {
+          "display": "opentofu/hcloud",
+          "namespace": "opentofu",
+          "name": "hcloud"
+        },
+        {
+          "display": "hashicorp/hcloud",
+          "namespace": "hashicorp",
+          "name": "hcloud"
+        }
+      ],
+      "description": "Terraform Hetzner Cloud provider",
+      "popularity": 573,
+      "fork_count": 80,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v1.51.0",
+          "published": "2025-05-20T10:54:13Z"
+        },
+        {
+          "id": "v1.50.1",
+          "published": "2025-04-24T10:55:29Z"
+        },
+        {
+          "id": "v1.50.0",
+          "published": "2025-02-25T15:31:07Z"
+        },
+        {
+          "id": "v1.50.0-rc.0",
+          "published": "2025-02-05T15:28:38Z"
+        },
+        {
+          "id": "v1.49.1",
+          "published": "2024-11-21T14:27:53Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "mongey/kafka",
+        "namespace": "mongey",
+        "name": "kafka"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform provider for managing Apache Kafka Topics + ACLs",
+      "popularity": 535,
+      "fork_count": 137,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v0.9.0",
+          "published": "2025-03-07T10:21:47Z"
+        },
+        {
+          "id": "v0.8.4",
+          "published": "2025-02-17T10:36:27Z"
+        },
+        {
+          "id": "v0.8.3",
+          "published": "2024-12-08T21:58:57Z"
+        },
+        {
+          "id": "v0.8.2",
+          "published": "2024-12-08T20:19:52Z"
+        },
+        {
+          "id": "v0.8.1",
+          "published": "2024-08-23T12:28:40Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "digitalocean/digitalocean",
+        "namespace": "digitalocean",
+        "name": "digitalocean"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [
+        {
+          "display": "opentofu/digitalocean",
+          "namespace": "opentofu",
+          "name": "digitalocean"
+        },
+        {
+          "display": "hashicorp/digitalocean",
+          "namespace": "hashicorp",
+          "name": "digitalocean"
+        }
+      ],
+      "description": "Terraform DigitalOcean provider",
+      "popularity": 534,
+      "fork_count": 295,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v2.54.0",
+          "published": "2025-05-19T15:07:23Z"
+        },
+        {
+          "id": "v2.53.0",
+          "published": "2025-05-07T15:29:05Z"
+        },
+        {
+          "id": "v2.52.0",
+          "published": "2025-04-29T13:31:56Z"
+        },
+        {
+          "id": "v2.51.0",
+          "published": "2025-04-16T19:59:10Z"
+        },
+        {
+          "id": "v2.50.0",
+          "published": "2025-03-25T17:35:07Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "databricks/databricks",
+        "namespace": "databricks",
+        "name": "databricks"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Databricks Terraform Provider",
+      "popularity": 514,
+      "fork_count": 430,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v1.80.0",
+          "published": "2025-05-19T09:25:38Z"
+        },
+        {
+          "id": "v1.79.1",
+          "published": "2025-05-14T14:03:37Z"
+        },
+        {
+          "id": "v1.79.0",
+          "published": "2025-05-13T13:07:44Z"
+        },
+        {
+          "id": "v1.78.0",
+          "published": "2025-05-13T09:43:31Z"
+        },
+        {
+          "id": "v1.77.0",
+          "published": "2025-05-08T07:09:01Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "databrickslabs/databricks",
+        "namespace": "databrickslabs",
+        "name": "databricks"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Databricks Terraform Provider",
+      "popularity": 514,
+      "fork_count": 430,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v1.80.0",
+          "published": "2025-05-19T09:25:38Z"
+        },
+        {
+          "id": "v1.79.1",
+          "published": "2025-05-14T14:03:37Z"
+        },
+        {
+          "id": "v1.79.0",
+          "published": "2025-05-13T13:07:44Z"
+        },
+        {
+          "id": "v1.78.0",
+          "published": "2025-05-13T09:43:31Z"
+        },
+        {
+          "id": "v1.77.0",
+          "published": "2025-05-08T07:09:01Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "carlpett/sops",
+        "namespace": "carlpett",
+        "name": "sops"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "A Terraform provider for reading Mozilla sops files",
+      "popularity": 511,
+      "fork_count": 64,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v1.2.0",
+          "published": "2025-03-27T20:03:49Z"
+        },
+        {
+          "id": "v1.1.1",
+          "published": "2024-08-17T20:59:27Z"
+        },
+        {
+          "id": "v1.0.0",
+          "published": "2023-09-16T16:19:20Z"
+        },
+        {
+          "id": "v0.7.2",
+          "published": "2023-01-06T20:23:05Z"
+        },
+        {
+          "id": "v0.7.1",
+          "published": "2022-05-14T16:16:43Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "hashicorp/terraform-provider-kubernetes-alpha",
+        "namespace": "hashicorp",
+        "name": "kubernetes-alpha"
+      },
+      "warnings": [
+        "You are using opentofu/kubernetes-alpha instead of hashicorp/kubernetes-alpha. This provider is maintained by HashiCorp and the OpenTofu project only builds the provider binaries from the source code. Both the opentofu/ and hashicorp/ namespaces in the OpenTofu Registry contain the OpenTofu-built provider binaries based on the HashiCorp source code. To avoid configuration errors, we recommend using the hashicorp/ namespaced providers."
+      ],
+      "link": "",
+      "canonical_addr": {
+        "display": "opentofu/kubernetes-alpha",
+        "namespace": "opentofu",
+        "name": "kubernetes-alpha"
+      },
+      "reverse_aliases": [],
+      "description": "A Terraform provider for Kubernetes that uses dynamic resource types and server-side apply. Supports all Kubernetes resources.",
+      "popularity": 492,
+      "fork_count": 63,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v0.6.0",
+          "published": "2021-08-04T18:28:04Z"
+        },
+        {
+          "id": "v0.5.0",
+          "published": "2021-06-08T18:00:41Z"
+        },
+        {
+          "id": "v0.4.1",
+          "published": "2021-05-21T17:45:10Z"
+        },
+        {
+          "id": "v0.4.0",
+          "published": "2021-05-19T11:59:24Z"
+        },
+        {
+          "id": "v0.3.3",
+          "published": "2021-05-03T15:16:28Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "hashicorp/terraform-provider-vault",
+        "namespace": "hashicorp",
+        "name": "vault"
+      },
+      "warnings": [
+        "You are using opentofu/vault, which is a mirror of hashicorp/vault. Using both providers in one project can lead to issues and we recommend using only hashicorp/vault for compatibility."
+      ],
+      "link": "",
+      "canonical_addr": {
+        "display": "opentofu/vault",
+        "namespace": "opentofu",
+        "name": "vault"
+      },
+      "reverse_aliases": [],
+      "description": "Terraform Vault provider",
+      "popularity": 479,
+      "fork_count": 561,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v4.8.0",
+          "published": "2025-04-23T19:57:21Z"
+        },
+        {
+          "id": "v4.7.0",
+          "published": "2025-03-12T19:44:06Z"
+        },
+        {
+          "id": "v4.6.0",
+          "published": "2025-01-15T20:51:10Z"
+        },
+        {
+          "id": "v4.5.0",
+          "published": "2024-11-19T17:03:12Z"
+        },
+        {
+          "id": "v4.4.0",
+          "published": "2024-08-07T16:56:06Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "argoproj-labs/argocd",
+        "namespace": "argoproj-labs",
+        "name": "argocd"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform provider for Argo CD",
+      "popularity": 460,
+      "fork_count": 92,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v7.8.0",
+          "published": "2025-05-15T08:59:48Z"
+        },
+        {
+          "id": "v7.7.0",
+          "published": "2025-05-08T09:32:36Z"
+        },
+        {
+          "id": "v7.6.1",
+          "published": "2025-05-05T12:13:43Z"
+        },
+        {
+          "id": "v7.6.0",
+          "published": "2025-04-24T08:02:36Z"
+        },
+        {
+          "id": "v7.5.3",
+          "published": "2025-04-12T11:06:39Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "oboukili/argocd",
+        "namespace": "oboukili",
+        "name": "argocd"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform provider for Argo CD",
+      "popularity": 460,
+      "fork_count": 92,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v7.8.0",
+          "published": "2025-05-15T08:59:48Z"
+        },
+        {
+          "id": "v7.7.0",
+          "published": "2025-05-08T09:32:36Z"
+        },
+        {
+          "id": "v7.6.1",
+          "published": "2025-05-05T12:13:43Z"
+        },
+        {
+          "id": "v7.6.0",
+          "published": "2025-04-24T08:02:36Z"
+        },
+        {
+          "id": "v7.5.3",
+          "published": "2025-04-12T11:06:39Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "grafana/grafana",
+        "namespace": "grafana",
+        "name": "grafana"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [
+        {
+          "display": "opentofu/grafana",
+          "namespace": "opentofu",
+          "name": "grafana"
+        },
+        {
+          "display": "hashicorp/grafana",
+          "namespace": "hashicorp",
+          "name": "grafana"
+        }
+      ],
+      "description": "Terraform Grafana provider",
+      "popularity": 459,
+      "fork_count": 254,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v3.25.0",
+          "published": "2025-05-09T13:57:46Z"
+        },
+        {
+          "id": "v3.24.1",
+          "published": "2025-05-06T13:09:27Z"
+        },
+        {
+          "id": "v3.24.0",
+          "published": "2025-05-06T09:56:13Z"
+        },
+        {
+          "id": "v3.23.0",
+          "published": "2025-05-06T08:16:51Z"
+        },
+        {
+          "id": "v3.22.3",
+          "published": "2025-04-17T16:57:10Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "hashicorp/terraform-provider-azuread",
+        "namespace": "hashicorp",
+        "name": "azuread"
+      },
+      "warnings": [
+        "You are using opentofu/azuread instead of hashicorp/azuread. This provider is maintained by HashiCorp and the OpenTofu project only builds the provider binaries from the source code. Both the opentofu/ and hashicorp/ namespaces in the OpenTofu Registry contain the OpenTofu-built provider binaries based on the HashiCorp source code. To avoid configuration errors, we recommend using the hashicorp/ namespaced providers."
+      ],
+      "link": "",
+      "canonical_addr": {
+        "display": "opentofu/azuread",
+        "namespace": "opentofu",
+        "name": "azuread"
+      },
+      "reverse_aliases": [],
+      "description": "Terraform provider for Azure Active Directory",
+      "popularity": 445,
+      "fork_count": 316,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v3.4.0",
+          "published": "2025-05-15T11:26:59Z"
+        },
+        {
+          "id": "v3.3.0",
+          "published": "2025-04-03T07:27:20Z"
+        },
+        {
+          "id": "v3.2.0",
+          "published": "2025-03-21T10:00:10Z"
+        },
+        {
+          "id": "v3.1.0",
+          "published": "2025-01-16T15:37:58Z"
+        },
+        {
+          "id": "v3.0.2",
+          "published": "2024-10-04T17:39:10Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "datadog/datadog",
+        "namespace": "datadog",
+        "name": "datadog"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [
+        {
+          "display": "opentofu/datadog",
+          "namespace": "opentofu",
+          "name": "datadog"
+        },
+        {
+          "display": "hashicorp/datadog",
+          "namespace": "hashicorp",
+          "name": "datadog"
+        }
+      ],
+      "description": "Terraform Datadog provider",
+      "popularity": 419,
+      "fork_count": 392,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v3.63.0",
+          "published": "2025-05-20T13:13:13Z"
+        },
+        {
+          "id": "v3.62.0",
+          "published": "2025-05-15T08:15:27Z"
+        },
+        {
+          "id": "v3.61.0",
+          "published": "2025-04-30T11:57:32Z"
+        },
+        {
+          "id": "v3.60.1",
+          "published": "2025-04-21T17:37:36Z"
+        },
+        {
+          "id": "v3.60.0",
+          "published": "2025-04-16T16:19:02Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "gitlabhq/gitlab",
+        "namespace": "gitlabhq",
+        "name": "gitlab"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [
+        {
+          "display": "opentofu/gitlab",
+          "namespace": "opentofu",
+          "name": "gitlab"
+        },
+        {
+          "display": "hashicorp/gitlab",
+          "namespace": "hashicorp",
+          "name": "gitlab"
+        }
+      ],
+      "description": "Terraform GitLab Provider",
+      "popularity": 406,
+      "fork_count": 320,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v18.0.0",
+          "published": "2025-05-16T08:29:18Z"
+        },
+        {
+          "id": "v17.11.0",
+          "published": "2025-04-17T17:43:04Z"
+        },
+        {
+          "id": "v17.10.0",
+          "published": "2025-03-21T01:02:29Z"
+        },
+        {
+          "id": "v17.9.0",
+          "published": "2025-02-20T22:11:04Z"
+        },
+        {
+          "id": "v17.8.0",
+          "published": "2025-01-16T20:04:22Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "microsoft/azuredevops",
+        "namespace": "microsoft",
+        "name": "azuredevops"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [
+        {
+          "display": "opentofu/azuredevops",
+          "namespace": "opentofu",
+          "name": "azuredevops"
+        },
+        {
+          "display": "hashicorp/azuredevops",
+          "namespace": "hashicorp",
+          "name": "azuredevops"
+        }
+      ],
+      "description": "Terraform Azure DevOps provider",
+      "popularity": 403,
+      "fork_count": 288,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v1.9.0",
+          "published": "2025-04-21T07:36:34Z"
+        },
+        {
+          "id": "v1.8.1",
+          "published": "2025-03-14T09:49:51Z"
+        },
+        {
+          "id": "v1.8.0",
+          "published": "2025-03-13T08:37:06Z"
+        },
+        {
+          "id": "v1.7.0",
+          "published": "2025-02-17T06:08:09Z"
+        },
+        {
+          "id": "v1.6.0",
+          "published": "2025-01-23T06:09:35Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "cyrilgdn/postgresql",
+        "namespace": "cyrilgdn",
+        "name": "postgresql"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform PostgreSQL provider",
+      "popularity": 397,
+      "fork_count": 205,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v1.25.0",
+          "published": "2024-11-07T11:41:32Z"
+        },
+        {
+          "id": "v1.24.0",
+          "published": "2024-10-22T13:16:17Z"
+        },
+        {
+          "id": "v1.23.0",
+          "published": "2024-09-08T17:05:52Z"
+        },
+        {
+          "id": "v1.22.0",
+          "published": "2024-03-02T13:47:33Z"
+        },
+        {
+          "id": "v1.21.1-beta.1",
+          "published": "2023-10-31T19:09:52Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "fluxcd/flux",
+        "namespace": "fluxcd",
+        "name": "flux"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform and OpenTofu provider for bootstrapping Flux",
+      "popularity": 386,
+      "fork_count": 86,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v1.5.1",
+          "published": "2025-02-25T17:36:01Z"
+        },
+        {
+          "id": "v1.5.0",
+          "published": "2025-02-20T16:14:13Z"
+        },
+        {
+          "id": "v1.4.0",
+          "published": "2024-09-30T18:00:35Z"
+        },
+        {
+          "id": "v1.3.1-rc.1",
+          "published": "2024-07-26T14:08:07Z"
+        },
+        {
+          "id": "v1.3.0",
+          "published": "2024-05-13T15:07:59Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "terraform-provider-openstack/openstack",
+        "namespace": "terraform-provider-openstack",
+        "name": "openstack"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform OpenStack provider",
+      "popularity": 379,
+      "fork_count": 363,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v3.0.0",
+          "published": "2024-09-25T10:57:11Z"
+        },
+        {
+          "id": "v2.1.0",
+          "published": "2024-07-22T11:54:25Z"
+        },
+        {
+          "id": "v2.0.0",
+          "published": "2024-05-16T11:20:58Z"
+        },
+        {
+          "id": "v1.54.1",
+          "published": "2024-01-31T13:25:26Z"
+        },
+        {
+          "id": "v1.54.0",
+          "published": "2024-01-29T09:45:55Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "ibm-bluemix/ibm",
+        "namespace": "ibm-bluemix",
+        "name": "ibm"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs",
+      "popularity": 347,
+      "fork_count": 691,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v1.78.3",
+          "published": "2025-05-20T14:31:28Z"
+        },
+        {
+          "id": "v1.78.2",
+          "published": "2025-05-13T08:20:26Z"
+        },
+        {
+          "id": "v1.78.1",
+          "published": "2025-05-09T13:17:24Z"
+        },
+        {
+          "id": "v1.78.0",
+          "published": "2025-04-30T11:16:58Z"
+        },
+        {
+          "id": "v1.77.1",
+          "published": "2025-04-14T06:38:29Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "ibm-cloud/ibm",
+        "namespace": "ibm-cloud",
+        "name": "ibm"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs",
+      "popularity": 347,
+      "fork_count": 691,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v1.78.3",
+          "published": "2025-05-20T14:31:28Z"
+        },
+        {
+          "id": "v1.78.2",
+          "published": "2025-05-13T08:20:26Z"
+        },
+        {
+          "id": "v1.78.1",
+          "published": "2025-05-09T13:17:24Z"
+        },
+        {
+          "id": "v1.78.0",
+          "published": "2025-04-30T11:16:58Z"
+        },
+        {
+          "id": "v1.77.1",
+          "published": "2025-04-14T06:38:29Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "rancher/rke",
+        "namespace": "rancher",
+        "name": "rke"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform provider plugin for deploy kubernetes cluster by RKE(Rancher Kubernetes Engine)",
+      "popularity": 344,
+      "fork_count": 152,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v1.7.5",
+          "published": "2025-04-07T23:01:04Z"
+        },
+        {
+          "id": "v1.7.5-rc1",
+          "published": "2025-04-07T23:01:04Z"
+        },
+        {
+          "id": "v1.7.0",
+          "published": "2024-12-03T16:24:05Z"
+        },
+        {
+          "id": "v1.7.0-rc1",
+          "published": "2024-12-02T19:52:08Z"
+        },
+        {
+          "id": "v1.6.1",
+          "published": "2024-12-02T19:52:35Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "yamamoto-febc/rke",
+        "namespace": "yamamoto-febc",
+        "name": "rke"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform provider plugin for deploy kubernetes cluster by RKE(Rancher Kubernetes Engine)",
+      "popularity": 344,
+      "fork_count": 152,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v1.7.5",
+          "published": "2025-04-07T23:01:04Z"
+        },
+        {
+          "id": "v1.7.5-rc1",
+          "published": "2025-04-07T23:01:04Z"
+        },
+        {
+          "id": "v1.7.0",
+          "published": "2024-12-03T16:24:05Z"
+        },
+        {
+          "id": "v1.7.0-rc1",
+          "published": "2024-12-02T19:52:08Z"
+        },
+        {
+          "id": "v1.6.1",
+          "published": "2024-12-02T19:52:35Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "jianyuan/sentry",
+        "namespace": "jianyuan",
+        "name": "sentry"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform provider for Sentry",
+      "popularity": 338,
+      "fork_count": 139,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v0.14.5",
+          "published": "2025-04-28T11:42:51Z"
+        },
+        {
+          "id": "v0.14.4",
+          "published": "2025-04-01T21:01:46Z"
+        },
+        {
+          "id": "v0.14.3",
+          "published": "2024-12-25T13:32:28Z"
+        },
+        {
+          "id": "v0.14.2",
+          "published": "2024-12-16T13:32:11Z"
+        },
+        {
+          "id": "v0.14.1",
+          "published": "2024-10-31T23:59:08Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "hashicorp/terraform-provider-awscc",
+        "namespace": "hashicorp",
+        "name": "awscc"
+      },
+      "warnings": [
+        "You are using opentofu/awscc instead of hashicorp/awscc. This provider is maintained by HashiCorp and the OpenTofu project only builds the provider binaries from the source code. Both the opentofu/ and hashicorp/ namespaces in the OpenTofu Registry contain the OpenTofu-built provider binaries based on the HashiCorp source code. To avoid configuration errors, we recommend using the hashicorp/ namespaced providers."
+      ],
+      "link": "",
+      "canonical_addr": {
+        "display": "opentofu/awscc",
+        "namespace": "opentofu",
+        "name": "awscc"
+      },
+      "reverse_aliases": [],
+      "description": "Terraform AWS Cloud Control provider",
+      "popularity": 283,
+      "fork_count": 129,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v1.41.0",
+          "published": "2025-05-15T15:57:07Z"
+        },
+        {
+          "id": "v1.40.0",
+          "published": "2025-05-08T19:39:24Z"
+        },
+        {
+          "id": "v1.39.0",
+          "published": "2025-05-01T18:07:02Z"
+        },
+        {
+          "id": "v1.39.0-alpha1",
+          "published": "2025-04-29T14:29:23Z"
+        },
+        {
+          "id": "v1.38.0",
+          "published": "2025-04-24T18:03:07Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "jfrog/artifactory",
+        "namespace": "jfrog",
+        "name": "artifactory"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform provider to manage JFrog Artifactory",
+      "popularity": 283,
+      "fork_count": 112,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v12.9.4",
+          "published": "2025-05-21T08:55:16Z"
+        },
+        {
+          "id": "v12.9.3",
+          "published": "2025-05-15T08:44:18Z"
+        },
+        {
+          "id": "v12.9.2",
+          "published": "2025-04-04T04:41:14Z"
+        },
+        {
+          "id": "v12.9.1",
+          "published": "2025-02-25T20:59:23Z"
+        },
+        {
+          "id": "v12.9.0",
+          "published": "2025-02-20T19:24:48Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "okta/okta",
+        "namespace": "okta",
+        "name": "okta"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "A Terraform provider to manage Okta resources, enabling infrastructure-as-code provisioning and management of users, groups, applications, and other Okta objects.",
+      "popularity": 283,
+      "fork_count": 225,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v4.19.0",
+          "published": "2025-05-20T09:43:42Z"
+        },
+        {
+          "id": "v4.18.0",
+          "published": "2025-05-06T10:19:14Z"
+        },
+        {
+          "id": "v4.17.0",
+          "published": "2025-04-22T10:09:27Z"
+        },
+        {
+          "id": "v4.16.0",
+          "published": "2025-04-08T09:14:31Z"
+        },
+        {
+          "id": "v4.15.0",
+          "published": "2025-03-07T00:21:47Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "oktadeveloper/okta",
+        "namespace": "oktadeveloper",
+        "name": "okta"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [
+        {
+          "display": "opentofu/okta",
+          "namespace": "opentofu",
+          "name": "okta"
+        },
+        {
+          "display": "hashicorp/okta",
+          "namespace": "hashicorp",
+          "name": "okta"
+        }
+      ],
+      "description": "A Terraform provider to manage Okta resources, enabling infrastructure-as-code provisioning and management of users, groups, applications, and other Okta objects.",
+      "popularity": 283,
+      "fork_count": 225,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v4.19.0",
+          "published": "2025-05-20T09:43:42Z"
+        },
+        {
+          "id": "v4.18.0",
+          "published": "2025-05-06T10:19:14Z"
+        },
+        {
+          "id": "v4.17.0",
+          "published": "2025-04-22T10:09:27Z"
+        },
+        {
+          "id": "v4.16.0",
+          "published": "2025-04-08T09:14:31Z"
+        },
+        {
+          "id": "v4.15.0",
+          "published": "2025-03-07T00:21:47Z"
+        }
+      ],
+      "is_blocked": false
+    },
+    {
+      "addr": {
+        "display": "tailscale/tailscale",
+        "namespace": "tailscale",
+        "name": "tailscale"
+      },
+      "link": "",
+      "canonical_addr": null,
+      "reverse_aliases": [],
+      "description": "Terraform provider for Tailscale",
+      "popularity": 283,
+      "fork_count": 47,
+      "fork_of": {
+        "display": "",
+        "namespace": "",
+        "name": ""
+      },
+      "upstream_popularity": 0,
+      "upstream_fork_count": 0,
+      "versions": [
+        {
+          "id": "v0.20.0",
+          "published": "2025-05-05T19:38:55Z"
+        },
+        {
+          "id": "v0.19.0",
+          "published": "2025-04-09T18:41:02Z"
+        },
+        {
+          "id": "v0.18.0",
+          "published": "2025-02-26T15:58:15Z"
+        },
+        {
+          "id": "v0.17.2",
+          "published": "2024-10-08T20:49:56Z"
+        },
+        {
+          "id": "v0.17.1",
+          "published": "2024-09-20T16:25:42Z"
+        }
+      ],
+      "is_blocked": false
+    }
+  ]
+}
