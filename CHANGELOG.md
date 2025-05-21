@@ -10,8 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - API responses are now persistently cached on the filesystem
-  - Index of providers is valid for a month, to force refresh: `rm ~/.cache/tofuref/index.json`
-  - Providers themselves are valid forever, because they are versioned
+    - Index of providers is valid for a month, to force refresh: `rm ~/.cache/tofuref/index.json`
+    - Providers themselves are valid forever because they are versioned
+- If the initial fetch of the provider index fails, a fallback version with top 50 providers and 5 newest versions is
+  used
+
+### Fixed
+
+- Content that contained markdown splits (`---`) is now properly fully considered as content
+
+### Changed
+
+- All API requests now have a shorter timeout, 5s → 3s
 
 ### Removed
 
@@ -21,13 +31,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Use provider configuration had `v` prefix in the version number 
+- Use provider configuration had `v` prefix in the version number
 - Use provider configuration was missing a quote at the beginning of source
 - Use provider configuration has a proper format (aligned `=`)
 
 ## [1.0.0] - 2025-05-19
 
-### Added 
+### Added
 
 - Use command (`u` or `y`) to copy provider configuration for `required_providers` block
 - End-to-end tests have been added

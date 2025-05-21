@@ -42,7 +42,10 @@ PROVIDER_JSON = json.loads("""{
 
 def test_provider_use():
     provider = Provider.from_json(PROVIDER_JSON)
-    assert provider.use_configuration == """    rabbitmq = {
+    assert (
+        provider.use_configuration
+        == """    rabbitmq = {
       source  = "0username/rabbitmq"
       version = "1.9.1"
     }"""
+    )

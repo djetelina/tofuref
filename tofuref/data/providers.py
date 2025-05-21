@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
-from typing import Dict, Optional, List, Any
+from pathlib import Path
+from typing import Dict, Optional, List, Any, Callable
+
 from rich.json import JSON as RICH_JSON
 import json
 import logging
@@ -70,7 +72,7 @@ class Provider:
     def use_configuration(self) -> str:
         return f"""    {self.name} = {{
       source  = "{self.organization}/{self.name}"
-      version = "{self.active_version.lstrip('v')}"
+      version = "{self.active_version.lstrip("v")}"
     }}"""
 
     async def overview(self) -> str:
@@ -112,13 +114,26 @@ class Provider:
         )
 
 
-async def populate_providers(log_widget: Optional[Any] = None) -> Dict[str, Provider]:
+async def populate_providers(
+    log_widget: Optional[Any] = None, notify_callback: Callable = None
+) -> Dict[str, Provider]:
     LOGGER.debug("Populating providers")
     providers = {}
+    fallback_providers_path = (
+        Path(__file__).resolve().parent.parent / "fallback" / "providers.json"
+    )
 
     data = await get_registry_api("index.json", log_widget=log_widget)
+    if not data:
+        data = json.loads(fallback_providers_path.read_text())
+        if notify_callback:
+            notify_callback(
+                "Something went wrong while fetching index of providers, using limited fallback.",
+                title="Using fallback",
+                severity="error",
+            )
 
-    LOGGER.debug("Got API response")
+    LOGGER.debug("Got API response (or fallback)")
 
     for provider_json in data["providers"]:
         provider = Provider.from_json(provider_json)

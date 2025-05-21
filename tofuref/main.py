@@ -91,7 +91,9 @@ class TofuRefApp(App):
 
     async def _preload(self) -> None:
         LOGGER.debug("preload start")
-        registry.providers = await populate_providers(log_widget=self.log_widget)
+        registry.providers = await populate_providers(
+            log_widget=self.log_widget, notify_callback=self.notify
+        )
         self.log_widget.write(
             f"Providers loaded ([cyan bold]{len(registry.providers)}[/])"
         )
