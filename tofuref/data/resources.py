@@ -2,7 +2,10 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
 
-from tofuref.data.helpers import get_registry_api, header_markdown_split
+from tofuref.data.helpers import (
+    get_registry_api,
+    header_markdown_split,
+)
 
 if TYPE_CHECKING:
     from tofuref.data.providers import Provider
