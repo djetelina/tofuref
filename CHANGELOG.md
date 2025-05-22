@@ -14,14 +14,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Providers themselves are valid forever because they are versioned
 - If the initial fetch of the provider index fails, a fallback version with top 50 providers and 5 newest versions is
   used
+- `u`se (`y`ank) now works in the content window; it lets you select which codeblock found in the content to copy
+- `escape` can now be used to cancel search
 
 ### Fixed
 
 - Content that contained markdown splits (`---`) is now properly fully considered as content
+- `escape` in fullscreen mode no longer breaks fullscreen mode
 
 ### Changed
 
 - All API requests now have a shorter timeout, 5s → 3s
+- Keybind for showing log was changed from `l` to `ctrl+l` and hidden from the footer
+- `u`se of a provider can now be invoked even when none has been selected yet, it will copy the highlighted one with
+  their latest version
 
 ### Removed
 

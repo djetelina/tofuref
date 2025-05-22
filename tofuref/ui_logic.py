@@ -6,14 +6,14 @@ from tofuref.data.registry import registry
 from tofuref.widgets import (
     ResourcesOptionList,
     ProvidersOptionList,
-    WelcomeMarkdownViewer,
+    ContentWindow,
 )
 
 
 async def load_provider_resources(
     provider: Provider,
     navigation_resources: ResourcesOptionList = None,
-    content_markdown: WelcomeMarkdownViewer = None,
+    content_markdown: ContentWindow = None,
 ):
     if navigation_resources is None or content_markdown is None:
         return
@@ -21,7 +21,7 @@ async def load_provider_resources(
     navigation_resources.loading = True
     content_markdown.loading = True
     await provider.load_resources()
-    await content_markdown.document.update(await provider.overview())
+    content_markdown.update(await provider.overview())
     content_markdown.document.border_subtitle = (
         f"{provider.display_name} {provider.active_version} Overview"
     )

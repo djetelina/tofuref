@@ -1,9 +1,12 @@
 import asyncio
 import logging
+from typing import Iterable
 
 from textual import on
-from textual.app import App, ComposeResult
+from textual.app import App, ComposeResult, SystemCommand
+from textual.binding import Binding
 from textual.containers import Container
+from textual.screen import Screen
 from textual.widgets import (
     Footer,
     Input,
@@ -21,10 +24,11 @@ from tofuref.ui_logic import (
 )
 from tofuref.widgets import (
     CustomRichLog,
-    WelcomeMarkdownViewer,
+    ContentWindow,
     ProvidersOptionList,
     ResourcesOptionList,
     SearchInput,
+    CodeBlockSelect,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -39,21 +43,29 @@ class TofuRefApp(App):
         ("/", "search", "Search"),
         ("v", "version", "Provider Version"),
         ("p", "providers", "Providers"),
-        ("u", "use", "Use provider"),
         ("y", "use", "Use provider"),
+        ("u", "use", "Use provider"),
         ("r", "resources", "Resources"),
         ("c", "content", "Content"),
         ("f", "fullscreen", "Fullscreen Mode"),
-        ("l", "log", "Show Log"),
+        Binding("ctrl+l", "log", "Show Log", show=False),
     ]
+    ESCAPE_TO_MINIMIZE = False
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.log_widget = CustomRichLog()
-        self.content_markdown = WelcomeMarkdownViewer()
+        self.content_markdown = ContentWindow()
         self.navigation_providers = ProvidersOptionList()
         self.navigation_resources = ResourcesOptionList()
         self.search = SearchInput()
+        self.code_block_selector = CodeBlockSelect()
+        # TODO we can probably move registry to here, it was dumb to have application state there when we are subclassing app
+        # app is actually reachable anywhere above data layer, widgets hold the app reference
+
+    def get_system_commands(self, screen: Screen) -> Iterable[SystemCommand]:
+        yield from super().get_system_commands(screen)
+        yield SystemCommand("Log", "Toggle log widget (^l)", self.action_log)
 
     def compose(self) -> ComposeResult:
         # Navigation
@@ -117,12 +129,19 @@ class TofuRefApp(App):
                     searchable.size.height - 3,
                 )
 
-    def action_use(self) -> None:
-        if registry.active_provider:
-            self.copy_to_clipboard(registry.active_provider.use_configuration)
-            self.notify(
-                registry.active_provider.use_configuration, title="Copied", timeout=10
-            )
+    async def action_use(self) -> None:
+        if not self.content_markdown.document.has_focus:
+            if registry.active_provider:
+                to_copy = registry.active_provider.use_configuration
+            elif self.navigation_providers.highlighted is not None:
+                highlighted_provider = self.navigation_providers.options[
+                    self.navigation_providers.highlighted
+                ].prompt
+                to_copy = registry.providers[highlighted_provider].use_configuration
+            else:
+                return
+            self.copy_to_clipboard(to_copy)
+            self.notify(to_copy, title="Copied to clipboard", timeout=10)
 
     def action_log(self) -> None:
         self.log_widget.display = not self.log_widget.display
@@ -223,6 +242,7 @@ class TofuRefApp(App):
     async def on_option_list_option_selected(
         self, event: OptionList.OptionSelected
     ) -> None:
+        # TODO refactor this so it's event.control.option_selected(event.option.prompt), holding the logic with the widget
         if event.control == self.navigation_providers:
             provider_selected = registry.providers[event.option.prompt]
             registry.active_provider = provider_selected
@@ -235,15 +255,31 @@ class TofuRefApp(App):
             )
         elif event.control == self.navigation_resources:
             resource_selected = event.option.prompt
+            registry.active_resource = resource_selected
             if registry.fullscreen_mode:
                 self.screen.maximize(self.content_markdown)
             self.content_markdown.loading = True
-            await self.content_markdown.document.update(
-                await resource_selected.content()
-            )
+            self.content_markdown.update(await resource_selected.content())
             self.content_markdown.document.border_subtitle = f"{resource_selected.type.value} - {resource_selected.provider.name}_{resource_selected.name}"
             self.content_markdown.document.focus()
             self.content_markdown.loading = False
+        elif event.control == self.code_block_selector:
+            code_selected = event.option.prompt.renderables[1].code
+            self.copy_to_clipboard(code_selected)
+            # We don't want the longest notification, so three dots will replace lines beyond the 3rd line
+            code_selected_lines = code_selected.splitlines()
+            if len(code_selected_lines) > 4:
+                snippet = "\n".join(code_selected_lines[:4])
+                code_selected_notify = f"{snippet}\n..."
+            else:
+                code_selected_notify = code_selected.strip()
+            self.notify(code_selected_notify, title="Copied to clipboard", markup=False)
+            self.action_content()
+            if not registry.fullscreen_mode:
+                self.screen.minimize()
+            await self.code_block_selector.parent.remove_children(
+                [self.code_block_selector]
+            )
 
 
 def main() -> None:

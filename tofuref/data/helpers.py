@@ -14,6 +14,8 @@ from tofuref import __version__
 
 LOGGER = logging.getLogger(__name__)
 
+CODEBLOCK_REGEX = r"^```([a-z]+)\n([\s\S]*?)^```"
+
 
 def header_markdown_split(contents: str) -> Tuple[dict, str]:
     """
