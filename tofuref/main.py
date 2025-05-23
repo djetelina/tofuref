@@ -1,4 +1,3 @@
-import asyncio
 import logging
 from typing import Iterable
 
@@ -92,7 +91,6 @@ class TofuRefApp(App):
             self.screen.maximize(self.navigation_providers)
         self.navigation_providers.loading = True
         self.screen.refresh()
-        await asyncio.sleep(0.001)
         LOGGER.debug("Starting on ready done, running preload worker")
         self.app.run_worker(self._preload, name="preload")
 
@@ -185,7 +183,6 @@ class TofuRefApp(App):
                 id="version-select",
             )
             await self.navigation_resources.mount(version_select)
-            await asyncio.sleep(0.1)
             version_select.action_show_overlay()
 
     @on(Select.Changed, "#version-select")
@@ -193,15 +190,12 @@ class TofuRefApp(App):
         if event.value != self.active_provider.active_version:
             self.active_provider.active_version = event.value
             await self.navigation_resources.load_provider_resources(
-                self.active_provider,
-                content_markdown=self.content_markdown,
+                self.active_provider
             )
             await self.navigation_resources.remove_children("#version-select")
 
-    def on_input_changed(self, event: Input.Changed) -> None:
-        if event.input.id != "search":
-            return
-
+    @on(Input.Changed, "#search")
+    def search_input_changed(self, event: Input.Changed) -> None:
         query = event.value.strip()
         if self.search.parent == self.navigation_providers:
             if not query:
@@ -221,51 +215,17 @@ class TofuRefApp(App):
                     [r for r in self.active_provider.resources if query in r.name],
                 )
 
-    def on_input_submitted(self, event: Input.Submitted) -> None:
-        self.search.parent.focus()
-        self.search.parent.highlighted = 0
-        self.search.parent.remove_children([self.search])
+    @on(Input.Submitted, "#search")
+    def search_input_submitted(self, event: Input.Submitted) -> None:
+        event.control.parent.focus()
+        event.control.parent.highlighted = 0
+        event.control.parent.remove_children([event.control])
 
-    async def on_option_list_option_selected(
-        self, event: OptionList.OptionSelected
+    @on(OptionList.OptionSelected)
+    async def option_list_option_selected(
+            self, event: OptionList.OptionSelected
     ) -> None:
-        # TODO refactor this so it's event.control.option_selected(event.option.prompt), holding the logic with the widget
-        if event.control == self.navigation_providers:
-            provider_selected = self.providers[event.option.prompt]
-            self.active_provider = provider_selected
-            if self.fullscreen_mode:
-                self.screen.maximize(self.navigation_resources)
-            await self.navigation_resources.load_provider_resources(
-                provider_selected,
-                content_markdown=self.content_markdown,
-            )
-        elif event.control == self.navigation_resources:
-            resource_selected = event.option.prompt
-            self.active_resource = resource_selected
-            if self.fullscreen_mode:
-                self.screen.maximize(self.content_markdown)
-            self.content_markdown.loading = True
-            self.content_markdown.update(await resource_selected.content())
-            self.content_markdown.document.border_subtitle = f"{resource_selected.type.value} - {resource_selected.provider.name}_{resource_selected.name}"
-            self.content_markdown.document.focus()
-            self.content_markdown.loading = False
-        elif event.control == self.code_block_selector:
-            code_selected = event.option.prompt.renderables[1].code
-            self.copy_to_clipboard(code_selected)
-            # We don't want the longest notification, so three dots will replace lines beyond the 3rd line
-            code_selected_lines = code_selected.splitlines()
-            if len(code_selected_lines) > 4:
-                snippet = "\n".join(code_selected_lines[:4])
-                code_selected_notify = f"{snippet}\n..."
-            else:
-                code_selected_notify = code_selected.strip()
-            self.notify(code_selected_notify, title="Copied to clipboard", markup=False)
-            self.action_content()
-            if not self.fullscreen_mode:
-                self.screen.minimize()
-            await self.code_block_selector.parent.remove_children(
-                [self.code_block_selector]
-            )
+        await event.control.on_option_selected(event.option)
 
 
 def main() -> None:
