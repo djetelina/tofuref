@@ -33,6 +33,7 @@ tofuref
 | `u`, `y`      | Context aware copying (using a provider/resource)    |
 | `v`           | change active provider **version**                   |
 | `q`, `ctrl+q` | **quit** tofuref                                     |
+| `t`           | toggle **table of contents** from content window     |
 | `ctrl+l`      | display **log** window                               |
 
 #### Focus windows
@@ -46,9 +47,11 @@ tofuref
 | `c`         | focus **content** window   |
 | `f`         | toggle **fullscreen** mode |
 
-#### Navigate in a window
+### Navigate in a window
 
 Navigate with arrows/page up/page down/home/end or your mouse.
+
+VIM keybindings should be also supported in a limited capacity.
 
 ## Upgrade
 

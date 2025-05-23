@@ -1,4 +1,4 @@
-from typing import List, TYPE_CHECKING
+from typing import List
 
 from rich.console import Group
 from rich.syntax import Syntax
@@ -6,14 +6,17 @@ from textual.binding import Binding
 from textual.widgets import OptionList
 from textual.widgets.option_list import Option
 
-if TYPE_CHECKING:
-    from tofuref.widgets.content_window import ContentWindow
+from tofuref.widgets.keybindings import VIM_OPTION_LIST_NAVIGATE
 
 
 class CodeBlockSelect(OptionList):
-    BINDINGS = OptionList.BINDINGS + [
-        Binding("escape", "close", "Close panel", show=False),
-    ]
+    BINDINGS = (
+        OptionList.BINDINGS
+        + [
+            Binding("escape", "close", "Close panel", show=False),
+        ]
+        + VIM_OPTION_LIST_NAVIGATE
+    )
 
     def __init__(self, **kwargs):
         super().__init__(
@@ -37,7 +40,7 @@ class CodeBlockSelect(OptionList):
         self.highlighted = 0
 
     def action_close(self):
-        content_window = self.parent.query_one("#content", expect_type=ContentWindow)
+        content_window = self.app.content_markdown
         content_window.document.focus()
         if not self.app.fullscreen_mode:
             self.screen.minimize()

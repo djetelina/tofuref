@@ -1,17 +1,21 @@
 import json
 import logging
 from pathlib import Path
-from typing import Optional, Collection, cast, Dict
+from typing import Collection, Dict, Optional, cast
 
 from textual.widgets import OptionList
 from textual.widgets.option_list import Option
+
 from tofuref.data.helpers import get_registry_api
 from tofuref.data.providers import Provider
+from tofuref.widgets.keybindings import VIM_OPTION_LIST_NAVIGATE
 
 LOGGER = logging.getLogger(__name__)
 
 
 class ProvidersOptionList(OptionList):
+    BINDINGS = OptionList.BINDINGS + VIM_OPTION_LIST_NAVIGATE
+
     def __init__(self, **kwargs):
         super().__init__(
             name="Providers",
