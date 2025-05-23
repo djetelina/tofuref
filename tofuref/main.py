@@ -223,7 +223,7 @@ class TofuRefApp(App):
 
     @on(OptionList.OptionSelected)
     async def option_list_option_selected(
-            self, event: OptionList.OptionSelected
+        self, event: OptionList.OptionSelected
     ) -> None:
         await event.control.on_option_selected(event.option)
 

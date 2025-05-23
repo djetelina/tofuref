@@ -59,6 +59,4 @@ class CodeBlockSelect(OptionList):
         self.app.action_content()
         if not self.app.fullscreen_mode:
             self.screen.minimize()
-        await self.parent.remove_children(
-            [self]
-        )
+        await self.parent.remove_children([self])

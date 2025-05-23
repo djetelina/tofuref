@@ -38,7 +38,7 @@ Changelog: https://github.com/djetelina/tofuref/blob/main/CHANGELOG.md
 | `q`, `ctrl+q` | **quit** tofuref |
 | `ctrl+l` | display **log** window |
 
-### Focus widgets
+### Focus windows
 
 | keybindings | action |
 |------|--------|
@@ -49,7 +49,7 @@ Changelog: https://github.com/djetelina/tofuref/blob/main/CHANGELOG.md
 | `c` | focus **content** window |
 | `f` | toggle **fullscreen** mode |
 
-### Navigate in widget
+### Navigate in a window
 
 Navigate with arrows/page up/page down/home/end or your mouse.
 
