@@ -1,5 +1,6 @@
-from typing import List, Optional
+from typing import ClassVar
 
+from textual.binding import BindingType
 from textual.widgets import OptionList
 from textual.widgets.option_list import Option
 
@@ -9,7 +10,7 @@ from tofuref.widgets.keybindings import VIM_OPTION_LIST_NAVIGATE
 
 
 class ResourcesOptionList(OptionList):
-    BINDINGS = OptionList.BINDINGS + VIM_OPTION_LIST_NAVIGATE
+    BINDINGS: ClassVar[list[BindingType]] = [*OptionList.BINDINGS, *VIM_OPTION_LIST_NAVIGATE]
 
     def __init__(self, **kwargs):
         super().__init__(
@@ -22,15 +23,13 @@ class ResourcesOptionList(OptionList):
 
     def populate(
         self,
-        provider: Optional[Provider] = None,
-        resources: Optional[List[Resource]] = None,
+        provider: Provider | None = None,
+        resources: list[Resource] | None = None,
     ) -> None:
         self.clear_options()
         if provider is None:
             return
-        self.border_subtitle = (
-            f"{provider.organization}/{provider.name} {provider.active_version}"
-        )
+        self.border_subtitle = f"{provider.organization}/{provider.name} {provider.active_version}"
 
         if resources is None:
             for resource in provider.resources:
@@ -46,9 +45,7 @@ class ResourcesOptionList(OptionList):
         self.app.content_markdown.loading = True
         await provider.load_resources()
         self.app.content_markdown.update(await provider.overview())
-        self.app.content_markdown.document.border_subtitle = (
-            f"{provider.display_name} {provider.active_version} Overview"
-        )
+        self.app.content_markdown.document.border_subtitle = f"{provider.display_name} {provider.active_version} Overview"
         self.populate(provider)
         self.focus()
         self.highlighted = 0
@@ -62,6 +59,8 @@ class ResourcesOptionList(OptionList):
             self.screen.maximize(self.app.content_markdown)
         self.app.content_markdown.loading = True
         self.app.content_markdown.update(await resource_selected.content())
-        self.app.content_markdown.document.border_subtitle = f"{resource_selected.type.value} - {resource_selected.provider.name}_{resource_selected.name}"
+        self.app.content_markdown.document.border_subtitle = (
+            f"{resource_selected.type.value} - {resource_selected.provider.name}_{resource_selected.name}"
+        )
         self.app.content_markdown.document.focus()
         self.app.content_markdown.loading = False

@@ -1,6 +1,7 @@
 import re
+from typing import ClassVar
 
-from textual.binding import Binding
+from textual.binding import Binding, BindingType
 from textual.widgets import MarkdownViewer, Tree
 
 from tofuref import __version__
@@ -10,7 +11,7 @@ from tofuref.data.helpers import CODEBLOCK_REGEX
 class ContentWindow(MarkdownViewer):
     ALLOW_MAXIMIZE = True
 
-    BINDINGS = [
+    BINDINGS: ClassVar[list[BindingType]] = [
         Binding("up", "up", "Scroll Up", show=False),
         Binding("k", "up", "Scroll Down", show=False),
         Binding("down", "down", "Scroll Down", show=False),
@@ -110,13 +111,9 @@ VIM keybindings should be also supported in a limited capacity.
             self.document.focus()
 
     def action_yank(self):
-        code_blocks = re.findall(
-            CODEBLOCK_REGEX, self.content, re.MULTILINE | re.DOTALL
-        )
+        code_blocks = re.findall(CODEBLOCK_REGEX, self.content, re.MULTILINE | re.DOTALL)
         if self.app.code_block_selector.has_parent:
-            self.app.code_block_selector.parent.remove_children(
-                [self.app.code_block_selector]
-            )
+            self.app.code_block_selector.parent.remove_children([self.app.code_block_selector])
         if not code_blocks:
             return
         self.screen.mount(self.app.code_block_selector)

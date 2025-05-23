@@ -3,7 +3,7 @@ import logging
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any
 
 import httpx
 from xdg_base_dirs import xdg_cache_home
@@ -17,7 +17,7 @@ LOGGER = logging.getLogger(__name__)
 CODEBLOCK_REGEX = r"^```([a-z]+)\n([\s\S]*?)^```"
 
 
-def header_markdown_split(contents: str) -> Tuple[dict, str]:
+def header_markdown_split(contents: str) -> tuple[dict, str]:
     """
     Most of the documentation files from the registry have a YAML "header"
     that we mostly (at the moment) don't care about. Either way we
@@ -54,12 +54,10 @@ def is_provider_index_expired(file: Path, timeout: int = 31 * 86400) -> bool:
     New providers that people actually want probably won't be showing too often, so a month should be okay.
     """
     now = datetime.now().timestamp()
-    return (
-        file == cached_file_path("index.json") and now - file.stat().st_mtime >= timeout
-    )
+    return file == cached_file_path("index.json") and now - file.stat().st_mtime >= timeout
 
 
-def get_from_cache(endpoint: str) -> Optional[str]:
+def get_from_cache(endpoint: str) -> str | None:
     cached_file = cached_file_path(endpoint)
     if not cached_file.exists() or is_provider_index_expired(cached_file):
         return None
@@ -69,9 +67,9 @@ def get_from_cache(endpoint: str) -> Optional[str]:
 async def get_registry_api(
     endpoint: str,
     json: bool = True,
-    log_widget: Optional[Any] = None,
+    log_widget: Any | None = None,
     timeout: float = 3,
-) -> Union[Dict[str, dict], str]:
+) -> dict[str, dict] | str:
     """
     Sends GET request to opentofu providers registry to a given endpoint
     and returns the response either as a JSON or as a string. It also "logs" the request.
@@ -80,16 +78,12 @@ async def get_registry_api(
     """
     uri = f"https://api.opentofu.org/registry/docs/providers/{endpoint}"
     if cached_content := get_from_cache(endpoint):
-        LOGGER.info(
-            f"Using cached file for {endpoint} from {cached_file_path(endpoint)}"
-        )
+        LOGGER.info(f"Using cached file for {endpoint} from {cached_file_path(endpoint)}")
         if log_widget is not None:
             log_widget.write(f"Cache hit [cyan]{cached_file_path(endpoint)}[/]")
         return jsonlib.loads(cached_content) if json else cached_content
     LOGGER.debug("Starting async client")
-    async with httpx.AsyncClient(
-        headers={"User-Agent": f"tofuref v{__version__}"}
-    ) as client:
+    async with httpx.AsyncClient(headers={"User-Agent": f"tofuref v{__version__}"}) as client:
         LOGGER.debug("Client started, sending request")
         try:
             r = await client.get(uri, timeout=timeout)

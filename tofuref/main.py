@@ -1,9 +1,11 @@
 import logging
-from typing import Iterable
+from collections.abc import Iterable
+from typing import ClassVar
 
+from rich.markdown import Markdown
 from textual import on
 from textual.app import App, ComposeResult, SystemCommand
-from textual.binding import Binding
+from textual.binding import Binding, BindingType
 from textual.containers import Container
 from textual.screen import Screen
 from textual.widgets import (
@@ -12,15 +14,14 @@ from textual.widgets import (
     OptionList,
     Select,
 )
-from rich.markdown import Markdown
 
 from tofuref.widgets import (
-    CustomRichLog,
+    CodeBlockSelect,
     ContentWindow,
+    CustomRichLog,
     ProvidersOptionList,
     ResourcesOptionList,
     SearchInput,
-    CodeBlockSelect,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -29,7 +30,7 @@ LOGGER = logging.getLogger(__name__)
 class TofuRefApp(App):
     CSS_PATH = "tofuref.tcss"
     TITLE = "TofuRef - OpenTofu Provider Reference"
-    BINDINGS = [
+    BINDINGS: ClassVar[list[BindingType]] = [
         ("q", "quit", "Quit"),
         ("s", "search", "Search"),
         ("/", "search", "Search"),
@@ -63,10 +64,9 @@ class TofuRefApp(App):
 
     def compose(self) -> ComposeResult:
         # Navigation
-        with Container(id="sidebar"):
-            with Container(id="navigation"):
-                yield self.navigation_providers
-                yield self.navigation_resources
+        with Container(id="sidebar"), Container(id="navigation"):
+            yield self.navigation_providers
+            yield self.navigation_resources
 
         # Main content area
         with Container(id="content"):
@@ -82,7 +82,8 @@ class TofuRefApp(App):
         self.content_markdown.document.classes = "bordered content"
         self.content_markdown.document.border_title = "Content"
         self.content_markdown.document.border_subtitle = "Welcome"
-        if self.size.width < 125:
+        fullscreen_threshold = 125
+        if self.size.width < fullscreen_threshold:
             self.fullscreen_mode = True
         if self.fullscreen_mode:
             self.navigation_providers.styles.column_span = 2
@@ -113,7 +114,7 @@ class TofuRefApp(App):
                 self.search.value = ""
                 searchable.mount(self.search)
                 self.search.focus()
-                self.search.offset = searchable.offset + (
+                self.search.offset = searchable.offset + (  # noqa: RUF005
                     0,
                     searchable.size.height - 3,
                 )
@@ -123,9 +124,7 @@ class TofuRefApp(App):
             if self.active_provider:
                 to_copy = self.active_provider.use_configuration
             elif self.navigation_providers.highlighted is not None:
-                highlighted_provider = self.navigation_providers.options[
-                    self.navigation_providers.highlighted
-                ].prompt
+                highlighted_provider = self.navigation_providers.options[self.navigation_providers.highlighted].prompt
                 to_copy = self.providers[highlighted_provider].use_configuration
             else:
                 return
@@ -189,9 +188,7 @@ class TofuRefApp(App):
     async def change_provider_version(self, event: Select.Changed) -> None:
         if event.value != self.active_provider.active_version:
             self.active_provider.active_version = event.value
-            await self.navigation_resources.load_provider_resources(
-                self.active_provider
-            )
+            await self.navigation_resources.load_provider_resources(self.active_provider)
             await self.navigation_resources.remove_children("#version-select")
 
     @on(Input.Changed, "#search")
@@ -201,9 +198,7 @@ class TofuRefApp(App):
             if not query:
                 self.navigation_providers.populate()
             else:
-                self.navigation_providers.populate(
-                    [p for p in self.providers.keys() if query in p]
-                )
+                self.navigation_providers.populate([p for p in self.providers if query in p])
         elif self.search.parent == self.navigation_resources:
             if not query:
                 self.navigation_resources.populate(
@@ -222,9 +217,7 @@ class TofuRefApp(App):
         event.control.parent.remove_children([event.control])
 
     @on(OptionList.OptionSelected)
-    async def option_list_option_selected(
-        self, event: OptionList.OptionSelected
-    ) -> None:
+    async def option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
         await event.control.on_option_selected(event.option)
 
 

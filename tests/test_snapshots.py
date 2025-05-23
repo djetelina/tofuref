@@ -43,30 +43,17 @@ def test_search_github(snap_compare):
 
 
 def test_search_github_cancel(snap_compare):
-    assert snap_compare(APP_PATH, press=SEARCH_GITHUB + ["escape"])
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "escape"])
 
 
 def test_open_github(snap_compare):
-    assert snap_compare(APP_PATH, press=SEARCH_GITHUB + ["enter", "enter"])
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter"])
 
 
 def test_open_github_membership(snap_compare):
     assert snap_compare(
         APP_PATH,
-        press=SEARCH_GITHUB
-        + [
-            "enter",
-            "enter",
-            "s",
-            "m",
-            "e",
-            "m",
-            "b",
-            "e",
-            "r",
-            "enter",
-            "enter",
-        ],
+        press=[*SEARCH_GITHUB, "enter", "enter", "s", "m", "e", "m", "b", "e", "r", "enter", "enter"],
     )
 
 
@@ -75,39 +62,30 @@ def test_back_to_providers(snap_compare):
 
 
 def test_provider_overview(snap_compare):
-    assert snap_compare(APP_PATH, press=SEARCH_GITHUB + ["enter", "enter", "c"])
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "c"])
 
 
 def test_version_picker(snap_compare):
-    assert snap_compare(APP_PATH, press=SEARCH_GITHUB + ["enter", "enter", "v"])
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "v"])
 
 
 def test_version_picker_submit(snap_compare):
     assert snap_compare(
         APP_PATH,
-        press=SEARCH_GITHUB
-        + [
-            "enter",
-            "enter",
-            "v",
-            "down",
-            "enter",
-        ],
+        press=[*SEARCH_GITHUB, "enter", "enter", "v", "down", "enter"],
     )
 
 
 def test_use(snap_compare):
-    assert snap_compare(APP_PATH, press=SEARCH_GITHUB + ["enter", "enter", "u"])
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "u"])
 
 
 def test_copy_selection_github_overview(snap_compare):
-    assert snap_compare(APP_PATH, press=SEARCH_GITHUB + ["enter", "enter", "c", "y"])
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "c", "y"])
 
 
 def test_copy_selection_github_overview_copy_first(snap_compare):
-    assert snap_compare(
-        APP_PATH, press=SEARCH_GITHUB + ["enter", "enter", "c", "y", "enter"]
-    )
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "c", "y", "enter"])
 
 
 def test_vim_providers(snap_compare):

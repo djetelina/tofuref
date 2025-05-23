@@ -69,3 +69,14 @@ log_cli = true
 log_cli_level = "INFO"
 log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
 log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+
+[tool.ruff]
+line-length = 144
+#fix = true
+
+[tool.ruff.lint]
+select = ["E", "I", "ASYNC", "B", "A", "PIE", "PT", "SIM", "PTH", "N", "W", "PL", "UP", "RUF"]
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 72
