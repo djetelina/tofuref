@@ -12,7 +12,8 @@ def test_welcome_fullscreen(snap_compare):
 
 
 def test_toggle_fullscreen(snap_compare):
-    assert snap_compare(APP_PATH, terminal_size=(200, 30), press="f")
+    # Result: fullscreen mode off, even though it's a small window
+    assert snap_compare(APP_PATH, press=["f"])
 
 
 def test_content(snap_compare):
