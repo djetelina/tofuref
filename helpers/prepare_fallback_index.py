@@ -16,21 +16,15 @@ NUMBER_OF_VERSIONS = 5
 
 
 def main():
-    data = httpx.get(
-        "https://api.opentofu.org/registry/docs/providers/index.json"
-    ).json()
+    data = httpx.get("https://api.opentofu.org/registry/docs/providers/index.json").json()
 
-    providers = [
-        x for x in data["providers"] if x["addr"]["namespace"] != "terraform-providers"
-    ]
+    providers = [x for x in data["providers"] if x["addr"]["namespace"] != "terraform-providers"]
 
-    top_providers = sorted(providers, key=lambda p: p["popularity"], reverse=True)[
-        :NUMBER_OF_PROVIDERS
-    ]
+    top_providers = sorted(providers, key=lambda p: p["popularity"], reverse=True)[:NUMBER_OF_PROVIDERS]
 
     for provider in top_providers:
         provider["versions"] = provider["versions"][:NUMBER_OF_VERSIONS]
-    with open("providers.json", "w") as f:
+    with open("providers.json", "w") as f:  # noqa: PTH123
         json.dump({"providers": top_providers}, f, indent=2)
 
 

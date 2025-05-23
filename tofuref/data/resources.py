@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from tofuref.data.helpers import (
     get_registry_api,
@@ -23,7 +23,7 @@ class Resource:
     name: str
     provider: "Provider"
     type: ResourceType
-    _content: Optional[str] = None
+    _content: str | None = None
 
     def __lt__(self, other: "Resource") -> bool:
         return self.name < other.name

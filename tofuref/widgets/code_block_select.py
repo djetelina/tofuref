@@ -1,8 +1,8 @@
-from typing import List
+from typing import ClassVar
 
 from rich.console import Group
 from rich.syntax import Syntax
-from textual.binding import Binding
+from textual.binding import Binding, BindingType
 from textual.widgets import OptionList
 from textual.widgets.option_list import Option
 
@@ -10,28 +10,22 @@ from tofuref.widgets.keybindings import VIM_OPTION_LIST_NAVIGATE
 
 
 class CodeBlockSelect(OptionList):
-    BINDINGS = (
-        OptionList.BINDINGS
-        + [
-            Binding("escape", "close", "Close panel", show=False),
-        ]
-        + VIM_OPTION_LIST_NAVIGATE
-    )
+    BINDINGS: ClassVar[list[BindingType]] = [
+        *OptionList.BINDINGS,
+        Binding("escape", "close", "Close panel", show=False),
+        * VIM_OPTION_LIST_NAVIGATE
+    ]
 
     def __init__(self, **kwargs):
-        super().__init__(
-            name="CodeBlocks", id="code-block-selector", classes="bordered", **kwargs
-        )
+        super().__init__(name="CodeBlocks", id="code-block-selector", classes="bordered", **kwargs)
         self.border_title = "Choose a codeblock to copy"
 
-    def set_new_options(self, code_blocks: List[tuple]) -> None:
+    def set_new_options(self, code_blocks: list[tuple]) -> None:
         self.clear_options()
-        i = 0
-        for lexer, block in code_blocks:
-            i += 1
+        for i, (lexer, block) in enumerate(code_blocks):
             self.add_option(
                 Group(
-                    f"[b]Codeblock[/] {i}",
+                    f"[b]Codeblock[/] {i + 1}",
                     Syntax(block, lexer=lexer if lexer else "hcl", theme="material"),
                 )
             )
@@ -53,7 +47,8 @@ class CodeBlockSelect(OptionList):
         self.app.copy_to_clipboard(code_selected)
         # We don't want the longest notification, so three dots will replace lines beyond the 3rd line
         code_selected_lines = code_selected.splitlines()
-        if len(code_selected_lines) > 4:
+        lines_of_code_to_show = 4
+        if len(code_selected_lines) > lines_of_code_to_show:
             snippet = "\n".join(code_selected_lines[:4])
             code_selected_notify = f"{snippet}\n..."
         else:

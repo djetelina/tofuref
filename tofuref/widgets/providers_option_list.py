@@ -1,8 +1,10 @@
 import json
 import logging
+from collections.abc import Collection
 from pathlib import Path
-from typing import Collection, Dict, Optional, cast
+from typing import ClassVar, cast
 
+from textual.binding import BindingType
 from textual.widgets import OptionList
 from textual.widgets.option_list import Option
 
@@ -14,7 +16,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 class ProvidersOptionList(OptionList):
-    BINDINGS = OptionList.BINDINGS + VIM_OPTION_LIST_NAVIGATE
+    BINDINGS: ClassVar[list[BindingType]] = [*OptionList.BINDINGS, *VIM_OPTION_LIST_NAVIGATE]
 
     def __init__(self, **kwargs):
         super().__init__(
@@ -27,7 +29,7 @@ class ProvidersOptionList(OptionList):
 
     def populate(
         self,
-        providers: Optional[Collection[str]] = None,
+        providers: Collection[str] | None = None,
     ) -> None:
         if providers is None:
             providers = self.app.providers.keys()
@@ -37,14 +39,10 @@ class ProvidersOptionList(OptionList):
         for name in providers:
             self.add_option(name)
 
-    async def load_index(self) -> Dict[str, Provider]:
+    async def load_index(self) -> dict[str, Provider]:
         LOGGER.debug("Loading providers")
         providers = {}
-        fallback_providers_path = (
-            Path(__file__).resolve().parent.parent.parent
-            / "fallback"
-            / "providers.json"
-        )
+        fallback_providers_path = Path(__file__).resolve().parent.parent.parent / "fallback" / "providers.json"
 
         data = await get_registry_api("index.json", log_widget=self.app.log_widget)
         if not data:
@@ -69,12 +67,7 @@ class ProvidersOptionList(OptionList):
             if all(filter_in):
                 providers[provider.display_name] = provider
 
-        providers = {
-            k: v
-            for k, v in sorted(
-                providers.items(), key=lambda p: p[1].popularity, reverse=True
-            )
-        }
+        providers = {k: v for k, v in sorted(providers.items(), key=lambda p: p[1].popularity, reverse=True)}
 
         return providers
 

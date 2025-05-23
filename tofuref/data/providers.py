@@ -1,14 +1,14 @@
+import json
 from dataclasses import dataclass, field
-from typing import Dict, Optional, List, Any
+from typing import Any
 
 from rich.json import JSON as RICH_JSON
-import json
 
-from tofuref.data.resources import Resource, ResourceType
 from tofuref.data.helpers import (
     get_registry_api,
     header_markdown_split,
 )
+from tofuref.data.resources import Resource, ResourceType
 
 
 @dataclass
@@ -19,16 +19,16 @@ class Provider:
     fork_count: int
     blocked: bool
     popularity: int
-    _overview: Optional[str] = None
-    _active_version: Optional[str] = None
-    versions: List[Dict[str, str]] = field(default_factory=list)
-    fork_of: Optional[str] = None
-    raw_json: Optional[dict] = None
-    resources: List[Resource] = field(default_factory=list)
-    datasources: List[Resource] = field(default_factory=list)
-    functions: List[Resource] = field(default_factory=list)
-    guides: List[Resource] = field(default_factory=list)
-    log_widget: Optional[Any] = None
+    _overview: str | None = None
+    _active_version: str | None = None
+    versions: list[dict[str, str]] = field(default_factory=list)
+    fork_of: str | None = None
+    raw_json: dict | None = None
+    resources: list[Resource] = field(default_factory=list)
+    datasources: list[Resource] = field(default_factory=list)
+    functions: list[Resource] = field(default_factory=list)
+    guides: list[Resource] = field(default_factory=list)
+    log_widget: Any | None = None
 
     @classmethod
     def from_json(cls, data: dict) -> "Provider":
@@ -73,9 +73,7 @@ class Provider:
 
     async def overview(self) -> str:
         if self._overview is None:
-            self._overview = await get_registry_api(
-                f"{self._endpoint}/index.md", json=False, log_widget=self.log_widget
-            )
+            self._overview = await get_registry_api(f"{self._endpoint}/index.md", json=False, log_widget=self.log_widget)
             _, self._overview = header_markdown_split(self._overview)
         return self._overview
 
@@ -92,19 +90,9 @@ class Provider:
         for r in sorted(resource_data["docs"]["resources"], key=lambda x: x["name"]):
             self.resources.append(Resource(r["name"], self, type=ResourceType.RESOURCE))
         for d in sorted(resource_data["docs"]["datasources"], key=lambda x: x["name"]):
-            self.resources.append(
-                Resource(d["name"], self, type=ResourceType.DATASOURCE)
-            )
+            self.resources.append(Resource(d["name"], self, type=ResourceType.DATASOURCE))
         for f in sorted(resource_data["docs"]["functions"], key=lambda x: x["name"]):
             self.resources.append(Resource(f["name"], self, type=ResourceType.FUNCTION))
 
     def __rich__(self):
-        return RICH_JSON(
-            json.dumps(
-                {
-                    k: v
-                    for k, v in self.__dict__.items()
-                    if k not in ["raw_json", "versions"]
-                }
-            )
-        )
+        return RICH_JSON(json.dumps({k: v for k, v in self.__dict__.items() if k not in ["raw_json", "versions"]}))
