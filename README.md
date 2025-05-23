@@ -24,22 +24,31 @@ tofuref
 ```
 
 ### Controls
-Navigate with arrows/page up/page down/home/end or your mouse.
+
+#### Actions
 
 | keybindings   | action                                               |
 |---------------|------------------------------------------------------|
-| `tab`         | focus next window                                    |
-| `shift+tab`   | focus previous window                                |
-| `enter`       | choose selected or finish search                     |
-| `q`, `ctrl+q` | **quit** tofuref                                     |
 | `s`, `/`      | **search** in the context of providers and resources |
+| `u`, `y`      | Context aware copying (using a provider/resource)    |
 | `v`           | change active provider **version**                   |
-| `p`           | focus **providers** window                           |
-| `u`, `y`      | copy ready-to-**use** provider version constraint    |
-| `r`           | focus **resources** window                           |
-| `c`           | focus **content** window                             |
-| `f`           | toggle **fullscreen** mode                           |
-| `l`           | display **log** window                               |
+| `q`, `ctrl+q` | **quit** tofuref                                     |
+| `ctrl+l`      | display **log** window                               |
+
+#### Focus windows
+
+| keybindings | action                     |
+|-------------|----------------------------|
+| `tab`       | focus next window          |
+| `shift+tab` | focus previous window      |
+| `p`         | focus **providers** window |
+| `r`         | focus **resources** window |
+| `c`         | focus **content** window   |
+| `f`         | toggle **fullscreen** mode |
+
+#### Navigate in a window
+
+Navigate with arrows/page up/page down/home/end or your mouse.
 
 ## Upgrade
 

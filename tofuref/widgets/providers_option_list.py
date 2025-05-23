@@ -37,7 +37,9 @@ class ProvidersOptionList(OptionList):
         LOGGER.debug("Loading providers")
         providers = {}
         fallback_providers_path = (
-            Path(__file__).resolve().parent.parent.parent / "fallback" / "providers.json"
+            Path(__file__).resolve().parent.parent.parent
+            / "fallback"
+            / "providers.json"
         )
 
         data = await get_registry_api("index.json", log_widget=self.app.log_widget)
@@ -77,6 +79,4 @@ class ProvidersOptionList(OptionList):
         self.app.active_provider = provider_selected
         if self.app.fullscreen_mode:
             self.screen.maximize(self.app.navigation_resources)
-        await self.app.navigation_resources.load_provider_resources(
-            provider_selected
-        )
+        await self.app.navigation_resources.load_provider_resources(provider_selected)
