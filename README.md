@@ -22,6 +22,11 @@ Run the application:
 ```bash
 tofuref
 ```
+### Option
+
+| option       | ^p                 | description                                     |
+|--------------|--------------------|-------------------------------------------------|
+| Fuzzy Search | :heavy_check_mark: | Enable fuzzy search in the context of resources |
 
 ### Controls
 

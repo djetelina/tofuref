@@ -7,6 +7,7 @@ from textual import on
 from textual.app import App, ComposeResult, SystemCommand
 from textual.binding import Binding, BindingType
 from textual.containers import Container
+from textual.fuzzy import Matcher
 from textual.screen import Screen
 from textual.widgets import (
     Footer,
@@ -45,6 +46,8 @@ class TofuRefApp(App):
     ]
     ESCAPE_TO_MINIMIZE = False
 
+    FILTER_FUZZY_THRESHOLD = 2.5
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.log_widget = CustomRichLog()
@@ -57,10 +60,16 @@ class TofuRefApp(App):
         self.providers = {}
         self.active_provider = None
         self.active_resource = None
+        self.resource_fuzzy_search = True
 
     def get_system_commands(self, screen: Screen) -> Iterable[SystemCommand]:
         yield from super().get_system_commands(screen)
         yield SystemCommand("Log", "Toggle log widget (^l)", self.action_log)
+        yield SystemCommand(
+            "Resource fuzzy search",
+            f"Toggle resource fuzzy search ({'enabled' if self.resource_fuzzy_search else 'disabled'})",
+            self.action_toggle_resource_fuzzy_search
+        )
 
     def compose(self) -> ComposeResult:
         # Navigation
@@ -134,6 +143,10 @@ class TofuRefApp(App):
     def action_log(self) -> None:
         self.log_widget.display = not self.log_widget.display
 
+    def action_toggle_resource_fuzzy_search(self) -> None:
+        self.resource_fuzzy_search = not self.resource_fuzzy_search
+        self.log_widget.write("Resource fuzzy search is {}".format("enabled" if self.resource_fuzzy_search else "disabled"))
+
     def action_providers(self) -> None:
         if self.fullscreen_mode:
             self.screen.maximize(self.navigation_providers)
@@ -194,6 +207,7 @@ class TofuRefApp(App):
     @on(Input.Changed, "#search")
     def search_input_changed(self, event: Input.Changed) -> None:
         query = event.value.strip()
+        matcher = Matcher(query)
         if self.search.parent == self.navigation_providers:
             if not query:
                 self.navigation_providers.populate()
@@ -205,9 +219,15 @@ class TofuRefApp(App):
                     self.active_provider,
                 )
             else:
+                if self.resource_fuzzy_search:
+                    matched_resources = sorted(
+                        [r for r in self.active_provider.resources if matcher.match(r.name) > self.FILTER_FUZZY_THRESHOLD],
+                            key=lambda x: matcher.match(x.name), reverse=True)
+                else:
+                    matched_resources = [r for r in self.active_provider.resources if query in r.name]
                 self.navigation_resources.populate(
                     self.active_provider,
-                    [r for r in self.active_provider.resources if query in r.name],
+                    matched_resources
                 )
 
     @on(Input.Submitted, "#search")
