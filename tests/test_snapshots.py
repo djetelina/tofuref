@@ -20,6 +20,20 @@ def test_content(snap_compare):
     assert snap_compare(APP_PATH, press=["c", "pagedown"])
 
 
+def test_content_toc_on(snap_compare):
+    assert snap_compare(APP_PATH, press=["c", "t"])
+
+
+def test_content_toc_off(snap_compare):
+    assert snap_compare(APP_PATH, press=["c", "t", "t"])
+
+
+def test_content_toc_submit(snap_compare):
+    assert snap_compare(
+        APP_PATH, press=["c", "t", "down", "down", "down", "down", "down", "enter"]
+    )
+
+
 def test_use_none_selected(snap_compare):
     assert snap_compare(APP_PATH, press=["u"])
 
@@ -94,3 +108,15 @@ def test_copy_selection_github_overview_copy_first(snap_compare):
     assert snap_compare(
         APP_PATH, press=SEARCH_GITHUB + ["enter", "enter", "c", "y", "enter"]
     )
+
+
+def test_vim_providers(snap_compare):
+    assert snap_compare(APP_PATH, press=["j"])
+
+
+def test_vim_resources(snap_compare):
+    assert snap_compare(APP_PATH, press=["enter", "j"])
+
+
+def test_vim_content(snap_compare):
+    assert snap_compare(APP_PATH, press=["c", "j"])

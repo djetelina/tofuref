@@ -42,3 +42,25 @@ Screen {
 .nav-selector {
     height: 100%;
 }
+
+MarkdownViewer {
+    & > MarkdownTableOfContents {
+        dock:right;
+        border: ascii $primary;
+        color: $foreground;
+        background: $surface;
+    }
+}
+
+MarkdownTableOfContents {
+    &:focus-within {
+        border: ascii $accent;
+        color: $foreground;
+        background: $surface;
+        background-tint: $foreground 5%;
+    }
+}
+
+MarkdownTableOfContents > Tree {
+    background: $surface;
+}

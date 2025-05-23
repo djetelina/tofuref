@@ -1,12 +1,16 @@
-from typing import Optional, List
+from typing import List, Optional
 
 from textual.widgets import OptionList
 from textual.widgets.option_list import Option
-from tofuref.data.resources import Resource
+
 from tofuref.data.providers import Provider
+from tofuref.data.resources import Resource
+from tofuref.widgets.keybindings import VIM_OPTION_LIST_NAVIGATE
 
 
 class ResourcesOptionList(OptionList):
+    BINDINGS = OptionList.BINDINGS + VIM_OPTION_LIST_NAVIGATE
+
     def __init__(self, **kwargs):
         super().__init__(
             name="Resources",

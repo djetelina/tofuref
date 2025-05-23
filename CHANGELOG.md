@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   used
 - `u`se (`y`ank) now works in the content window; it lets you select which codeblock found in the content to copy
 - `escape` can now be used to cancel search
+- Some windows now support limited vim bindings (`j`, `k`, `G`, `ctrl+f`, `ctrl+b`)
+- Table of Contents can now be toggled in the content window, allowing for navigation between headers
 
 ### Fixed
 

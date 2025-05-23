@@ -1,10 +1,10 @@
 import re
 
 from textual.binding import Binding
-from textual.widgets import MarkdownViewer
-from tofuref.data.helpers import CODEBLOCK_REGEX
+from textual.widgets import MarkdownViewer, Tree
 
 from tofuref import __version__
+from tofuref.data.helpers import CODEBLOCK_REGEX
 
 
 class ContentWindow(MarkdownViewer):
@@ -12,13 +12,19 @@ class ContentWindow(MarkdownViewer):
 
     BINDINGS = [
         Binding("up", "up", "Scroll Up", show=False),
+        Binding("k", "up", "Scroll Down", show=False),
         Binding("down", "down", "Scroll Down", show=False),
+        Binding("j", "down", "Scroll Up", show=False),
         Binding("pageup", "page_up", "Page Up", show=False),
+        Binding("ctrl+f", "page_up", "Page Up", show=False),
         Binding("pagedown", "page_down", "Page Down", show=False),
+        Binding("ctrl+b", "page_down", "Page Down", show=False),
         Binding("home", "scroll_home", "Top", show=False),
         Binding("end", "scroll_end", "Bottom", show=False),
+        Binding("G", "scroll_end", "Bottom", show=False),
         Binding("u", "yank", "Copy code blocks", show=False),
         Binding("y", "yank", "Copy code blocks"),
+        Binding("t", "toggle_toc", "Toggle TOC"),
     ]
 
     def __init__(self, content=None, **kwargs):
@@ -36,6 +42,7 @@ Changelog: https://github.com/djetelina/tofuref/blob/main/CHANGELOG.md
 | `u`, `y` | Context aware copying (using a provider/resource) |
 | `v` | change active provider **version** |
 | `q`, `ctrl+q` | **quit** tofuref |
+| `t` | toggle **table of contents** from content window |
 | `ctrl+l` | display **log** window |
 
 ### Focus windows
@@ -52,6 +59,8 @@ Changelog: https://github.com/djetelina/tofuref/blob/main/CHANGELOG.md
 ### Navigate in a window
 
 Navigate with arrows/page up/page down/home/end or your mouse.
+
+VIM keybindings should be also supported in a limited capacity.
 
 ---
 
@@ -88,6 +97,17 @@ Navigate with arrows/page up/page down/home/end or your mouse.
     def update(self, markdown: str) -> None:
         self.content = markdown
         self.document.update(markdown)
+
+    def action_toggle_toc(self):
+        self.show_table_of_contents = not self.show_table_of_contents
+        if not self.table_of_contents.border_title:
+            self.table_of_contents.border_title = "Table of Contents"
+        if self.show_table_of_contents:
+            toc = self.table_of_contents.query_one(Tree)
+            toc.focus()
+            toc.action_cursor_down()
+        else:
+            self.document.focus()
 
     def action_yank(self):
         code_blocks = re.findall(
