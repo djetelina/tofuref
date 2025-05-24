@@ -1,5 +1,19 @@
 name: Ruff
-on: [ push, pull_request ]
+on:
+  push:
+    paths:
+      - 'tofuref/**'
+      - 'tests/**'
+      - 'helpers/**'
+      - 'pyproject.toml'
+      - 'uv.lock'
+  pull_request:
+    paths:
+      - 'tofuref/**'
+      - 'tests/**'
+      - 'helpers/**'
+      - 'pyproject.toml'
+      - 'uv.lock'
 
 permissions:
   contents: read # needed for actions/checkout
