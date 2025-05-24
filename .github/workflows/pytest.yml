@@ -1,6 +1,10 @@
 name: pytest
 on: pull_request
 
+permissions:
+  contents: read # needed for actions/checkout
+  actions: write # needed for actions/upload-artifact
+
 jobs:
   build:
     name: pytest
