@@ -945,6 +945,7 @@ dependencies = [
     { name = "httpx" },
     { name = "pyyaml" },
     { name = "textual" },
+    { name = "tomli", marker = "python_full_version < '3.11'" },
     { name = "xdg-base-dirs" },
 ]
 
@@ -962,6 +963,7 @@ requires-dist = [
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "textual", specifier = ">=3.1.1" },
+    { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=2.2.1" },
     { name = "xdg-base-dirs", specifier = ">=6.0.2" },
 ]
 

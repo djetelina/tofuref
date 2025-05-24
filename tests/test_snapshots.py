@@ -1,3 +1,5 @@
+import os
+
 APP_PATH = "../tofuref/main.py"
 
 SEARCH_GITHUB = ["s", "g", "i", "t", "h", "u", "b"]
@@ -29,9 +31,7 @@ def test_content_toc_off(snap_compare):
 
 
 def test_content_toc_submit(snap_compare):
-    assert snap_compare(
-        APP_PATH, press=["c", "t", "down", "down", "down", "down", "down", "enter"]
-    )
+    assert snap_compare(APP_PATH, press=["c", "t", "down", "down", "down", "down", "down", "enter"])
 
 
 def test_use_none_selected(snap_compare):
@@ -98,3 +98,13 @@ def test_vim_resources(snap_compare):
 
 def test_vim_content(snap_compare):
     assert snap_compare(APP_PATH, press=["c", "j"])
+
+
+def test_config_theme(snap_compare):
+    os.environ["TOFUREF_THEME_UI"] = "monokai"
+    os.environ["TOFUREF_THEME_CODEBLOCKS"] = "monokai"
+    os.environ["TOFUREF_THEME_BORDERS_STYLE"] = "solid"
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "c", "pagedown"])
+    os.environ.pop("TOFUREF_THEME_UI")
+    os.environ.pop("TOFUREF_THEME_CODEBLOCKS")
+    os.environ.pop("TOFUREF_THEME_BORDERS_STYLE")

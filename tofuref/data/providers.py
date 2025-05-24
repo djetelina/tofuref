@@ -71,18 +71,19 @@ class Provider:
       version = "{self.active_version.lstrip("v")}"
     }}"""
 
-    async def overview(self) -> str:
+    async def overview(self, timeout: float) -> str:
         if self._overview is None:
-            self._overview = await get_registry_api(f"{self._endpoint}/index.md", json=False, log_widget=self.log_widget)
+            self._overview = await get_registry_api(f"{self._endpoint}/index.md", json=False, log_widget=self.log_widget, timeout=timeout)
             _, self._overview = header_markdown_split(self._overview)
         return self._overview
 
-    async def load_resources(self) -> None:
+    async def load_resources(self, timeout: float) -> None:
         if self.resources:
             return
         resource_data = await get_registry_api(
             f"{self.organization}/{self.name}/{self.active_version}/index.json",
             log_widget=self.log_widget,
+            timeout=timeout,
         )
         for g in sorted(resource_data["docs"]["guides"], key=lambda x: x["name"]):
             self.resources.append(Resource(g["name"], self, type=ResourceType.GUIDE))

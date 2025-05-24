@@ -13,7 +13,7 @@ class CodeBlockSelect(OptionList):
     BINDINGS: ClassVar[list[BindingType]] = [
         *OptionList.BINDINGS,
         Binding("escape", "close", "Close panel", show=False),
-        * VIM_OPTION_LIST_NAVIGATE
+        *VIM_OPTION_LIST_NAVIGATE,
     ]
 
     def __init__(self, **kwargs):
@@ -26,7 +26,7 @@ class CodeBlockSelect(OptionList):
             self.add_option(
                 Group(
                     f"[b]Codeblock[/] {i + 1}",
-                    Syntax(block, lexer=lexer if lexer else "hcl", theme="material"),
+                    Syntax(block, lexer=lexer if lexer else "hcl", theme=self.app.config.theme.codeblocks),
                 )
             )
             self.add_option(None)

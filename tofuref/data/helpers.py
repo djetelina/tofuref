@@ -46,29 +46,27 @@ def save_to_cache(endpoint: str, contents: str) -> None:
     cached_file.write_text(contents)
 
 
-def is_provider_index_expired(file: Path, timeout: int = 31 * 86400) -> bool:
+def is_provider_index_expired(file: Path, index_cache_duration_days: int = 31) -> bool:
     """
     Provider index is mutable, we consider it expired after 31 days (unconfigurable for now)
 
     One request per month is not too bad (we could have static fallback for the cases where this is hit when offline).
     New providers that people actually want probably won't be showing too often, so a month should be okay.
     """
+    timeout = index_cache_duration_days * 86400
     now = datetime.now().timestamp()
     return file == cached_file_path("index.json") and now - file.stat().st_mtime >= timeout
 
 
-def get_from_cache(endpoint: str) -> str | None:
+def get_from_cache(endpoint: str, index_cache_duration_days: int | None = 31) -> str | None:
     cached_file = cached_file_path(endpoint)
-    if not cached_file.exists() or is_provider_index_expired(cached_file):
+    if not cached_file.exists() or is_provider_index_expired(cached_file, index_cache_duration_days=index_cache_duration_days):
         return None
     return cached_file.read_text()
 
 
 async def get_registry_api(
-    endpoint: str,
-    json: bool = True,
-    log_widget: Any | None = None,
-    timeout: float = 3,
+    endpoint: str, json: bool = True, log_widget: Any | None = None, timeout: float = 3.0, index_cache_duration_days: int = 31
 ) -> dict[str, dict] | str:
     """
     Sends GET request to opentofu providers registry to a given endpoint
@@ -77,7 +75,7 @@ async def get_registry_api(
     Local cache is used to save/retrieve API responses.
     """
     uri = f"https://api.opentofu.org/registry/docs/providers/{endpoint}"
-    if cached_content := get_from_cache(endpoint):
+    if cached_content := get_from_cache(endpoint, index_cache_duration_days):
         LOGGER.info(f"Using cached file for {endpoint} from {cached_file_path(endpoint)}")
         if log_widget is not None:
             log_widget.write(f"Cache hit [cyan]{cached_file_path(endpoint)}[/]")
