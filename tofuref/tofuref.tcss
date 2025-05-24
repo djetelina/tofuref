@@ -28,11 +28,11 @@ Screen {
 }
 
 .bordered {
-    border: ascii $primary;
+    border: $border-style $primary;
 }
 
 .bordered:focus {
-    border: ascii $accent;
+    border: $border-style $accent;
 }
 
 .content {
@@ -46,7 +46,7 @@ Screen {
 MarkdownViewer {
     & > MarkdownTableOfContents {
         dock:right;
-        border: ascii $primary;
+        border: $border-style $primary;
         color: $foreground;
         background: $surface;
     }
@@ -54,7 +54,7 @@ MarkdownViewer {
 
 MarkdownTableOfContents {
     &:focus-within {
-        border: ascii $accent;
+        border: $border-style $accent;
         color: $foreground;
         background: $surface;
         background-tint: $foreground 5%;

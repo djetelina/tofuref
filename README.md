@@ -53,6 +53,44 @@ Navigate with arrows/page up/page down/home/end or your mouse.
 
 VIM keybindings should be also supported in a limited capacity.
 
+### Configuration
+
+Default configuration can be overridden by a config file (`~/.config/tofuref/config.toml`),
+which can be overridden with env variables.
+
+#### General
+
+Put these as simple key=value in your config.toml.
+
+| name                      | description                                                                     | type  | default | env                                 |
+|---------------------------|---------------------------------------------------------------------------------|-------|---------|-------------------------------------|
+| http_request_timeout      | Timeout for all http requests (in seconds)                                      | float | 3.0     | `TOFUREF_HTTP_REQUEST_TIMEOUT`      |
+| index_cache_duration_days | How long the provider index should be cached for (in days)                      | int   | 31      | `TOFUREF_INDEX_CACHE_DURATION_DAYS` |
+| fullscreen_init_threshold | Threshold of terminal width under which tofuref should start in fullscreen mode | int   | 125     | `TOFUREF_FULLSCREEN_INIT_THRESHOLD` |
+
+#### Theme
+
+These options belong to a toml section, `[theme]`.
+
+| name          | description                                                                                                                          | type   | default                               | env                           |
+|---------------|--------------------------------------------------------------------------------------------------------------------------------------|--------|---------------------------------------|-------------------------------|
+| ui            | Colorscheme for the UI, inspect available themes through command palette (`^p`) `Change theme` command                               | string | textual-dark (or `TEXTUAL_THEME` env) | `TOFUREF_THEME_UI`            |
+| codeblocks    | The [pygments style](https://pygments.org/styles/) for code blocks                                                                   | string | material                              | `TOFUREF_THEME_CODEBLOCKS`    |
+| borders_style | The borders to use for windows, list and showcase of available [here](https://textual.textualize.io/styles/border/#all-border-types) | string | ascii                                 | `TOFUREF_THEME_BORDERS_STYLE` |
+
+#### Example file
+
+Author's configuration:
+
+```toml
+fullscreen_init_threshold = 160
+
+[theme]
+ui = "monokai"
+codeblocks = "monokai"
+borders_style = "vkey"
+```
+
 ## Upgrade
 
 ```bash

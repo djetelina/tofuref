@@ -8,6 +8,7 @@ from textual.app import App, ComposeResult, SystemCommand
 from textual.binding import Binding, BindingType
 from textual.containers import Container
 from textual.screen import Screen
+from textual.theme import BUILTIN_THEMES
 from textual.widgets import (
     Footer,
     Input,
@@ -15,6 +16,7 @@ from textual.widgets import (
     Select,
 )
 
+from tofuref.config import Config
 from tofuref.widgets import (
     CodeBlockSelect,
     ContentWindow,
@@ -46,17 +48,27 @@ class TofuRefApp(App):
     ESCAPE_TO_MINIMIZE = False
 
     def __init__(self, *args, **kwargs):
+        # Configuration
+        self.config = Config.load()
+        for theme in BUILTIN_THEMES.values():
+            theme.variables.update({"border-style": self.config.theme.borders_style})
+
         super().__init__(*args, **kwargs)
+        # Widgets for easier reference, they could be replaced by query method
         self.log_widget = CustomRichLog()
         self.content_markdown = ContentWindow()
         self.navigation_providers = ProvidersOptionList()
         self.navigation_resources = ResourcesOptionList()
         self.search = SearchInput()
         self.code_block_selector = CodeBlockSelect()
+
+        # Internal state
         self.fullscreen_mode = False
         self.providers = {}
         self.active_provider = None
         self.active_resource = None
+
+        self.theme = self.config.theme.ui
 
     def get_system_commands(self, screen: Screen) -> Iterable[SystemCommand]:
         yield from super().get_system_commands(screen)
@@ -78,11 +90,11 @@ class TofuRefApp(App):
 
     async def on_ready(self) -> None:
         LOGGER.debug("Starting on ready")
-        self.log_widget.write("Populating providers from the registry API")
+        self.content_markdown.document.code_dark_theme = self.config.theme.codeblocks
         self.content_markdown.document.classes = "bordered content"
         self.content_markdown.document.border_title = "Content"
         self.content_markdown.document.border_subtitle = "Welcome"
-        fullscreen_threshold = 125
+        fullscreen_threshold = self.config.fullscreen_init_threshold
         if self.size.width < fullscreen_threshold:
             self.fullscreen_mode = True
         if self.fullscreen_mode:
@@ -97,6 +109,7 @@ class TofuRefApp(App):
 
     async def _preload(self) -> None:
         LOGGER.debug("preload start")
+        self.log_widget.write("Populating providers from the registry API")
         self.providers = await self.navigation_providers.load_index()
         self.log_widget.write(f"Providers loaded ([cyan bold]{len(self.providers)}[/])")
         self.navigation_providers.populate()

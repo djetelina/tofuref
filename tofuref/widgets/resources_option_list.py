@@ -1,4 +1,4 @@
-from typing import ClassVar
+from typing import ClassVar, cast
 
 from textual.binding import BindingType
 from textual.widgets import OptionList
@@ -43,8 +43,8 @@ class ResourcesOptionList(OptionList):
     ):
         self.loading = True
         self.app.content_markdown.loading = True
-        await provider.load_resources()
-        self.app.content_markdown.update(await provider.overview())
+        await provider.load_resources(timeout=self.app.config.http_request_timeout)
+        self.app.content_markdown.update(await provider.overview(timeout=self.app.config.http_request_timeout))
         self.app.content_markdown.document.border_subtitle = f"{provider.display_name} {provider.active_version} Overview"
         self.populate(provider)
         self.focus()
@@ -53,12 +53,12 @@ class ResourcesOptionList(OptionList):
         self.loading = False
 
     async def on_option_selected(self, option: Option):
-        resource_selected = option.prompt
+        resource_selected = cast(Resource, option.prompt)
         self.app.active_resource = resource_selected
         if self.app.fullscreen_mode:
             self.screen.maximize(self.app.content_markdown)
         self.app.content_markdown.loading = True
-        self.app.content_markdown.update(await resource_selected.content())
+        self.app.content_markdown.update(await resource_selected.content(timeout=self.app.config.http_request_timeout))
         self.app.content_markdown.document.border_subtitle = (
             f"{resource_selected.type.value} - {resource_selected.provider.name}_{resource_selected.name}"
         )

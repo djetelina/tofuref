@@ -44,7 +44,12 @@ class ProvidersOptionList(OptionList):
         providers = {}
         fallback_providers_path = Path(__file__).resolve().parent.parent.parent / "fallback" / "providers.json"
 
-        data = await get_registry_api("index.json", log_widget=self.app.log_widget)
+        data = await get_registry_api(
+            "index.json",
+            log_widget=self.app.log_widget,
+            timeout=self.app.config.http_request_timeout,
+            index_cache_duration_days=self.app.config.index_cache_duration_days,
+        )
         if not data:
             data = json.loads(fallback_providers_path.read_text())
             self.app.notify(
