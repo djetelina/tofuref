@@ -1,5 +1,12 @@
 name: pytest
-on: pull_request
+on:
+  pull_request:
+    paths:
+      - 'tofuref/**'
+      - 'tests/**'
+      - 'helpers/**'
+      - 'pyproject.toml'
+      - 'uv.lock'
 
 permissions:
   contents: read # needed for actions/checkout
