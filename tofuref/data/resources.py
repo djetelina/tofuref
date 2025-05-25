@@ -40,13 +40,12 @@ class Resource:
     def __hash__(self):
         return hash(f"{self.provider.name}_{self.type}_{self.name}")
 
-    async def content(self, timeout: float):
+    async def content(self):
         if self._content is None:
             doc_data = await get_registry_api(
                 f"{self.provider.organization}/{self.provider.name}/{self.provider.active_version}/{self.type.value}s/{self.name}.md",
                 json=False,
                 log_widget=self.provider.log_widget,
-                timeout=timeout,
             )
             _, self._content = header_markdown_split(doc_data)
         return self._content

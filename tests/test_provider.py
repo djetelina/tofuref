@@ -1,6 +1,7 @@
 import json
 
 from tofuref.data.providers import Provider
+from tofuref.widgets.providers_option_list import ProvidersOptionList
 
 PROVIDER_JSON = json.loads("""{
   "addr": {
@@ -49,3 +50,8 @@ def test_provider_use():
       version = "1.9.1"
     }"""
     )
+
+
+def test_provider_fallback_exists():
+    p = ProvidersOptionList()
+    assert p.fallback_providers_file.exists()

@@ -6,6 +6,7 @@ from textual.binding import Binding, BindingType
 from textual.widgets import OptionList
 from textual.widgets.option_list import Option
 
+from tofuref.config import config
 from tofuref.widgets.keybindings import VIM_OPTION_LIST_NAVIGATE
 
 
@@ -26,7 +27,7 @@ class CodeBlockSelect(OptionList):
             self.add_option(
                 Group(
                     f"[b]Codeblock[/] {i + 1}",
-                    Syntax(block, lexer=lexer if lexer else "hcl", theme=self.app.config.theme.codeblocks),
+                    Syntax(block, lexer=lexer if lexer else "hcl", theme=config.theme.codeblocks),
                 )
             )
             self.add_option(None)

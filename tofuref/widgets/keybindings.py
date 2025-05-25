@@ -6,5 +6,4 @@ VIM_OPTION_LIST_NAVIGATE = [
     Binding("G", "last", "Last", show=False),
     Binding("ctrl+b", "page_down", "Page Down", show=False),
     Binding("ctrl+f", "page_up", "Page Up", show=False),
-    Binding("gg", "first", "First", show=False),
 ]

@@ -1,4 +1,5 @@
 import logging
+import sys
 from collections.abc import Iterable
 from typing import ClassVar
 
@@ -16,7 +17,7 @@ from textual.widgets import (
     Select,
 )
 
-from tofuref.config import Config
+from tofuref.config import config
 from tofuref.widgets import (
     CodeBlockSelect,
     ContentWindow,
@@ -31,27 +32,29 @@ LOGGER = logging.getLogger(__name__)
 
 class TofuRefApp(App):
     CSS_PATH = "tofuref.tcss"
-    TITLE = "TofuRef - OpenTofu Provider Reference"
     BINDINGS: ClassVar[list[BindingType]] = [
-        ("q", "quit", "Quit"),
-        ("s", "search", "Search"),
         ("/", "search", "Search"),
-        ("v", "version", "Provider Version"),
-        ("p", "providers", "Providers"),
+        Binding("s", "search", "Search", show=False),
         ("y", "use", "Use provider"),
-        ("u", "use", "Use provider"),
-        ("r", "resources", "Resources"),
-        ("c", "content", "Content"),
-        ("f", "fullscreen", "Fullscreen Mode"),
+        Binding("u", "use", "Use provider", show=False),
+        ("v", "version", "Provider Version"),
+        Binding("p", "providers", "Providers", show=False),
+        Binding("r", "resources", "Resources", show=False),
+        Binding("c", "content", "Content", show=False),
+        Binding("f", "fullscreen", "Fullscreen Mode"),
         Binding("ctrl+l", "log", "Show Log", show=False),
+        Binding("q", "quit", "Quit"),
     ]
+    TITLE = "TofuRef - OpenTofu Provider Reference"
     ESCAPE_TO_MINIMIZE = False
 
     def __init__(self, *args, **kwargs):
-        # Configuration
-        self.config = Config.load()
+        # We are updating config in the tests, we need to reload config
+        if "pytest" in sys.modules:
+            config.reload()
+        # We have to do this super early, otherwise tests are flaky
         for theme in BUILTIN_THEMES.values():
-            theme.variables.update({"border-style": self.config.theme.borders_style})
+            theme.variables.update({"border-style": config.theme.borders_style})
 
         super().__init__(*args, **kwargs)
         # Widgets for easier reference, they could be replaced by query method
@@ -68,7 +71,7 @@ class TofuRefApp(App):
         self.active_provider = None
         self.active_resource = None
 
-        self.theme = self.config.theme.ui
+        self.theme = config.theme.ui
 
     def get_system_commands(self, screen: Screen) -> Iterable[SystemCommand]:
         yield from super().get_system_commands(screen)
@@ -90,11 +93,13 @@ class TofuRefApp(App):
 
     async def on_ready(self) -> None:
         LOGGER.debug("Starting on ready")
-        self.content_markdown.document.code_dark_theme = self.config.theme.codeblocks
+
+        self.content_markdown.document.code_dark_theme = config.theme.codeblocks
         self.content_markdown.document.classes = "bordered content"
         self.content_markdown.document.border_title = "Content"
         self.content_markdown.document.border_subtitle = "Welcome"
-        fullscreen_threshold = self.config.fullscreen_init_threshold
+
+        fullscreen_threshold = config.fullscreen_init_threshold
         if self.size.width < fullscreen_threshold:
             self.fullscreen_mode = True
         if self.fullscreen_mode:
@@ -102,6 +107,7 @@ class TofuRefApp(App):
             self.navigation_resources.styles.column_span = 2
             self.content_markdown.styles.column_span = 2
             self.screen.maximize(self.navigation_providers)
+
         self.navigation_providers.loading = True
         self.screen.refresh()
         LOGGER.debug("Starting on ready done, running preload worker")
