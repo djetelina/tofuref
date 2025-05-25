@@ -26,6 +26,7 @@ class ProvidersOptionList(OptionList):
             **kwargs,
         )
         self.border_title = "Providers"
+        self.fallback_providers_file = Path(__file__).resolve().parent.parent / "fallback" / "providers.json"
 
     def populate(
         self,
@@ -42,16 +43,13 @@ class ProvidersOptionList(OptionList):
     async def load_index(self) -> dict[str, Provider]:
         LOGGER.debug("Loading providers")
         providers = {}
-        fallback_providers_path = Path(__file__).resolve().parent.parent.parent / "fallback" / "providers.json"
 
         data = await get_registry_api(
             "index.json",
             log_widget=self.app.log_widget,
-            timeout=self.app.config.http_request_timeout,
-            index_cache_duration_days=self.app.config.index_cache_duration_days,
         )
         if not data:
-            data = json.loads(fallback_providers_path.read_text())
+            data = json.loads(self.fallback_providers_file.read_text())
             self.app.notify(
                 "Something went wrong while fetching index of providers, using limited fallback.",
                 title="Using fallback",

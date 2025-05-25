@@ -52,8 +52,6 @@ class ThemeConfig(SectionConfig):
     borders_style: str = "ascii"
 
 
-# TODO having this as singleton would be great (especially for the timout that's now passed around a lot,
-#  I need to check it doesn't break snapshot tests = I already broke them a few times by trying to use singletons
 @dataclass
 class Config:
     """Can contain primitives or subclasses of ConfigSection"""
@@ -72,6 +70,17 @@ class Config:
         config.update_from_env()
 
         return config
+
+    def reload(self):
+        # Would be nice to solve returning to defaults in a smarter way...
+        self.http_request_timeout = 3.0
+        self.index_cache_duration_days = 31
+        self.fullscreen_init_threshold = 125
+        self.theme.ui = DEFAULT_THEME
+        self.theme.codeblocks = "material"
+        self.theme.borders_style = "ascii"
+        self.update_from_file()
+        self.update_from_env()
 
     @property
     def _sections(self) -> list[str]:
@@ -118,3 +127,6 @@ def _get_env_value(key: str, expected_type: type):
         return expected_type(env_value)
     except (ValueError, TypeError) as _:
         return None
+
+
+config = Config.load()
