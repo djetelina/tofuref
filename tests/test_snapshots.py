@@ -98,3 +98,11 @@ def test_vim_resources(snap_compare):
 
 def test_vim_content(snap_compare):
     assert snap_compare(APP_PATH, press=["c", "j"])
+
+
+def test_github_fuzzy_search(snap_compare):
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "/", "a", "c", "t", "_", "s", "e", "c"])
+
+
+def test_toggle_fuzzy_search(snap_compare):
+    assert snap_compare(APP_PATH, press=["ctrl+p", "f", "u", "z", "z", "enter", "ctrl+p"])
