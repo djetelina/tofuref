@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fallback for providers had an incorrect path
+- Cache and Configuration directories are now truly cross-platform
+  (they probably didn't work on Windows previously), macOS cache and config move as
+  a result of this change
 
 ## [1.1.0] - 2025-05-23
 

@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 import httpx
-from xdg_base_dirs import xdg_cache_home
+from platformdirs import user_cache_path
 from yaml import safe_load
 from yaml.scanner import ScannerError
 
@@ -38,12 +38,11 @@ def header_markdown_split(contents: str) -> tuple[dict, str]:
 
 
 def cached_file_path(endpoint: str) -> Path:
-    return xdg_cache_home() / "tofuref" / endpoint.replace("/", "_")
+    return user_cache_path("tofuref", ensure_exists=True) / endpoint.replace("/", "_")
 
 
 def save_to_cache(endpoint: str, contents: str) -> None:
     cached_file = cached_file_path(endpoint)
-    cached_file.parent.mkdir(parents=True, exist_ok=True)
     cached_file.write_text(contents)
 
 
