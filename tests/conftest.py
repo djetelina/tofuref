@@ -2,7 +2,7 @@ import shutil
 from pathlib import Path
 
 import pytest
-from xdg_base_dirs import xdg_config_home
+from platformdirs import user_config_path
 
 from tofuref.data.helpers import cached_file_path
 
@@ -24,8 +24,8 @@ def clear_provider_index_cache():
 @pytest.fixture(scope="session", autouse=True)
 def config_file():
     """Yeah, let's add argparse for an alternative config file later, please"""
-    config_file = xdg_config_home() / "tofuref" / "config.toml"
-    backup_config_file = xdg_config_home() / "tofuref" / "config.toml.bak"
+    config_file = user_config_path("tofuref") / "config.toml"
+    backup_config_file = user_config_path("tofuref") / "config.toml.bak"
     moved = False
     if config_file.exists():
         moved = True

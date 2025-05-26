@@ -55,8 +55,14 @@ VIM keybindings should be also supported in a limited capacity.
 
 ### Configuration
 
-Default configuration can be overridden by a config file (`~/.config/tofuref/config.toml`),
+Default configuration can be overridden by a config file,
 which can be overridden with env variables.
+
+Config file locations:
+
+* Unix: `~/.config/tofuref/config.toml`
+* macOS: `~/Library/Application Support"/tofuref/config.toml`
+* Windows: `%USERPROFILE%\AppData\Local\tofuref\tofuref\config.toml`
 
 #### General
 

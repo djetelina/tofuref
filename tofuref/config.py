@@ -20,8 +20,8 @@ if sys.version_info >= (3, 11):
     import tomllib
 else:
     import tomli as tomllib
+from platformdirs import user_config_path
 from textual.constants import DEFAULT_THEME
-from xdg_base_dirs import xdg_config_home
 
 APP_NAME: str = "tofuref"
 
@@ -88,7 +88,7 @@ class Config:
 
     @property
     def file(self) -> Path:
-        return xdg_config_home() / APP_NAME / "config.toml"
+        return user_config_path(APP_NAME) / "config.toml"
 
     def update_from_file(self) -> None:
         if self.file.exists():
