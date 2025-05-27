@@ -51,7 +51,7 @@ class TofuRefApp(App):
     def __init__(self, *args, **kwargs):
         # We are updating config in the tests, we need to reload config
         if "pytest" in sys.modules:
-            config.reload()
+            config.load(reset=True)
         # We have to do this super early, otherwise tests are flaky
         for theme in BUILTIN_THEMES.values():
             theme.variables.update({"border-style": config.theme.borders_style})
