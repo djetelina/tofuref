@@ -8,6 +8,7 @@ dependencies = [
     "httpx>=0.28.1",
     "tomli>=2.2.1 ; python_full_version < '3.11'",
     "platformdirs>=4.3.7",
+    "yaucl>=0.1.0",
 ]
 authors = [
     { name = "David Jetelina" }
