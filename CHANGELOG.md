@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Configuration support through a file and env variables
+- Notification when a newer version is available
 
 ### Changed
 
