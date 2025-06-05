@@ -3,6 +3,8 @@ import sys
 from collections.abc import Iterable
 from typing import ClassVar
 
+import httpx
+from packaging.version import Version
 from rich.markdown import Markdown
 from textual import on
 from textual.app import App, ComposeResult, SystemCommand
@@ -17,6 +19,7 @@ from textual.widgets import (
     Select,
 )
 
+from tofuref import __version__
 from tofuref.config import config
 from tofuref.widgets import (
     CodeBlockSelect,
@@ -112,6 +115,7 @@ class TofuRefApp(App):
         self.screen.refresh()
         LOGGER.debug("Starting on ready done, running preload worker")
         self.app.run_worker(self._preload, name="preload")
+        self.call_later(self.check_for_new_version)
 
     async def _preload(self) -> None:
         LOGGER.debug("preload start")
@@ -123,6 +127,12 @@ class TofuRefApp(App):
         self.navigation_providers.highlighted = 0
         self.log_widget.write(Markdown("---"))
         LOGGER.info("Initial load complete")
+
+    async def check_for_new_version(self) -> None:
+        newest_version = await get_current_pypi_version()
+        version = Version(__version__)
+        if version < newest_version:
+            self.notify(f"✨ Version {newest_version} is available!\n[dim]Update now for the latest improvements[/dim]", timeout=20)
 
     def action_search(self) -> None:
         """Focus the search input."""
@@ -238,6 +248,15 @@ class TofuRefApp(App):
     @on(OptionList.OptionSelected)
     async def option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
         await event.control.on_option_selected(event.option)
+
+
+async def get_current_pypi_version() -> Version:
+    async with httpx.AsyncClient(headers={"User-Agent": f"tofuref v{__version__}"}) as client:
+        try:
+            r = await client.get("https://pypi.org/pypi/tofuref/json", timeout=config.http_request_timeout)
+        except Exception as _:
+            return Version("0.0.0")
+        return Version(r.json()["info"]["version"])
 
 
 def main() -> None:

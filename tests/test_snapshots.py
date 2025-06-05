@@ -1,4 +1,5 @@
 import os
+from unittest.mock import patch
 
 APP_PATH = "../tofuref/main.py"
 
@@ -10,6 +11,13 @@ def test_welcome(snap_compare):
 
 
 def test_welcome_fullscreen(snap_compare):
+    assert snap_compare(APP_PATH)
+
+
+@patch("tofuref.main.get_current_pypi_version")
+@patch("tofuref.__version__", "1.0.0")
+def test_welcome_update_available(mock_coro, snap_compare):
+    mock_coro.return_value = "1.0.1"
     assert snap_compare(APP_PATH)
 
 
