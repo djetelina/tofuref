@@ -2,6 +2,8 @@ import json  # For RECENTS_CACHE_FILE, though save_recents handles it
 import os
 from unittest.mock import patch
 
+import pytest  # Added for pytestmark
+
 # config import might be removed if no longer needed after this refactoring
 from tofuref.config import config
 from tofuref.data.helpers import FAVORITES_CACHE_FILE, RECENTS_CACHE_FILE, save_recents
