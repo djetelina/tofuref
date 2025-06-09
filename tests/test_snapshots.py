@@ -2,12 +2,16 @@ import json  # For RECENTS_CACHE_FILE, though save_recents handles it
 import os
 from unittest.mock import patch
 
-import pytest  # Added for pytestmark
+import pytest  # Not strictly needed if pytestmark is removed and no other pytest features used directly here
 
-# config import might be removed if no longer needed after this refactoring
+# config import is kept for now, in case other tests use it, though not for favorites.
 from tofuref.config import config
-from tofuref.data.helpers import FAVORITES_CACHE_FILE, RECENTS_CACHE_FILE, save_recents
 from tofuref.data.helpers import save_favorites as save_favorites_to_file
+
+# RECENTS_CACHE_FILE and FAVORITES_CACHE_FILE are no longer needed here, paths are monkeypatched.
+from tofuref.data.helpers import save_recents
+
+# pytestmark for ensure_clean_favorites_recents_state is removed as mock_cache_files_paths handles it.
 
 APP_PATH = "../tofuref/main.py"
 
@@ -141,177 +145,165 @@ KNOWN_RESOURCE_TIME_SLEEP_HASH = str(hash("time_resource_time_sleep"))
 KNOWN_RESOURCE_TIME_OFFSET_HASH = str(hash("time_resource_time_offset"))
 
 
+# This is the correct definition of set_recents_for_test.
+# The floating save_recents(recent_ids) above it was the syntax error.
 def set_recents_for_test(recent_ids: list[str]):
     save_recents(recent_ids)
 
 
-def clear_recents_for_test():
-    if RECENTS_CACHE_FILE.exists():
-        RECENTS_CACHE_FILE.unlink()
+# Removed clear_recents_for_test and clear_favorites_for_test.
+# Their functionality is replaced by the autouse mock_cache_files_paths fixture
+# in conftest.py, which ensures clean temp files for each test via tmp_path.
 
 
-def clear_favorites_for_test():
-    if FAVORITES_CACHE_FILE.exists():
-        FAVORITES_CACHE_FILE.unlink()
-
-
-def setup_favorites_and_recents_state(monkeypatch, fav_providers=None, fav_resources=None, recent_items=None):
-    """Helper to set up a clean state and then desired state."""
-    # Clear first
-    clear_recents_for_test()
-    clear_favorites_for_test()  # Deletes the favorites.json file
+def setup_favorites_and_recents_state(fav_providers=None, fav_resources=None, recent_items=None):
+    """
+    Helper to set up favorites and recents state.
+    Relies on mock_cache_files_paths fixture to ensure files are temporary and clean.
+    The monkeypatch argument is removed as it's no longer needed for this function's core purpose.
+    """
+    # The autouse mock_cache_files_paths fixture ensures FAVORITES_CACHE_FILE
+    # and RECENTS_CACHE_FILE point to clean temp files for each test.
+    # So, no explicit clearing of files is needed here as tmp_path handles it.
 
     # Setup favorites
     providers = fav_providers if fav_providers is not None else []
     resources = fav_resources if fav_resources is not None else []
-    if fav_providers is not None or fav_resources is not None:
+    # Only write a favorites file if there are actual favorites to set for the test.
+    # Otherwise, the non-existence of the file is the "no favorites" state.
+    if providers or resources:
         favorites_data = {"providers": providers, "resources": resources}
         save_favorites_to_file(favorites_data)
+    # If both are empty or None, favorites.json might not be created by this function,
+    # which is handled by load_favorites() returning defaults.
 
-    # Setup recents (remains the same)
+    # Setup recents
+    # Only write a recents file if there are actual recents to set.
     if recent_items:
-        set_recents_for_test(recent_items)
+        set_recents_for_test(recent_items)  # save_recents is an alias for the real save_recents
+    # If recent_items is None, recents.json might not be created by this function,
+    # which is handled by load_recents() returning an empty list.
 
-    # No need to monkeypatch config for favorites anymore
 
-
-def cleanup_favorites_and_recents_state(monkeypatch):  # monkeypatch might be removable if not used for other things
-    """Helper to clean up state after a test."""
-    clear_recents_for_test()
-    clear_favorites_for_test()  # Deletes the favorites.json file
-
-    # No need to monkeypatch config for favorites anymore
-
+# Removed cleanup_favorites_and_recents_state function.
+# File cleanup is automatically handled by pytest's tmp_path fixture.
 
 # --- New Snapshot Tests for Favorites and Recents ---
 
 
-def test_provider_list_with_favorites_and_recents(snap_compare, monkeypatch):
-    fav_provider = KNOWN_PROVIDER_1_UNIQUE_ID  # hashicorp/time
-    recent_provider = KNOWN_PROVIDER_2_UNIQUE_ID  # hashicorp/random
+def test_provider_list_with_favorites_and_recents(snap_compare, monkeypatch):  # monkeypatch might still be used by app or other test aspects
+    fav_provider = KNOWN_PROVIDER_1_UNIQUE_ID
+    recent_provider = KNOWN_PROVIDER_2_UNIQUE_ID
 
-    setup_favorites_and_recents_state(monkeypatch, fav_providers=[fav_provider], recent_items=[recent_provider])
+    setup_favorites_and_recents_state(fav_providers=[fav_provider], recent_items=[recent_provider])
 
-    try:
-        # The app loads providers on startup.
-        # Sorting by favorite, then recent, then popularity should apply.
-        # hashicorp/time (fav) should be first.
-        # hashicorp/random (recent) should be second.
-        # Others follow (e.g. hashicorp/null by popularity if not fav/recent)
-        assert snap_compare(APP_PATH, terminal_size=(200, 60), press=["wait:1.0"])  # wait for list to process
-    finally:
-        cleanup_favorites_and_recents_state(monkeypatch)
+    # try/finally for cleanup is removed as tmp_path handles it.
+    assert snap_compare(APP_PATH, terminal_size=(200, 60), press=["wait:1.0"])
 
 
 def test_resource_list_with_favorites_and_recents(snap_compare, monkeypatch):
-    # We will navigate to hashicorp/time provider
-    # Provider "hashicorp/time" unique_id is "hashicorp/time"
-    # Its resources are time_static, time_sleep, time_offset, time_rotating (from registry)
-    # Hashes are calculated based on provider.name ('time'), type ('resource'), and resource name.
-
     fav_resource_hash = KNOWN_RESOURCE_TIME_STATIC_HASH
     recent_resource_hash = KNOWN_RESOURCE_TIME_SLEEP_HASH
 
     setup_favorites_and_recents_state(
-        monkeypatch,
         fav_resources=[fav_resource_hash],
-        recent_items=[recent_resource_hash],  # Recents list is global for providers and resources
+        recent_items=[recent_resource_hash],
     )
-
-    # Navigate to hashicorp/time provider's resources
-    # 1. Type "time" to filter providers
-    # 2. Press Enter to select the first filtered (should be hashicorp/time)
-    #    (Need to ensure it's the first, or use more specific navigation)
-    #    Let's find "time" provider: 't', 'i', 'm', 'e' then Enter should usually work if it's high enough.
-    #    Fallback data has "hashicorp/time" with popularity 2471.
-    #    "hashicorp/random" has 2031. "hashicorp/null" has 1000.
-    #    So "hashicorp/time" should be first among these if no fav/recent.
-    #    If we make it favorite, it will be at the top.
-    #    If we make it recent, it will be near top.
-    #    Let's assume default order first, then select.
-    #    Press sequence to select "hashicorp/time":
-    #    - Type 't', 'i', 'm', 'e', 'Enter' (to select search box)
-    #    - 'Enter' (to select the provider from list - assuming it's the first one after search)
-
-    # Simpler navigation:
-    # The test_app starts with provider list.
-    # "hashicorp/time" is KNOWN_PROVIDER_1_UNIQUE_ID.
-    # If we make it favorite, it will be at the top.
-    # Let's make it favorite to ensure it's the first one for easy selection.
-    # Or, even better, just use key navigation 'j', 'k' if we know its default position.
-    # The fallback data is sorted by popularity.
-    # hashicorp/terraform (99999)
-    # hashicorp/aws (36000)
-    # ... many others ...
-    # hashicorp/time (2471) - this will be some way down.
-    # Let's assume we search for it to select it.
-
-    press_sequence = ["t", "i", "m", "e", "enter", "enter", "wait:1.0"]  # search "time", select search box, select provider
-
-    try:
-        # time_static (fav) should be first.
-        # time_sleep (recent) should be second.
-        # time_offset, time_rotating should follow, sorted alphabetically.
-        assert snap_compare(APP_PATH, terminal_size=(200, 60), press=press_sequence)
-    finally:
-        cleanup_favorites_and_recents_state(monkeypatch)
+    press_sequence = ["t", "i", "m", "e", "enter", "enter", "wait:1.0"]
+    assert snap_compare(APP_PATH, terminal_size=(200, 60), press=press_sequence)
 
 
 def test_toggle_provider_favorite_and_sort(snap_compare, monkeypatch):
-    # Ensure KNOWN_PROVIDER_2_UNIQUE_ID (hashicorp/random) is not favorite initially
-    # It has popularity 2031. hashicorp/time has 2471.
-    # So 'time' is above 'random' in default sort from fallback.
-    # 'hashicorp/null' (1000) is below 'random'.
-    # Let's favorite 'hashicorp/random'. It should move to the top.
+    # Initial state is clean (no favorites/recents files) due to mock_cache_files_paths.
+    # Explicitly calling setup_favorites_and_recents_state() with no args
+    # ensures this, though it's redundant if files are guaranteed non-existent.
+    setup_favorites_and_recents_state()
 
-    provider_to_toggle = KNOWN_PROVIDER_2_UNIQUE_ID  # hashicorp/random
+    press_sequence_part1 = ["r", "a", "n", "d", "o", "m", "enter", "b", "wait:1.0"]
+    assert snap_compare(APP_PATH, terminal_size=(200, 60), press=press_sequence_part1)
 
-    setup_favorites_and_recents_state(monkeypatch)  # Clear all
+    press_sequence_part2 = ["b", "wait:1.0"]
+    assert snap_compare(APP_PATH, terminal_size=(200, 60), press=press_sequence_part2)
 
-    # Initial state: hashicorp/random is not favorited.
-    # It should be below hashicorp/time.
-    # We need to navigate to it. It might be the second or third visible.
-    # Let's assume it's reachable by 'j' (down) once or twice if list is not too long.
-    # Fallback: hashicorp/terraform, hashicorp/aws, hashicorp/google, hashicorp/azurerm, ... then hashicorp/time, then hashicorp/random
-    # This means hashicorp/random is many items down.
-    # Searching is more robust.
 
-    # Search for "random" provider, it should be the first result. Then bookmark it.
-    press_sequence_part1 = ["r", "a", "n", "d", "o", "m", "enter", "b", "wait:1.0"]  # search, select search, bookmark highlighted
+# --- Tests for Search with Favorites/Recents ---
 
-    try:
-        # Snapshot 1: hashicorp/random is now favorite and at the top.
-        assert snap_compare(APP_PATH, terminal_size=(200, 60), press=press_sequence_part1)
 
-        # Part 2: Un-favorite it. It's currently highlighted and at the top.
-        # Press 'b' again.
-        press_sequence_part2 = ["b", "wait:1.0"]
-        assert snap_compare(APP_PATH, terminal_size=(200, 60), press=press_sequence_part2)
-    finally:
-        cleanup_favorites_and_recents_state(monkeypatch)
+def test_search_providers_with_favorites_and_recents(snap_compare, monkeypatch):
+    # Using known providers from fallback data for predictability
+    # hashicorp/aws: popularity 36283
+    # hashicorp/random: popularity 2031
+    # hashicorp/time: popularity 2471
+    # hashicorp/null: popularity 1000
+
+    fav_provider = "hashicorp/aws"
+    recent_provider = "hashicorp/random"
+    # "hashicorp/time" and "hashicorp/null" will be "other" matches
+
+    setup_favorites_and_recents_state(fav_providers=[fav_provider], recent_items=[recent_provider])
+
+    # Simulate typing "hashicorp" into search and submitting
+    # The app starts with provider list active, so search applies to providers.
+    # Need to focus search input first. Standard Textual key for focusing next focusable is Tab.
+    # Or, if search input is always focusable or has a direct key:
+    # Let's assume user types '/' to focus search (common pattern in this app)
+    search_query = "hashicorp"
+    press_sequence = ["/", *list(search_query), "enter", "wait:1.0"]
+
+    # Expected order in search results:
+    # 1. ⭐ hashicorp/aws (Favorite)
+    # 2. 🕐 hashicorp/random (Recent)
+    # 3. hashicorp/time (Other, higher popularity than null)
+    # 4. hashicorp/null (Other, lower popularity than time)
+    # Note: The test snapshot will verify the exact order and appearance.
+    assert snap_compare(APP_PATH, terminal_size=(200, 60), press=press_sequence)
+
+
+def test_search_resources_with_favorites_and_recents(snap_compare, monkeypatch):
+    # Using "hashicorp/time" provider. Its resources are time_date, time_offset, time_rotating, time_sleep, time_static.
+    # Hashes are:
+    # time_date: str(hash("time_resource_time_date")) -> not used here, but for reference
+    # time_offset: KNOWN_RESOURCE_TIME_OFFSET_HASH
+    # time_rotating: str(hash("time_resource_time_rotating")) -> not used here
+    # time_sleep: KNOWN_RESOURCE_TIME_SLEEP_HASH
+    # time_static: KNOWN_RESOURCE_TIME_STATIC_HASH
+
+    fav_resource_hash = KNOWN_RESOURCE_TIME_STATIC_HASH  # "time_static"
+    recent_resource_hash = KNOWN_RESOURCE_TIME_SLEEP_HASH  # "time_sleep"
+    # Other matching resource: "time_offset" (KNOWN_RESOURCE_TIME_OFFSET_HASH)
+
+    setup_favorites_and_recents_state(
+        fav_providers=[KNOWN_PROVIDER_1_UNIQUE_ID],  # Favorite "hashicorp/time" to easily select it
+        fav_resources=[fav_resource_hash],
+        recent_items=[recent_resource_hash],  # Recents are global, so this could be a provider or resource ID
+    )
+
+    # Navigate to "hashicorp/time" (it's favorited, so it should be at/near the top)
+    # Assuming it's the first one after initial load due to favorite status.
+    press_to_provider = ["enter", "wait:0.5"]  # Select top provider (should be hashicorp/time)
+
+    # Search for "time" within resources of hashicorp/time
+    # Need to focus search input. Assume '/' works here too after navigating to resource list.
+    search_query = "time"  # This will match time_static, time_sleep, time_offset, time_date, time_rotating
+    press_sequence = [*press_to_provider, "/", *list(search_query), "enter", "wait:1.0"]
+
+    # Expected order in search results for "time" within hashicorp/time:
+    # 1. ⭐ R time_static (Favorite)
+    # 2. 🕐 R time_sleep (Recent)
+    # 3. R time_date (alphabetical)
+    # 4. R time_offset (alphabetical)
+    # (time_rotating would also match "time")
+    # The snapshot will verify the exact content and order.
+    assert snap_compare(APP_PATH, terminal_size=(200, 60), press=press_sequence)
 
 
 def test_toggle_resource_favorite_and_sort(snap_compare, monkeypatch):
-    # Navigate to hashicorp/time
-    # Then toggle favorite for 'time_sleep' resource.
-    # Default order: time_offset, time_rotating, time_sleep, time_static (alphabetical for resources)
+    # Initial state is clean.
+    setup_favorites_and_recents_state()
 
-    setup_favorites_and_recents_state(monkeypatch)  # Clear all
-
-    # Navigate to hashicorp/time provider's resources
-    # Search "time", select provider
     press_to_provider = ["t", "i", "m", "e", "enter", "enter", "wait:0.5"]
+    press_sequence_part1 = [*press_to_provider, "j", "j", "b", "wait:1.0"]
+    assert snap_compare(APP_PATH, terminal_size=(200, 60), press=press_sequence_part1)
 
-    # 'time_sleep' is third in alpha sort (time_offset, time_rotating, time_sleep). So two 'j' presses.
-    press_sequence_part1 = [*press_to_provider, "j", "j", "b", "wait:1.0"]  # Highlight time_sleep, bookmark
-
-    try:
-        # Snapshot 1: time_sleep is now favorite and at the top of resources for hashicorp/time.
-        assert snap_compare(APP_PATH, terminal_size=(200, 60), press=press_sequence_part1)
-
-        # Part 2: Un-favorite it. It's currently highlighted and at the top.
-        # Press 'b' again.
-        press_sequence_part2 = ["b", "wait:1.0"]
-        assert snap_compare(APP_PATH, terminal_size=(200, 60), press=press_sequence_part2)
-    finally:
-        cleanup_favorites_and_recents_state(monkeypatch)
+    press_sequence_part2 = ["b", "wait:1.0"]
+    assert snap_compare(APP_PATH, terminal_size=(200, 60), press=press_sequence_part2)

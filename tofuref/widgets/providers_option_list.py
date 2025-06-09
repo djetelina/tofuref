@@ -82,16 +82,46 @@ class ProvidersOptionList(OptionList):
                 )
 
             sorted_provider_keys = sorted(provider_keys, key=sort_key)
-            providers = sorted_provider_keys
+            # 'providers' variable for option adding loop below should be these sorted keys
+            provider_unique_ids_to_display = sorted_provider_keys
         else:
-            # If a specific list of providers (e.g. search results) is given, use that order
-            providers = cast(Collection[str], providers)
+            # If a specific list of provider unique_ids (e.g. search results) is given
+            provider_unique_ids_from_search = cast(Collection[str], providers)
+
+            # 1. Retrieve the actual Provider objects for these names
+            provider_objects_to_filter = [self.app.providers[uid] for uid in provider_unique_ids_from_search if uid in self.app.providers]
+
+            # 2. For each of these Provider objects, ensure their is_favorite and is_recent are set
+            recent_provider_ids = get_recents()
+            favorites_data = load_favorites()
+            for p_obj in provider_objects_to_filter:
+                if p_obj.unique_id in recent_provider_ids:
+                    p_obj.is_recent = True
+                else:
+                    p_obj.is_recent = False
+
+                if p_obj.unique_id in favorites_data["providers"]:
+                    p_obj.is_favorite = True
+                else:
+                    p_obj.is_favorite = False
+
+            # 3. Sort this list of Provider objects
+            # Re-use the sort_key function defined above for consistency, but adapt it for objects
+            def sort_provider_objects_key(p_obj: Provider):
+                return (
+                    not p_obj.is_favorite,
+                    not p_obj.is_recent,
+                    -p_obj.popularity,
+                )
+
+            sorted_provider_objects = sorted(provider_objects_to_filter, key=sort_provider_objects_key)
+            # The loop below expects unique_ids to fetch the object again, so extract them.
+            provider_unique_ids_to_display = [p.unique_id for p in sorted_provider_objects]
 
         self.clear_options()
-        self.border_subtitle = f"{len(providers)}/{len(self.app.providers)}"
-        for name_key in providers:  # name_key is now potentially sorted or from a filtered list
-            # We use app.providers[name_key].display_name because the key in app.providers
-            # (which is unique_id) might not have the prefix, but display_name will.
+        # Use the count of unique IDs intended for display for the subtitle
+        self.border_subtitle = f"{len(provider_unique_ids_to_display)}/{len(self.app.providers)}"
+        for name_key in provider_unique_ids_to_display:
             provider_obj = self.app.providers[name_key]
             self.add_option(Option(provider_obj.display_name, id=provider_obj.unique_id))
 

@@ -67,8 +67,25 @@ class ResourcesOptionList(OptionList):
             # So, sorting the list here should apply the desired order.
             display_resources.sort()
         else:
-            # If a specific list of resources (e.g., search results) is given, use that.
-            # We assume this list is already sorted or its order is intentional.
+            # If a specific list of resources (e.g., search results) is given.
+            # Ensure their favorite/recent status is up-to-date and then sort this subset.
+            recent_resource_hashes = get_recents()
+            favorites_data = load_favorites()
+            for res in resources:  # 'resources' is the input list here
+                res_hash = str(hash(res))
+                # Update is_recent
+                if res_hash in recent_resource_hashes:
+                    res.is_recent = True
+                else:
+                    res.is_recent = False
+
+                # Update is_favorite
+                if res_hash in favorites_data["resources"]:
+                    res.is_favorite = True
+                else:
+                    res.is_favorite = False
+
+            resources.sort()  # Sort the provided list in-place
             display_resources = resources
 
         for resource in display_resources:
