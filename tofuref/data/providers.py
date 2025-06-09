@@ -19,6 +19,8 @@ class Provider:
     fork_count: int
     blocked: bool
     popularity: int
+    is_favorite: bool = False
+    is_recent: bool = False
     _overview: str | None = None
     _active_version: str | None = None
     versions: list[dict[str, str]] = field(default_factory=list)
@@ -46,6 +48,15 @@ class Provider:
 
     @property
     def display_name(self) -> str:
+        prefix = ""
+        if self.is_favorite:
+            prefix = "⭐ "
+        elif self.is_recent:
+            prefix = "🕐 "
+        return f"{prefix}{self.organization}/{self.name}"
+
+    @property
+    def unique_id(self) -> str:
         return f"{self.organization}/{self.name}"
 
     @property

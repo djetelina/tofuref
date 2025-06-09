@@ -23,16 +23,39 @@ class Resource:
     name: str
     provider: "Provider"
     type: ResourceType
+    is_favorite: bool = False
+    is_recent: bool = False
     _content: str | None = None
 
     def __lt__(self, other: "Resource") -> bool:
+        if self.is_favorite and not other.is_favorite:
+            return True
+        if not self.is_favorite and other.is_favorite:
+            return False
+        if self.is_recent and not other.is_recent:
+            return True
+        if not self.is_recent and other.is_recent:
+            return False
         return self.name < other.name
 
     def __gt__(self, other: "Resource") -> bool:
+        if self.is_favorite and not other.is_favorite:
+            return False
+        if not self.is_favorite and other.is_favorite:
+            return True
+        if self.is_recent and not other.is_recent:
+            return False
+        if not self.is_recent and other.is_recent:
+            return True
         return self.name > other.name
 
     def __str__(self):
-        return f"[cyan]{self.type.value[0].upper()}[/] {self.name}"
+        prefix = ""
+        if self.is_favorite:
+            prefix = "⭐ "
+        elif self.is_recent:
+            prefix = "🕐 "
+        return f"{prefix}[cyan]{self.type.value[0].upper()}[/] {self.name}"
 
     def __rich__(self):
         return str(self)

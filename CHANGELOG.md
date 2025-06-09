@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Favorites and Recents:**
+  - Providers and resources can now be marked/unmarked as favorites using the 'b' key.
+  - Favorited items are indicated with a ⭐ icon and sorted to the top of their respective lists.
+  - Recently accessed items are automatically tracked, indicated with a 🕐 icon.
+  - The sort order for providers and resources is now: Favorites, then Recents, then default sorting (e.g., popularity for providers, name for resources).
+
 ## [1.2.0] - 2025-06-06 
 
 ### Added

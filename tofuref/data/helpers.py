@@ -17,6 +17,71 @@ LOGGER = logging.getLogger(__name__)
 
 CODEBLOCK_REGEX = r"^```([a-z]+)\n([\s\S]*?)^```"
 
+MAX_RECENT_ITEMS = 10
+RECENTS_CACHE_FILE = user_cache_path("tofuref", ensure_exists=True) / "recents.json"
+FAVORITES_CACHE_FILE = user_cache_path("tofuref", ensure_exists=True) / "favorites.json"
+
+
+def load_favorites() -> dict[str, list[str]]:
+    """Loads the dictionary of favorite items from the cache file."""
+    default_favorites = {"providers": [], "resources": []}
+    if not FAVORITES_CACHE_FILE.exists():
+        return default_favorites
+    try:
+        data = jsonlib.loads(FAVORITES_CACHE_FILE.read_text())
+        if not isinstance(data, dict) or "providers" not in data or "resources" not in data:
+            LOGGER.warning(f"Invalid format in favorites cache file: {FAVORITES_CACHE_FILE}. Resetting.")
+            return default_favorites
+        # Ensure list types
+        if not isinstance(data["providers"], list) or not isinstance(data["resources"], list):
+            LOGGER.warning(f"Invalid list types in favorites cache file: {FAVORITES_CACHE_FILE}. Resetting.")
+            return default_favorites
+        return data
+    except jsonlib.JSONDecodeError:
+        LOGGER.warning(f"Could not decode favorites cache file: {FAVORITES_CACHE_FILE}. Resetting.")
+        return default_favorites
+
+
+def save_favorites(favorites_data: dict[str, list[str]]) -> None:
+    """Saves the dictionary of favorite items to the cache file."""
+    try:
+        FAVORITES_CACHE_FILE.write_text(jsonlib.dumps(favorites_data, indent=2))
+    except OSError as e:
+        LOGGER.error(f"Could not write to favorites cache file: {FAVORITES_CACHE_FILE}", exc_info=e)
+
+
+def load_recents() -> list[str]:
+    """Loads the list of recent items from the cache file."""
+    if not RECENTS_CACHE_FILE.exists():
+        return []
+    try:
+        return jsonlib.loads(RECENTS_CACHE_FILE.read_text())
+    except jsonlib.JSONDecodeError:
+        LOGGER.warning(f"Could not decode recents cache file: {RECENTS_CACHE_FILE}")
+        return []
+
+
+def save_recents(recents: list[str]) -> None:
+    """Saves the list of recent items to the cache file."""
+    try:
+        RECENTS_CACHE_FILE.write_text(jsonlib.dumps(recents, indent=2))
+    except OSError as e:
+        LOGGER.error(f"Could not write to recents cache file: {RECENTS_CACHE_FILE}", exc_info=e)
+
+
+def add_to_recents(item_identifier: str) -> None:
+    """Adds an item to the list of recent items."""
+    recents = load_recents()
+    if item_identifier in recents:
+        recents.remove(item_identifier)
+    recents.insert(0, item_identifier)
+    save_recents(recents[:MAX_RECENT_ITEMS])
+
+
+def get_recents() -> list[str]:
+    """Returns the list of recent items."""
+    return load_recents()
+
 
 def header_markdown_split(contents: str) -> tuple[dict, str]:
     """
