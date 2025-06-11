@@ -30,15 +30,14 @@ class ProvidersOptionList(OptionList):
 
     def populate(
         self,
-        providers: Collection[str] | None = None,
+        providers: Collection[Provider] | None = None,
     ) -> None:
         if providers is None:
-            providers = self.app.providers.keys()
-        providers = cast(Collection[str], providers)
+            providers = self.app.providers.values()
         self.clear_options()
         self.border_subtitle = f"{len(providers)}/{len(self.app.providers)}"
-        for name in providers:
-            self.add_option(name)
+        for provider in providers:
+            self.add_option(provider)
 
     async def load_index(self) -> dict[str, Provider]:
         LOGGER.debug("Loading providers")
@@ -70,12 +69,12 @@ class ProvidersOptionList(OptionList):
             if all(filter_in):
                 providers[provider.display_name] = provider
 
-        providers = {k: v for k, v in sorted(providers.items(), key=lambda p: p[1].popularity, reverse=True)}
+        providers = {k: v for k, v in sorted(providers.items(), key=lambda p: (p[1].cached, p[1].popularity), reverse=True)}
 
         return providers
 
     async def on_option_selected(self, option: Option) -> None:
-        provider_selected = self.app.providers[option.prompt]
+        provider_selected = option.prompt
         self.app.active_provider = provider_selected
         if self.app.fullscreen_mode:
             self.screen.maximize(self.app.navigation_resources)

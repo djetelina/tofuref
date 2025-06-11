@@ -49,3 +49,4 @@ cover/
 __pypackages__/
 
 snapshot_report.html
+__tests_cache__/

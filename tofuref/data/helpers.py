@@ -37,8 +37,22 @@ def header_markdown_split(contents: str) -> tuple[dict, str]:
     return header, markdown_content
 
 
-def cached_file_path(endpoint: str) -> Path:
-    return user_cache_path("tofuref", ensure_exists=True) / endpoint.replace("/", "_")
+def cached_file_path(endpoint: str, glob: bool = False) -> Path:
+    """
+    Args:
+        endpoint: http endpoint of the registry API
+        glob: Looks for glob matches in the cache directory, never use with saving into cache.
+
+    Returns:
+        Path to the cached file for a given endpoint.
+        If glob is True, returns the first match, check `exists()`!.
+    """
+    filename = endpoint.replace("/", "_")
+    if glob:
+        matches = list(user_cache_path("tofuref", ensure_exists=True).glob(filename))
+        if matches:
+            return Path(matches[0])
+    return user_cache_path("tofuref", ensure_exists=True) / filename
 
 
 def save_to_cache(endpoint: str, contents: str) -> None:
