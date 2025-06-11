@@ -1,10 +1,11 @@
-import json
 from dataclasses import dataclass, field
 from typing import Any
 
-from rich.json import JSON as RICH_JSON
+from textual.content import Content
 
+from tofuref.config import config
 from tofuref.data.helpers import (
+    cached_file_path,
     get_registry_api,
     header_markdown_split,
 )
@@ -29,6 +30,7 @@ class Provider:
     functions: list[Resource] = field(default_factory=list)
     guides: list[Resource] = field(default_factory=list)
     log_widget: Any | None = None
+    _cached: bool | None = None
 
     @classmethod
     def from_json(cls, data: dict) -> "Provider":
@@ -61,8 +63,14 @@ class Provider:
         self._overview = None
 
     @property
-    def _endpoint(self) -> str:
-        return f"{self.organization}/{self.name}/{self.active_version}"
+    def endpoint(self) -> str:
+        return f"{self.organization}/{self.name}/{self.active_version}/index.md"
+
+    @property
+    def cached(self) -> bool:
+        if self._cached is None:
+            return cached_file_path(self.endpoint.replace(self.active_version, "*"), glob=True).exists()
+        return self._cached
 
     @property
     def use_configuration(self) -> str:
@@ -73,20 +81,26 @@ class Provider:
 
     async def overview(self) -> str:
         if self._overview is None:
-            self._overview = await get_registry_api(f"{self._endpoint}/index.md", json=False, log_widget=self.log_widget)
+            self._overview = await get_registry_api(self.endpoint, json=False, log_widget=self.log_widget)
             _, self._overview = header_markdown_split(self._overview)
+            self._cached = True
         return self._overview
 
     async def load_resources(self) -> None:
         if self.resources:
             return
+        await self.reload_resources()
+
+        self.sort_resources()
+
+    async def reload_resources(self) -> None:
+        self.resources = []
         resource_data = await get_registry_api(
             f"{self.organization}/{self.name}/{self.active_version}/index.json",
             log_widget=self.log_widget,
         )
         for g in sorted(resource_data["docs"]["guides"], key=lambda x: x["name"]):
             self.resources.append(Resource(g["name"], self, type=ResourceType.GUIDE))
-
         for r in sorted(resource_data["docs"]["resources"], key=lambda x: x["name"]):
             self.resources.append(Resource(r["name"], self, type=ResourceType.RESOURCE))
         for d in sorted(resource_data["docs"]["datasources"], key=lambda x: x["name"]):
@@ -94,5 +108,13 @@ class Provider:
         for f in sorted(resource_data["docs"]["functions"], key=lambda x: x["name"]):
             self.resources.append(Resource(f["name"], self, type=ResourceType.FUNCTION))
 
-    def __rich__(self):
-        return RICH_JSON(json.dumps({k: v for k, v in self.__dict__.items() if k not in ["raw_json", "versions"]}))
+        self.sort_resources()
+
+    def sort_resources(self):
+        type_order = {ResourceType.GUIDE: 0, ResourceType.RESOURCE: 1, ResourceType.DATASOURCE: 2, ResourceType.FUNCTION: 3}
+
+        self.resources.sort(key=lambda x: (-x.cached, type_order[x.type], x.name))
+
+    def visualize(self):
+        cached_icon = "🕓 " if config.theme.emoji else "[$success]C[/] "
+        return Content.from_markup(f"{cached_icon if self.cached else ''}[dim italic]{self.organization}[/]/{self.name}")

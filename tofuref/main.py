@@ -154,7 +154,7 @@ class TofuRefApp(App):
                 to_copy = self.active_provider.use_configuration
             elif self.navigation_providers.highlighted is not None:
                 highlighted_provider = self.navigation_providers.options[self.navigation_providers.highlighted].prompt
-                to_copy = self.providers[highlighted_provider].use_configuration
+                to_copy = highlighted_provider.use_configuration
             else:
                 return
             self.copy_to_clipboard(to_copy)
@@ -227,7 +227,7 @@ class TofuRefApp(App):
             if not query:
                 self.navigation_providers.populate()
             else:
-                self.navigation_providers.populate([p for p in self.providers if query in p])
+                self.navigation_providers.populate([v for p, v in self.providers.items() if query in p])
         elif self.search.parent == self.navigation_resources:
             if not query:
                 self.navigation_resources.populate(

@@ -7,7 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.2.0] - 2025-06-06 
+### Added
+
+- Added a config option in the theme section to enable/disable emojis
+- Cached providers and resources are now sorted first, identified by 🕓 or `C`
+- Made name of the provider pop a little bit by dimming the organization
+
+### Changed
+
+- Replaced letters identifying resource types (`R`, `D`, `F`, `G`) with emojis
+
+### Fixed
+
+- Various colours should now adhere to the active theme, instead of being fixed
+
+## [1.2.0] - 2025-06-06
 
 ### Added
 

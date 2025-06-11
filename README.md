@@ -7,7 +7,7 @@
 
 TUI for OpenTofu provider registry.
 
-![Screenshot](https://github.com/djetelina/tofuref/blob/main/screenshots/welcome.svg?raw=true)
+![Screenshot](https://github.com/djetelina/tofuref/blob/main/tests/__snapshots__/test_snapshots/test_welcome.svg?raw=true)
 
 ## Installation
 

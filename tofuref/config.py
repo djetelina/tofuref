@@ -9,6 +9,7 @@ class ThemeConfig(BaseSectionConfig):
     ui: str = DEFAULT_THEME
     codeblocks: str = "material"
     borders_style: str = "ascii"
+    emoji: bool = True
 
 
 @dataclass
