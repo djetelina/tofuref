@@ -5,11 +5,13 @@ from typing import TYPE_CHECKING
 from textual.content import Content
 
 from tofuref.config import config
+from tofuref.data import emojis
+from tofuref.data.cache import cached_file_path, clear_from_cache
 from tofuref.data.helpers import (
-    cached_file_path,
     get_registry_api,
     header_markdown_split,
 )
+from tofuref.data.meta import Item
 
 if TYPE_CHECKING:
     from tofuref.data.providers import Provider
@@ -21,21 +23,16 @@ class ResourceType(Enum):
     GUIDE = "guide"
     FUNCTION = "function"
 
-type_to_emoji = {
-    ResourceType.RESOURCE: "📦",
-    ResourceType.DATASOURCE: "🌐",
-    ResourceType.GUIDE: "📚",
-    ResourceType.FUNCTION: "📈",
-}
-
 
 @dataclass
-class Resource:
+class Resource(Item):
     name: str
     provider: "Provider"
     type: ResourceType
     _content: str | None = None
     _cached: bool | None = None
+    bookmarked: bool = False
+    kind = "resources"
 
     def __lt__(self, other: "Resource") -> bool:
         return self.name < other.name
@@ -43,13 +40,28 @@ class Resource:
     def __gt__(self, other: "Resource") -> bool:
         return self.name > other.name
 
+    @property
+    def display_name(self):
+        return self.name
+
     def visualize(self):
-        icon = type_to_emoji[self.type] if config.theme.emoji else f"[$secondary]{self.type.value[0].upper()}[/]"
-        cached_icon = "🕓 " if config.theme.emoji else "[$success]C[/] "
-        return Content.from_markup(f"{icon} {cached_icon if self.cached else ''}{self.name}")
+        cached_icon = emojis.CACHE if config.theme.emoji else "[$success]C[/] "
+        bookmark_icon = emojis.BOOKMARK if config.theme.emoji else "[$success]B[/] "
+        if self.bookmarked:
+            prefix = bookmark_icon
+        elif self.cached:
+            prefix = cached_icon
+        else:
+            prefix = ""
+        resource_icon = emojis.RESOURCE_TYPE[self.type.value] if config.theme.emoji else f"[$secondary]{self.type.value[0].upper()}[/]"
+        return Content.from_markup(f"{resource_icon} {prefix}{self.name}")
+
+    @property
+    def identifying_name(self):
+        return f"{self.provider.name}_{self.type.value}_{self.name}"
 
     def __hash__(self):
-        return hash(f"{self.provider.name}_{self.type}_{self.name}")
+        return hash(self.identifying_name)
 
     @property
     def endpoint(self) -> str:
@@ -70,5 +82,9 @@ class Resource:
             )
             _, self._content = header_markdown_split(doc_data)
             self._cached = True
-            self.provider.sort_resources()
         return self._content
+
+    def clear_from_cache(self) -> None:
+        if self.cached:
+            clear_from_cache(self.endpoint)
+            self._cached = False

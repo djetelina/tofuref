@@ -7,7 +7,8 @@ import pytest
 from httpx import Response
 from platformdirs import user_config_path
 
-from tofuref.data.helpers import cached_file_path
+from tofuref.data.bookmarks import Bookmarks
+from tofuref.data.cache import cached_file_path
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -47,7 +48,7 @@ def mock_cache_path():
             cache_dir.mkdir(parents=True, exist_ok=True)
         return cache_dir
 
-    with patch("tofuref.data.helpers.user_cache_path", side_effect=mock_user_cache_path):
+    with patch("tofuref.data.cache.user_cache_path", side_effect=mock_user_cache_path):
         yield cache_dir
     for file in cache_dir.glob("*"):
         file.unlink()
@@ -84,9 +85,23 @@ def mock_http_requests():
     with patch("httpx.AsyncClient.get", side_effect=http_get) as mock_get:
         yield
 
-@pytest.fixture(autouse=True)
+
+@pytest.fixture(scope="session", autouse=True)
 def disable_emoji():
     """Disabling emojis for tests, because they might look different depending on the OS, terminal etc."""
     os.environ["TOFUREF_THEME_EMOJI"] = "false"
     yield
     os.environ.pop("TOFUREF_THEME_EMOJI")
+
+
+@pytest.fixture(scope="session", autouse=True)
+def patch_bookmarks():
+    class PatchedBookmarks(Bookmarks):
+        def save_to_disk(self):
+            pass
+
+        def load_from_disk(self):
+            self.saved = {"providers": [], "resources": []}
+
+    with patch("tofuref.data.bookmarks.Bookmarks", PatchedBookmarks) as patched:
+        yield patched

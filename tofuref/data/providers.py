@@ -4,16 +4,19 @@ from typing import Any
 from textual.content import Content
 
 from tofuref.config import config
+from tofuref.data import emojis
+from tofuref.data.bookmarks import Bookmarks
+from tofuref.data.cache import cached_file_path, clear_from_cache
 from tofuref.data.helpers import (
-    cached_file_path,
     get_registry_api,
     header_markdown_split,
 )
+from tofuref.data.meta import Item
 from tofuref.data.resources import Resource, ResourceType
 
 
 @dataclass
-class Provider:
+class Provider(Item):
     organization: str
     name: str
     description: str
@@ -30,7 +33,9 @@ class Provider:
     functions: list[Resource] = field(default_factory=list)
     guides: list[Resource] = field(default_factory=list)
     log_widget: Any | None = None
+    bookmarked: bool = False
     _cached: bool | None = None
+    kind = "providers"
 
     @classmethod
     def from_json(cls, data: dict) -> "Provider":
@@ -51,6 +56,10 @@ class Provider:
         return f"{self.organization}/{self.name}"
 
     @property
+    def identifying_name(self) -> str:
+        return self.display_name
+
+    @property
     def active_version(self) -> str:
         if self._active_version is None:
             self._active_version = self.versions[0]["id"]
@@ -66,10 +75,13 @@ class Provider:
     def endpoint(self) -> str:
         return f"{self.organization}/{self.name}/{self.active_version}/index.md"
 
+    def _endpoint_wildcard_version(self) -> str:
+        return self.endpoint.replace(self.active_version, "*")
+
     @property
     def cached(self) -> bool:
         if self._cached is None:
-            return cached_file_path(self.endpoint.replace(self.active_version, "*"), glob=True).exists()
+            return cached_file_path(self._endpoint_wildcard_version(), glob=True).exists()
         return self._cached
 
     @property
@@ -86,14 +98,12 @@ class Provider:
             self._cached = True
         return self._overview
 
-    async def load_resources(self) -> None:
+    async def load_resources(self, bookmarks: Bookmarks) -> None:
         if self.resources:
-            return
-        await self.reload_resources()
+            self.sort_resources()
+        await self.reload_resources(bookmarks)
 
-        self.sort_resources()
-
-    async def reload_resources(self) -> None:
+    async def reload_resources(self, bookmarks: Bookmarks) -> None:
         self.resources = []
         resource_data = await get_registry_api(
             f"{self.organization}/{self.name}/{self.active_version}/index.json",
@@ -108,13 +118,31 @@ class Provider:
         for f in sorted(resource_data["docs"]["functions"], key=lambda x: x["name"]):
             self.resources.append(Resource(f["name"], self, type=ResourceType.FUNCTION))
 
+        for resource in self.resources:
+            if bookmarks.check("resources", resource.identifying_name):
+                resource.bookmarked = True
+
         self.sort_resources()
 
-    def sort_resources(self):
+    def sort_resources(self) -> None:
         type_order = {ResourceType.GUIDE: 0, ResourceType.RESOURCE: 1, ResourceType.DATASOURCE: 2, ResourceType.FUNCTION: 3}
 
-        self.resources.sort(key=lambda x: (-x.cached, type_order[x.type], x.name))
+        self.resources.sort(key=lambda x: (-x.bookmarked, -x.cached, type_order[x.type], x.name))
 
-    def visualize(self):
-        cached_icon = "🕓 " if config.theme.emoji else "[$success]C[/] "
-        return Content.from_markup(f"{cached_icon if self.cached else ''}[dim italic]{self.organization}[/]/{self.name}")
+    def visualize(self) -> Content:
+        cached_icon = emojis.CACHE if config.theme.emoji else "[$success]C[/] "
+        bookmark_icon = emojis.BOOKMARK if config.theme.emoji else "[$success]B[/] "
+        if self.bookmarked:
+            prefix = bookmark_icon
+        elif self.cached:
+            prefix = cached_icon
+        else:
+            prefix = ""
+        return Content.from_markup(f"{prefix}[dim italic]{self.organization}[/]/{self.name}")
+
+    def clear_from_cache(self) -> None:
+        if self.cached:
+            clear_from_cache(self._endpoint_wildcard_version())
+            # Also delete overview
+            clear_from_cache(self._endpoint_wildcard_version().replace(".md", ".json"))
+            self._cached = False

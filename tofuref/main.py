@@ -21,6 +21,7 @@ from textual.widgets import (
 
 from tofuref import __version__
 from tofuref.config import config
+from tofuref.data.bookmarks import Bookmarks
 from tofuref.widgets import (
     CodeBlockSelect,
     ContentWindow,
@@ -71,6 +72,7 @@ class TofuRefApp(App):
         # Internal state
         self.fullscreen_mode = False
         self.providers = {}
+        self.bookmarks = Bookmarks()
         self.active_provider = None
         self.active_resource = None
 

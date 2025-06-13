@@ -2,22 +2,17 @@ import json
 import logging
 from collections.abc import Collection
 from pathlib import Path
-from typing import ClassVar, cast
 
-from textual.binding import BindingType
-from textual.widgets import OptionList
 from textual.widgets.option_list import Option
 
 from tofuref.data.helpers import get_registry_api
 from tofuref.data.providers import Provider
-from tofuref.widgets.keybindings import VIM_OPTION_LIST_NAVIGATE
+from tofuref.widgets.menu_option_list_base import MenuOptionListBase
 
 LOGGER = logging.getLogger(__name__)
 
 
-class ProvidersOptionList(OptionList):
-    BINDINGS: ClassVar[list[BindingType]] = [*OptionList.BINDINGS, *VIM_OPTION_LIST_NAVIGATE]
-
+class ProvidersOptionList(MenuOptionListBase):
     def __init__(self, **kwargs):
         super().__init__(
             name="Providers",
@@ -68,8 +63,10 @@ class ProvidersOptionList(OptionList):
             )
             if all(filter_in):
                 providers[provider.display_name] = provider
+                if self.app.bookmarks.check("providers", provider.identifying_name):
+                    provider.bookmarked = True
 
-        providers = {k: v for k, v in sorted(providers.items(), key=lambda p: (p[1].cached, p[1].popularity), reverse=True)}
+        providers = {k: v for k, v in sorted(providers.items(), key=lambda p: (p[1].bookmarked, p[1].cached, p[1].popularity), reverse=True)}
 
         return providers
 
@@ -79,3 +76,4 @@ class ProvidersOptionList(OptionList):
         if self.app.fullscreen_mode:
             self.screen.maximize(self.app.navigation_resources)
         await self.app.navigation_resources.load_provider_resources(provider_selected)
+        self.replace_option_prompt_at_index(self.highlighted, option.prompt)

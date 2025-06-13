@@ -120,8 +120,28 @@ def test_config_theme(snap_compare):
 
 
 def test_recent_provider(snap_compare, clear_mock_cache):
-    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "p", *SEARCH_GITHUB])
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "p"])
 
 
 def test_recent_resource(snap_compare, clear_mock_cache):
-    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "enter", "r", "/", "a"])
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "enter", "r"])
+
+
+def test_bookmark_provider(snap_compare):
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "b"])
+
+
+def test_bookmark_resource(snap_compare):
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "b"])
+
+
+def test_bookmark_cached_provider(snap_compare, clear_mock_cache):
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "p", "b"])
+
+
+def test_bookmark_cached_resource(snap_compare, clear_mock_cache):
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "enter", "r", "b"])
+
+
+def test_clear_from_cache(snap_compare, clear_mock_cache):
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "p", "ctrl+d"])
