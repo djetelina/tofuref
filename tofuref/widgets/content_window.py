@@ -42,6 +42,7 @@ Changelog: https://github.com/djetelina/tofuref/blob/main/CHANGELOG.md
 | `s`, `/` | **search** in the context of providers and resources |
 | `u`, `y` | Context aware copying (using a provider/resource) |
 | `v` | change active provider **version** |
+| `b` | persistently bookmark an item to prioritize them in sorting when next re-ordered |
 | `q`, `ctrl+q` | **quit** tofuref |
 | `t` | toggle **table of contents** from content window |
 | `ctrl+l` | display **log** window |

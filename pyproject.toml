@@ -45,10 +45,11 @@ Issues = "https://github.com/DJetelina/tofuref/issues"
 [dependency-groups]
 dev = [
     "textual-dev>=1.7.0",
-    "ruff>=0.11.12",
+    "ruff>=0.11.13",
     "pytest>=8.4.0",
     "pytest-asyncio>=1.0.0",
     "pytest-textual-snapshot>=1.1.0",
+    "pre-commit>=4.2.0",
 ]
 
 [project.scripts]

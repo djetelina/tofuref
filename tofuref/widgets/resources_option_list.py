@@ -1,17 +1,13 @@
-from typing import ClassVar, cast
+from typing import cast
 
-from textual.binding import BindingType
-from textual.widgets import OptionList
 from textual.widgets.option_list import Option
 
 from tofuref.data.providers import Provider
 from tofuref.data.resources import Resource
-from tofuref.widgets.keybindings import VIM_OPTION_LIST_NAVIGATE
+from tofuref.widgets.menu_option_list_base import MenuOptionListBase
 
 
-class ResourcesOptionList(OptionList):
-    BINDINGS: ClassVar[list[BindingType]] = [*OptionList.BINDINGS, *VIM_OPTION_LIST_NAVIGATE]
-
+class ResourcesOptionList(MenuOptionListBase):
     def __init__(self, **kwargs):
         super().__init__(
             name="Resources",
@@ -43,7 +39,7 @@ class ResourcesOptionList(OptionList):
     ):
         self.loading = True
         self.app.content_markdown.loading = True
-        await provider.load_resources()
+        await provider.load_resources(bookmarks=self.app.bookmarks)
         self.app.content_markdown.update(await provider.overview())
         self.app.content_markdown.document.border_subtitle = f"{provider.display_name} {provider.active_version} Overview"
         self.populate(provider)
@@ -58,7 +54,11 @@ class ResourcesOptionList(OptionList):
         if self.app.fullscreen_mode:
             self.screen.maximize(self.app.content_markdown)
         self.app.content_markdown.loading = True
+        was_cached = resource_selected.cached
         self.app.content_markdown.update(await resource_selected.content())
+        is_cached = resource_selected.cached
+        if was_cached != is_cached:
+            self.replace_option_prompt_at_index(self.highlighted, option.prompt)
         self.app.content_markdown.document.border_subtitle = (
             f"{resource_selected.type.value} - {resource_selected.provider.name}_{resource_selected.name}"
         )

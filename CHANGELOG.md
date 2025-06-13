@@ -10,7 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added a config option in the theme section to enable/disable emojis
-- Cached providers and resources are now sorted first, identified by 🕓 or `C`
+- Added the ability to bookmark items with the keybinding `b`, identified by 📌 or `B`
+- Cached items are now sorted first, identified by 🕓 or `C`
+- Items can now be cleared from cache with `ctrl+d`
 - Made name of the provider pop a little bit by dimming the organization
 
 ### Changed

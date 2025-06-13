@@ -7,3 +7,5 @@ VIM_OPTION_LIST_NAVIGATE = [
     Binding("ctrl+b", "page_down", "Page Down", show=False),
     Binding("ctrl+f", "page_up", "Page Up", show=False),
 ]
+BOOKMARK = Binding("b", "bookmark", "Bookmark")
+CLEAR_CACHE = Binding("ctrl+d", "purge_from_cache", "Purge from cache")
