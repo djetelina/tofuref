@@ -9,3 +9,5 @@ VIM_OPTION_LIST_NAVIGATE = [
 ]
 BOOKMARK = Binding("b", "bookmark", "Bookmark")
 CLEAR_CACHE = Binding("ctrl+d", "purge_from_cache", "Purge from cache")
+OPEN_GITHUB = Binding("ctrl+g", "open_github", "Open GitHub")
+GITHUB_STATS = Binding("ctrl+s", "github_stats", "GitHub Stats")

@@ -10,10 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Cached guides now display their intended page title instead of their 'name' taken from a doc filename
+- In provider window, GitHub repo of the provider can now be opened in a browser with `ctrl+g`
+- In provider window, GitHub stats for a provider's repo can now be shown with `s`
 
 ### Changed
 
 - Headers (frontmatter) of markdown documents in the registry are now handled by a proper library
+- Numbers are now formatted according to locale
+- Number of providers now have spaces around the `/` (out of) symbol
 
 ## [1.3.0] - 2025-06-13
 

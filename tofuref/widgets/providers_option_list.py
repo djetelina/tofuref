@@ -2,17 +2,22 @@ import json
 import logging
 from collections.abc import Collection
 from pathlib import Path
+from typing import ClassVar
 
+from textual.binding import BindingType
 from textual.widgets.option_list import Option
 
 from tofuref.data.helpers import get_registry_api
 from tofuref.data.providers import Provider
+from tofuref.widgets import keybindings
 from tofuref.widgets.menu_option_list_base import MenuOptionListBase
 
 LOGGER = logging.getLogger(__name__)
 
 
 class ProvidersOptionList(MenuOptionListBase):
+    BINDINGS: ClassVar[list[BindingType]] = [*MenuOptionListBase.BINDINGS, keybindings.OPEN_GITHUB, keybindings.GITHUB_STATS]
+
     def __init__(self, **kwargs):
         super().__init__(
             name="Providers",
@@ -30,7 +35,7 @@ class ProvidersOptionList(MenuOptionListBase):
         if providers is None:
             providers = self.app.providers.values()
         self.clear_options()
-        self.border_subtitle = f"{len(providers)}/{len(self.app.providers)}"
+        self.border_subtitle = f"{len(providers):n} / {len(self.app.providers):n}"
         for provider in providers:
             self.add_option(provider)
 
@@ -77,3 +82,32 @@ class ProvidersOptionList(MenuOptionListBase):
             self.screen.maximize(self.app.navigation_resources)
         await self.app.navigation_resources.load_provider_resources(provider_selected)
         self.replace_option_prompt_at_index(self.highlighted, option.prompt)
+
+    def action_open_github(self):
+        if self.highlighted is None:
+            return
+        option = self.get_option_at_index(self.highlighted)
+        provider: Provider = option.prompt
+        self.app.open_url(provider.github_url)
+
+    async def action_github_stats(self):
+        if self.highlighted is None:
+            return
+        option = self.get_option_at_index(self.highlighted)
+        provider: Provider = option.prompt
+        stats = await provider.github_stats()
+        if stats:
+            msg = f"Stars: [$primary]{stats['stars']}[/]\nOpen issues/PRs: [$primary]{stats['open_issues']}[/]"
+            if stats["archived"]:
+                msg += "\n[bold $warning]Archived[/]"
+            self.app.notify(
+                msg,
+                title=f"GitHub stats for {provider.organization}/{provider.name}",
+                timeout=15,
+            )
+        else:
+            self.app.notify(
+                "Something went wrong while fetching GitHub stats.",
+                title="GitHub stats error",
+                severity="error",
+            )

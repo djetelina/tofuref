@@ -36,6 +36,8 @@ tofuref
 | `q`, `ctrl+q` | **quit** tofuref                                                                 |
 | `t`           | toggle **table of contents** from content window                                 |
 | `ctrl+l`      | display **log** window                                                           |
+| `ctrl+g`      | open **GitHub** repository for provider                                          |
+| `ctrl+s`      | Show **stats** of provider's github repo                                         |
 
 #### Focus windows
 
@@ -104,3 +106,7 @@ borders_style = "vkey"
 ```bash
 pipx upgrade tofuref
 ```
+
+## Development notes
+
+`uv run --env-file=tests.env pytest --snapshot-update`

@@ -46,6 +46,8 @@ Changelog: https://github.com/djetelina/tofuref/blob/main/CHANGELOG.md
 | `q`, `ctrl+q` | **quit** tofuref |
 | `t` | toggle **table of contents** from content window |
 | `ctrl+l` | display **log** window |
+| `ctrl+g` | open **GitHub** repository for provider |
+| `ctrl+s` | Show **stats** of provider's github repo |
 
 ### Focus windows
 
