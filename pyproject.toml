@@ -4,12 +4,12 @@ description = "TUI for OpenTofu provider registry."
 requires-python = ">=3.10"
 dependencies = [
     "textual>=3.3.0",
-    "pyyaml>=6.0.2",
     "httpx>=0.28.1",
     "tomli>=2.2.1 ; python_full_version < '3.11'",
     "platformdirs>=4.3.7",
     "yaucl>=0.2.0",
     "packaging>=25.0",
+    "python-frontmatter>=1.1.0",
 ]
 authors = [
     { name = "David Jetelina" }

@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import TYPE_CHECKING
 
+import frontmatter
 from textual.content import Content
 
 from tofuref.config import config
@@ -9,7 +10,6 @@ from tofuref.data import emojis
 from tofuref.data.cache import cached_file_path, clear_from_cache
 from tofuref.data.helpers import (
     get_registry_api,
-    header_markdown_split,
 )
 from tofuref.data.meta import Item
 
@@ -31,6 +31,7 @@ class Resource(Item):
     type: ResourceType
     _content: str | None = None
     _cached: bool | None = None
+    _title: str | None = None
     bookmarked: bool = False
     kind = "resources"
 
@@ -42,7 +43,7 @@ class Resource(Item):
 
     @property
     def display_name(self):
-        return self.name
+        return self._title if self._title is not None else self.name
 
     def visualize(self):
         cached_icon = emojis.CACHE if config.theme.emoji else "[$success]C[/] "
@@ -54,7 +55,7 @@ class Resource(Item):
         else:
             prefix = ""
         resource_icon = emojis.RESOURCE_TYPE[self.type.value] if config.theme.emoji else f"[$secondary]{self.type.value[0].upper()}[/]"
-        return Content.from_markup(f"{resource_icon} {prefix}{self.name}")
+        return Content.from_markup(f"{resource_icon} {prefix}{self.display_name}")
 
     @property
     def identifying_name(self):
@@ -80,7 +81,11 @@ class Resource(Item):
                 json=False,
                 log_widget=self.provider.log_widget,
             )
-            _, self._content = header_markdown_split(doc_data)
+            doc = frontmatter.loads(doc_data)
+            self._content = doc.content
+            if self.type == ResourceType.GUIDE:
+                # noinspection PyTypeChecker
+                self._title = doc.metadata["page_title"]
             self._cached = True
         return self._content
 
