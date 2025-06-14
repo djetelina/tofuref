@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Cached guides now display their intended page title instead of their 'name' taken from a doc filename
+
+### Changed
+
+- Headers (frontmatter) of markdown documents in the registry are now handled by a proper library
+
 ## [1.3.0] - 2025-06-13
 
 ### Added

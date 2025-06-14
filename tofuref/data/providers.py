@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any
 
+import frontmatter
 from textual.content import Content
 
 from tofuref.config import config
@@ -9,7 +10,6 @@ from tofuref.data.bookmarks import Bookmarks
 from tofuref.data.cache import cached_file_path, clear_from_cache
 from tofuref.data.helpers import (
     get_registry_api,
-    header_markdown_split,
 )
 from tofuref.data.meta import Item
 from tofuref.data.resources import Resource, ResourceType
@@ -93,8 +93,9 @@ class Provider(Item):
 
     async def overview(self) -> str:
         if self._overview is None:
-            self._overview = await get_registry_api(self.endpoint, json=False, log_widget=self.log_widget)
-            _, self._overview = header_markdown_split(self._overview)
+            doc_data = await get_registry_api(self.endpoint, json=False, log_widget=self.log_widget)
+            doc = frontmatter.loads(doc_data)
+            self._overview = doc.content
             self._cached = True
         return self._overview
 
@@ -121,6 +122,11 @@ class Provider(Item):
         for resource in self.resources:
             if bookmarks.check("resources", resource.identifying_name):
                 resource.bookmarked = True
+            if resource.cached and resource.type == ResourceType.GUIDE:
+                # Guide titles should override names taken from the filename
+                # But we don't want to cache all of them just to get the titles
+                # so we load them only if they are cached
+                await resource.content()
 
         self.sort_resources()
 
