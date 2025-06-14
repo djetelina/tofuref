@@ -1,3 +1,4 @@
+import locale
 import logging
 import sys
 from collections.abc import Iterable
@@ -32,6 +33,7 @@ from tofuref.widgets import (
 )
 
 LOGGER = logging.getLogger(__name__)
+locale.setlocale(locale.LC_ALL, "")
 
 
 class TofuRefApp(App):

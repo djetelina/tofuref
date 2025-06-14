@@ -1,9 +1,16 @@
+import logging
+import os
+import shutil
+import subprocess
+from asyncio import create_subprocess_shell
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Literal
 
 import frontmatter
+import httpx
 from textual.content import Content
 
+from tofuref import __version__
 from tofuref.config import config
 from tofuref.data import emojis
 from tofuref.data.bookmarks import Bookmarks
@@ -13,6 +20,8 @@ from tofuref.data.helpers import (
 )
 from tofuref.data.meta import Item
 from tofuref.data.resources import Resource, ResourceType
+
+LOGGER = logging.getLogger(__name__)
 
 
 @dataclass
@@ -35,7 +44,8 @@ class Provider(Item):
     log_widget: Any | None = None
     bookmarked: bool = False
     _cached: bool | None = None
-    kind = "providers"
+    kind: Literal["providers"] = "providers"
+    _github_stats: dict[str, str] | None = None
 
     @classmethod
     def from_json(cls, data: dict) -> "Provider":
@@ -58,6 +68,11 @@ class Provider(Item):
     @property
     def identifying_name(self) -> str:
         return self.display_name
+
+    @property
+    def github_url(self) -> str:
+        # It would be safer to get the url from registry, but for now let's assume this pattern will stick for opentofu too :)
+        return f"https://github.com/{self.organization}/terraform-provider-{self.name}"
 
     @property
     def active_version(self) -> str:
@@ -152,3 +167,46 @@ class Provider(Item):
             # Also delete overview
             clear_from_cache(self._endpoint_wildcard_version().replace(".md", ".json"))
             self._cached = False
+
+    async def github_stats(self):
+        # Not the prettiest, but all the http requests and cache handling should be refactored soon
+        if self._github_stats:
+            return self._github_stats
+        headers = {"User-Agent": f"tofuref v{__version__}", "X-GitHub-Api-Version": "2022-11-28", "Accept": "application/vnd.github+json"}
+        if os.getenv("GITHUB_TOKEN"):
+            LOGGER.info("GitHub token found in env")
+            headers["Authorization"] = f"Bearer {os.getenv('GITHUB_TOKEN')}"
+        elif shutil.which("gh"):
+            process = await create_subprocess_shell("gh auth token", stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, _ = await process.communicate()
+            token = stdout.decode().strip()
+            # Ensure the stdout really produced token
+            if token.startswith("gh"):
+                LOGGER.info("Using gh to get GitHub token")
+                headers["Authorization"] = f"Bearer {token}"
+
+        async with httpx.AsyncClient(headers=headers) as client:
+            try:
+                ret = await client.get(
+                    f"https://api.github.com/repos/{self.organization}/terraform-provider-{self.name}", timeout=config.http_request_timeout
+                )
+            except httpx.HTTPError as _:
+                return self._github_stats
+        data = ret.json()
+
+        ok_status_code = 200
+        if ret.status_code == ok_status_code:
+            stats = {
+                "stars": data.get("stargazers_count", 0),
+                "open_issues": data.get("open_issues_count", 0),
+                "archived": data.get("archived", False),
+            }
+            if stats["stars"] == 0:
+                stats["stars"] = data.get("watchers_count", 0)
+            # localize
+            for k, v in stats.items():
+                if not isinstance(v, bool):
+                    stats[k] = f"{int(v):n}"
+
+            self._github_stats = stats
+        return self._github_stats

@@ -1,9 +1,6 @@
 import os
 from unittest.mock import patch
 
-import pytest
-from packaging.version import Version
-
 APP_PATH = "../tofuref/main.py"
 
 SEARCH_GITHUB = ["s", "g", "i", "t", "h", "u", "b"]
@@ -145,3 +142,7 @@ def test_bookmark_cached_resource(snap_compare, clear_mock_cache):
 
 def test_clear_from_cache(snap_compare, clear_mock_cache):
     assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "p", "ctrl+d"])
+
+
+def test_stats(snap_compare, clear_mock_cache):
+    assert snap_compare(APP_PATH, press=["ctrl+s"])

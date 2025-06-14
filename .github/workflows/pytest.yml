@@ -16,6 +16,8 @@ jobs:
   build:
     name: pytest
     runs-on: ubuntu-latest
+    env:
+      LANG: en_US.UTF-8
     strategy:
       matrix:
         python-version:
@@ -33,10 +35,12 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           enable-cache: true
+
       - name: Run pytest
-        run: uv run pytest tests -v
+        run: uv run --env-file=tests.env pytest tests -v
+
       - name: Upload snapshot report
-        if: always()
+        if: ${{ matrix.python-version == '3.13' }}
         uses: actions/upload-artifact@v4
         with:
           name: snapshot_report_textual

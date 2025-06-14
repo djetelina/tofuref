@@ -78,6 +78,7 @@ def mock_http_requests():
             / "github_action_env_secret.md",
             "https://api.opentofu.org/registry/docs/providers/integrations/github/v6.6.0/resources/membership.md": responses_dir
             / "github_membership.md",
+            "https://api.github.com/repos/hashicorp/terraform-provider-aws": responses_dir / "github_repo_provider_aws.json",
         }
 
         return Response(200, content=endpoint_map[url].read_bytes())

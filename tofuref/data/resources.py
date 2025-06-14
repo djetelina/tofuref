@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 import frontmatter
 from textual.content import Content
@@ -33,7 +33,7 @@ class Resource(Item):
     _cached: bool | None = None
     _title: str | None = None
     bookmarked: bool = False
-    kind = "resources"
+    kind: Literal["resources"] = "resources"
 
     def __lt__(self, other: "Resource") -> bool:
         return self.name < other.name
