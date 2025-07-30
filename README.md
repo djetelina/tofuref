@@ -30,11 +30,12 @@ tofuref
 | keybindings   | action                                                                           |
 |---------------|----------------------------------------------------------------------------------|
 | `s`, `/`      | **search** in the context of providers and resources                             |
-| `u`, `y`      | Context aware copying (using a provider/resource)                                |
+| `u`, `y`      | context aware copying (using a provider/resource)                                |
 | `v`           | change active provider **version**                                               |
 | `b`           | persistently bookmark an item to prioritize them in sorting when next re-ordered |
 | `q`, `ctrl+q` | **quit** tofuref                                                                 |
 | `t`           | toggle **table of contents** from content window                                 |
+| `B`           | from content window, open active page in browser                                 |
 | `ctrl+l`      | display **log** window                                                           |
 | `ctrl+g`      | open **GitHub** repository for provider                                          |
 | `ctrl+s`      | Show **stats** of provider's github repo                                         |
@@ -84,7 +85,7 @@ These options belong to a toml section, `[theme]`.
 | name          | description                                                                                                                          | type   | default                               | env                           |
 |---------------|--------------------------------------------------------------------------------------------------------------------------------------|--------|---------------------------------------|-------------------------------|
 | ui            | Colorscheme for the UI, inspect available themes through command palette (`^p`) `Change theme` command                               | string | textual-dark (or `TEXTUAL_THEME` env) | `TOFUREF_THEME_UI`            |
-| codeblocks    | The [pygments style](https://pygments.org/styles/) for code blocks                                                                   | string | material                              | `TOFUREF_THEME_CODEBLOCKS`    |
+| codeblocks    | **CURRENTLY WORKS ONLY IN COPY MENU** The [pygments style](https://pygments.org/styles/) for code blocks                             | string | material                              | `TOFUREF_THEME_CODEBLOCKS`    |
 | borders_style | The borders to use for windows, list and showcase of available [here](https://textual.textualize.io/styles/border/#all-border-types) | string | ascii                                 | `TOFUREF_THEME_BORDERS_STYLE` |
 | emoji         | Whether to display emojis or letters as icons                                                                                        | bool   | true                                  | `TOFUREF_THEME_EMOJI`         |
 
