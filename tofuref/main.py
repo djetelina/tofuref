@@ -101,10 +101,9 @@ class TofuRefApp(App):
     async def on_ready(self) -> None:
         LOGGER.debug("Starting on ready")
 
-        self.content_markdown.document.code_dark_theme = config.theme.codeblocks
-        self.content_markdown.document.classes = "bordered content"
-        self.content_markdown.document.border_title = "Content"
-        self.content_markdown.document.border_subtitle = "Welcome"
+        self.content_markdown.classes = "bordered content"
+        self.content_markdown.border_title = "Content"
+        self.content_markdown.border_subtitle = "Welcome"
 
         fullscreen_threshold = config.fullscreen_init_threshold
         if self.size.width < fullscreen_threshold:

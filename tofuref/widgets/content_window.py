@@ -12,20 +12,15 @@ class ContentWindow(MarkdownViewer):
     ALLOW_MAXIMIZE = True
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("up", "up", "Scroll Up", show=False),
-        Binding("k", "up", "Scroll Down", show=False),
-        Binding("down", "down", "Scroll Down", show=False),
-        Binding("j", "down", "Scroll Up", show=False),
-        Binding("pageup", "page_up", "Page Up", show=False),
+        Binding("k", "scroll_up", "Scroll Up", show=False),
+        Binding("j", "scroll_down", "Scroll Down", show=False),
         Binding("ctrl+f", "page_up", "Page Up", show=False),
-        Binding("pagedown", "page_down", "Page Down", show=False),
         Binding("ctrl+b", "page_down", "Page Down", show=False),
-        Binding("home", "scroll_home", "Top", show=False),
-        Binding("end", "scroll_end", "Bottom", show=False),
         Binding("G", "scroll_end", "Bottom", show=False),
         Binding("u", "yank", "Copy code blocks", show=False),
         Binding("y", "yank", "Copy code blocks"),
         Binding("t", "toggle_toc", "Toggle TOC"),
+        Binding("B", "open_browser", "Open in browser"),
     ]
 
     def __init__(self, content=None, **kwargs):
@@ -45,6 +40,7 @@ Changelog: https://github.com/djetelina/tofuref/blob/main/CHANGELOG.md
 | `b` | persistently bookmark an item to prioritize them in sorting when next re-ordered |
 | `q`, `ctrl+q` | **quit** tofuref |
 | `t` | toggle **table of contents** from content window |
+| `B` | from content window, open active page in browser |
 | `ctrl+l` | display **log** window |
 | `ctrl+g` | open **GitHub** repository for provider |
 | `ctrl+s` | Show **stats** of provider's github repo |
@@ -80,24 +76,6 @@ VIM keybindings should be also supported in a limited capacity.
             **kwargs,
         )
 
-    def action_up(self) -> None:
-        self.document.scroll_up()
-
-    def action_down(self) -> None:
-        self.document.scroll_down()
-
-    def action_page_down(self) -> None:
-        self.document.action_page_down()
-
-    def action_page_up(self) -> None:
-        self.document.action_page_up()
-
-    def action_scroll_home(self) -> None:
-        self.document.scroll_home()
-
-    def action_scroll_end(self) -> None:
-        self.document.scroll_end()
-
     def update(self, markdown: str) -> None:
         self.content = markdown
         self.document.update(markdown)
@@ -122,6 +100,13 @@ VIM keybindings should be also supported in a limited capacity.
         self.screen.mount(self.app.code_block_selector)
         self.app.code_block_selector.set_new_options(code_blocks)
         self.screen.maximize(self.app.code_block_selector)
+
+    def action_open_browser(self):
+        provider = self.app.active_provider.display_name
+        resource_type = self.app.active_resource.type.value
+        resource_name = self.app.active_resource.name
+        url = f"https://search.opentofu.org/provider/{provider}/latest/docs/{resource_type}s/{resource_name}"
+        self.app.open_url(url)
 
     # Without this, the Markdown viewer would try to open a file on a disk, while the Markdown itself will open a browser link (desired)
     async def go(self, location):
