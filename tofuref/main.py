@@ -1,5 +1,7 @@
+import asyncio
 import locale
 import logging
+import os
 import sys
 from collections.abc import Iterable
 from typing import ClassVar
@@ -101,10 +103,6 @@ class TofuRefApp(App):
     async def on_ready(self) -> None:
         LOGGER.debug("Starting on ready")
 
-        self.content_markdown.classes = "bordered content"
-        self.content_markdown.border_title = "Content"
-        self.content_markdown.border_subtitle = "Welcome"
-
         fullscreen_threshold = config.fullscreen_init_threshold
         if self.size.width < fullscreen_threshold:
             self.fullscreen_mode = True
@@ -115,7 +113,7 @@ class TofuRefApp(App):
             self.screen.maximize(self.navigation_providers)
 
         self.navigation_providers.loading = True
-        self.screen.refresh()
+        await self.pause()
         LOGGER.debug("Starting on ready done, running preload worker")
         self.app.run_worker(self._preload, name="preload")
         self.call_later(self.check_for_new_version)
@@ -123,13 +121,27 @@ class TofuRefApp(App):
     async def _preload(self) -> None:
         LOGGER.debug("preload start")
         self.log_widget.write("Populating providers from the registry API")
+        self.navigation_providers.border_subtitle = "Fetching registry data..."
+        await self.pause()
         self.providers = await self.navigation_providers.load_index()
         self.log_widget.write(f"Providers loaded ([cyan bold]{len(self.providers)}[/])")
+        self.navigation_providers.border_subtitle = "Populating providers..."
+        if not os.environ.get("PYTEST_VERSION"):
+            LOGGER.info("Running tests")
+        await self.pause()
         self.navigation_providers.populate()
         self.navigation_providers.loading = False
+        self.navigation_providers.focus()
         self.navigation_providers.highlighted = 0
         self.log_widget.write(Markdown("---"))
         LOGGER.info("Initial load complete")
+
+    @staticmethod
+    async def pause(seconds=0.01):
+        """Used to yield event loop to textual so that it can render."""
+        # snapshot tests are super unhappy when they should be waiting based on time, so we'll block them
+        if not os.environ.get("PYTEST_VERSION"):
+            await asyncio.sleep(seconds)
 
     async def check_for_new_version(self) -> None:
         newest_version = await get_current_pypi_version()

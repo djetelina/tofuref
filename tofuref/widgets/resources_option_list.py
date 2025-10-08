@@ -28,8 +28,7 @@ class ResourcesOptionList(MenuOptionListBase):
         self.border_subtitle = f"{provider.organization}/{provider.name} {provider.active_version}"
 
         if resources is None:
-            for resource in provider.resources:
-                self.add_option(resource)
+            self.add_options(provider.resources)
         else:
             self.add_options(resources)
 
@@ -39,13 +38,24 @@ class ResourcesOptionList(MenuOptionListBase):
     ):
         self.loading = True
         self.app.content_markdown.loading = True
+        self.border_subtitle = "Fetching provider data..."
+        # Let the loading paint
+        await self.app.pause()
+        await self.app.content_markdown.update(await provider.overview())
+        self.app.content_markdown.border_subtitle = f"{provider.display_name} {provider.active_version} Overview"
+        # Let the content update behind the loading screen
+        await self.app.pause()
+        self.app.content_markdown.loading = False
+        # Show the content
+        self.border_subtitle = "Fetching resources..."
+        await self.app.pause()
         await provider.load_resources(bookmarks=self.app.bookmarks)
-        self.app.content_markdown.update(await provider.overview())
-        self.app.content_markdown.document.border_subtitle = f"{provider.display_name} {provider.active_version} Overview"
+        # Progress the loading by a little bit
+        self.border_subtitle = "Populating resources..."
+        await self.app.pause()
         self.populate(provider)
         self.focus()
         self.highlighted = 0
-        self.app.content_markdown.loading = False
         self.loading = False
 
     async def on_option_selected(self, option: Option):
@@ -55,11 +65,11 @@ class ResourcesOptionList(MenuOptionListBase):
             self.screen.maximize(self.app.content_markdown)
         self.app.content_markdown.loading = True
         was_cached = resource_selected.cached
-        self.app.content_markdown.update(await resource_selected.content())
+        await self.app.content_markdown.update(await resource_selected.content())
         is_cached = resource_selected.cached
         if was_cached != is_cached:
             self.replace_option_prompt_at_index(self.highlighted, option.prompt)
-        self.app.content_markdown.document.border_subtitle = (
+        self.app.content_markdown.border_subtitle = (
             f"{resource_selected.type.value} - {resource_selected.provider.name}_{resource_selected.name}"
         )
         self.app.content_markdown.document.focus()

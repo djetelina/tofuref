@@ -35,9 +35,8 @@ class ProvidersOptionList(MenuOptionListBase):
         if providers is None:
             providers = self.app.providers.values()
         self.clear_options()
+        self.add_options(providers)
         self.border_subtitle = f"{len(providers):n} / {len(self.app.providers):n}"
-        for provider in providers:
-            self.add_option(provider)
 
     async def load_index(self) -> dict[str, Provider]:
         LOGGER.debug("Loading providers")
@@ -56,6 +55,7 @@ class ProvidersOptionList(MenuOptionListBase):
             )
 
         LOGGER.debug("Got API response (or fallback)")
+        await self.app.pause()
 
         for provider_json in data["providers"]:
             provider = Provider.from_json(provider_json)
@@ -70,9 +70,10 @@ class ProvidersOptionList(MenuOptionListBase):
                 providers[provider.display_name] = provider
                 if self.app.bookmarks.check("providers", provider.identifying_name):
                     provider.bookmarked = True
-
+        await self.app.pause()
         providers = {k: v for k, v in sorted(providers.items(), key=lambda p: (p[1].bookmarked, p[1].cached, p[1].popularity), reverse=True)}
 
+        await self.app.pause()
         return providers
 
     async def on_option_selected(self, option: Option) -> None:
@@ -80,7 +81,9 @@ class ProvidersOptionList(MenuOptionListBase):
         self.app.active_provider = provider_selected
         if self.app.fullscreen_mode:
             self.screen.maximize(self.app.navigation_resources)
+        await self.app.pause()
         await self.app.navigation_resources.load_provider_resources(provider_selected)
+        await self.app.pause()
         self.replace_option_prompt_at_index(self.highlighted, option.prompt)
 
     def action_open_github(self):

@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 import shutil
@@ -127,12 +128,20 @@ class Provider(Item):
         )
         for g in sorted(resource_data["docs"]["guides"], key=lambda x: x["name"]):
             self.resources.append(Resource(g["name"], self, type=ResourceType.GUIDE))
+        if not os.environ.get("PYTEST_VERSION"):
+            await asyncio.sleep(0.1)
         for r in sorted(resource_data["docs"]["resources"], key=lambda x: x["name"]):
             self.resources.append(Resource(r["name"], self, type=ResourceType.RESOURCE))
+        if not os.environ.get("PYTEST_VERSION"):
+            await asyncio.sleep(0.1)
         for d in sorted(resource_data["docs"]["datasources"], key=lambda x: x["name"]):
             self.resources.append(Resource(d["name"], self, type=ResourceType.DATASOURCE))
+        if not os.environ.get("PYTEST_VERSION"):
+            await asyncio.sleep(0.1)
         for f in sorted(resource_data["docs"]["functions"], key=lambda x: x["name"]):
             self.resources.append(Resource(f["name"], self, type=ResourceType.FUNCTION))
+        if not os.environ.get("PYTEST_VERSION"):
+            await asyncio.sleep(0.1)
 
         for resource in self.resources:
             if bookmarks.check("resources", resource.identifying_name):
