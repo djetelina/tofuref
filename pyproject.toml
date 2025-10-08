@@ -3,10 +3,10 @@ name = "tofuref"
 description = "TUI for OpenTofu provider registry."
 requires-python = ">=3.10"
 dependencies = [
-    "textual>=5.0.1",
+    "textual>=6.2.1",
     "httpx>=0.28.1",
     "tomli>=2.2.1 ; python_full_version < '3.11'",
-    "platformdirs>=4.3.7",
+    "platformdirs>=4.5.0",
     "yaucl>=0.2.0",
     "packaging>=25.0",
     "python-frontmatter>=1.1.0",
@@ -45,11 +45,11 @@ Issues = "https://github.com/DJetelina/tofuref/issues"
 [dependency-groups]
 dev = [
     "textual-dev>=1.7.0",
-    "ruff>=0.12.7",
-    "pytest>=8.4.1",
-    "pytest-asyncio>=1.1.0",
+    "ruff>=0.14.0",
+    "pytest>=8.4.2",
+    "pytest-asyncio>=1.2.0",
     "pytest-textual-snapshot>=1.1.0",
-    "pre-commit>=4.2.0",
+    "pre-commit>=4.3.0",
 ]
 
 [project.scripts]
@@ -64,6 +64,10 @@ packages = ["tofuref"]
 
 [tool.hatch.version]
 path = "tofuref/__init__.py"
+
+[tool.hatch.version.raw-options]
+fallback_version = "0.0.0"
+local_scheme = "no-local-version"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
