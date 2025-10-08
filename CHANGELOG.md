@@ -15,11 +15,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Eliminate initial layout “jumping”
   - Note: Launch may be slightly slower; changes focus on perceived responsiveness
 
+### Changed
+
+- Default borders changed from `ascii` to `vkey`, you can still revert to `ascii` with your local configuration
+- Welcome content was refreshed
+
 ### Fixed
 
 - Normalized em/en dashes to hyphens so headings render correctly in the content viewer
 - Corrected the cache purge notification to refer to the right item type (Resource vs Provider)
 - Set a more descriptive subtitle for resource content pages
+- Open in browser in the welcome tab now opens this changelog instead of crashing the application
 
 ## [1.4.0] - 2025-07-30
 

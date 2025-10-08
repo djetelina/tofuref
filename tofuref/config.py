@@ -8,7 +8,7 @@ from yaucl import BaseConfig, BaseSectionConfig
 class ThemeConfig(BaseSectionConfig):
     ui: str = DEFAULT_THEME
     codeblocks: str = "material"
-    borders_style: str = "ascii"
+    borders_style: str = "vkey"
     emoji: bool = True
 
 
