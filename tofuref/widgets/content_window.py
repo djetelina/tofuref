@@ -25,11 +25,27 @@ class ContentWindow(MarkdownViewer):
 
     def __init__(self, content=None, **kwargs):
         welcome_content = f"""
-# Welcome to tofuref {__version__}!
+# Welcome to tofuref {__version__} 👋
+
+Keyboard-first reference viewer for OpenTofu/Terraform providers and their resources.
 
 Changelog: https://github.com/djetelina/tofuref/blob/main/CHANGELOG.md
 
-## Controls
+---
+
+## Quick start
+
+1. Press `s` or `/` to search providers and resources.
+2. Use arrow keys (or VIM `j`/`k`) to select a provider, then a resource.
+3. View rich docs in this window. Press `t` to toggle the Table of Contents.
+4. Press `y` (or `u`) to copy code blocks — pick the exact snippet you need.
+5. Press `B` to open the current page in your browser.
+
+Tip: Use `b` to bookmark frequently used items and prioritize them in future sort orders.
+
+---
+
+## Keyboard reference
 
 ### Actions
 | keybindings | action |
@@ -45,7 +61,7 @@ Changelog: https://github.com/djetelina/tofuref/blob/main/CHANGELOG.md
 | `ctrl+g` | open **GitHub** repository for provider |
 | `ctrl+s` | Show **stats** of provider's github repo |
 
-### Focus windows
+### Focus management
 
 | keybindings | action |
 |------|--------|
@@ -56,15 +72,14 @@ Changelog: https://github.com/djetelina/tofuref/blob/main/CHANGELOG.md
 | `c` | focus **content** window |
 | `f` | toggle **fullscreen** mode |
 
-### Navigate in a window
+### In-window navigation
 
-Navigate with arrows/page up/page down/home/end or your mouse.
-
-VIM keybindings should be also supported in a limited capacity.
+- Arrow keys, PageUp/PageDown, Home/End, or your mouse.
+- VIM-style: `j`/`k` for line scroll, `ctrl+f` page down, `ctrl+b` page up, `G` to end.
 
 ---
 
-# Get in touch
+## Get in touch
 * GitHub: https://github.com/djetelina/tofuref"""
 
         self.content = content if content is not None else welcome_content
@@ -105,10 +120,13 @@ VIM keybindings should be also supported in a limited capacity.
         self.screen.maximize(self.app.code_block_selector)
 
     def action_open_browser(self):
-        provider = self.app.active_provider.display_name
-        resource_type = self.app.active_resource.type.value
-        resource_name = self.app.active_resource.name
-        url = f"https://search.opentofu.org/provider/{provider}/latest/docs/{resource_type}s/{resource_name}"
+        if not self.app.active_provider:
+            url = "https://github.com/djetelina/tofuref/blob/main/CHANGELOG.md"
+        else:
+            provider = self.app.active_provider.display_name
+            resource_type = self.app.active_resource.type.value
+            resource_name = self.app.active_resource.name
+            url = f"https://search.opentofu.org/provider/{provider}/latest/docs/{resource_type}s/{resource_name}"
         self.app.open_url(url)
 
     # Without this, the Markdown viewer would try to open a file on a disk, while the Markdown itself will open a browser link (desired)

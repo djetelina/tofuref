@@ -9,6 +9,19 @@ TUI for OpenTofu provider registry.
 
 ![Screenshot](https://github.com/djetelina/tofuref/blob/main/tests/__snapshots__/test_snapshots/test_welcome.svg?raw=true)
 
+## Features
+
+* Keyboard first navigation
+* Searchable index of providers and resources
+* Copy blocks for your `required_providers`
+* Copy snippets from the docs
+* Browse all provider versions
+* Bookmark frequently used providers and resources
+* Cache visited providers and resources
+* If the markdown viewer is not sufficient for you, quickly open the resource in your web browser
+* Check provider stats to see if they are production ready based on stars and forks
+* Configurable look to match the rest of your system
+
 ## Installation
 
 ```bash
@@ -97,8 +110,8 @@ Author's configuration:
 fullscreen_init_threshold = 160
 
 [theme]
-ui = "monokai"
-codeblocks = "monokai"
+ui = "dracula"
+codeblocks = "dracula"
 borders_style = "vkey"
 ```
 
