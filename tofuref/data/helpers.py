@@ -26,6 +26,7 @@ async def get_registry_api(endpoint: str, json: bool = True, log_widget: Any | N
         if log_widget is not None:
             log_widget.write(f"Cache hit [cyan]{cached_file_path(endpoint)}[/]")
         return jsonlib.loads(cached_content) if json else cached_content
+    LOGGER.info(f"Cache miss for {endpoint}")
     LOGGER.debug("Starting async client")
     async with httpx.AsyncClient(headers={"User-Agent": f"tofuref v{__version__}"}) as client:
         LOGGER.debug("Client started, sending request")
@@ -42,6 +43,7 @@ async def get_registry_api(endpoint: str, json: bool = True, log_widget: Any | N
         log_widget.write(f"GET [cyan]{endpoint}[/] [bold]{r.status_code}[/]")
 
     # Saving as text, because we are loading JSON if desired during cache hit
+    LOGGER.info(f"Saving {endpoint} to cache")
     save_to_cache(endpoint, r.text)
 
     return r.json() if json else r.text

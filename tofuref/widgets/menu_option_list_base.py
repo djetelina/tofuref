@@ -33,4 +33,4 @@ class MenuOptionListBase(OptionList):
         res: Item = option.prompt
         res.clear_from_cache()
         self.replace_option_prompt_at_index(self.highlighted, option.prompt)
-        self.app.notify(f"Provider {res.display_name} purged from cache", title="Cache purged")
+        self.app.notify(f"{res.__class__.__name__} {res.display_name} purged from cache", title="Cache purged")

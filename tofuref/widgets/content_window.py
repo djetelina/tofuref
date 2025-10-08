@@ -75,10 +75,13 @@ VIM keybindings should be also supported in a limited capacity.
             id="content",
             **kwargs,
         )
+        self.classes = "bordered content"
+        self.border_title = "Content"
+        self.border_subtitle = "Welcome"
 
-    def update(self, markdown: str) -> None:
-        self.content = markdown
-        self.document.update(markdown)
+    async def update(self, markdown: str) -> None:
+        self.content = sanitize_markdown(markdown)
+        await self.document.update(self.content)
 
     def action_toggle_toc(self):
         self.show_table_of_contents = not self.show_table_of_contents
@@ -111,3 +114,10 @@ VIM keybindings should be also supported in a limited capacity.
     # Without this, the Markdown viewer would try to open a file on a disk, while the Markdown itself will open a browser link (desired)
     async def go(self, location):
         return None
+
+
+def sanitize_markdown(markdown: str) -> str:
+    """
+    Place to sanitize content that is incompatible with textual's Markdown.
+    """
+    return markdown.replace("–", "-").replace("—", "-")  # noqa: RUF001
