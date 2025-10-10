@@ -7,15 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Many big speed improvements
+    - Some things are now done in parallel
+    - Asynchronous access to the filesystem, should greatly increase responsiveness on slow disks
+    - Some widgets are now not showing until they are ready
+    - Check for cached doesn't happen for every single entry
+    - Loading indicator on startup to let things load faster in the background
+    - Config options for loading times notifications and for ignoring cache, mainly for development purposes
+- Backspace/left arrow now take you from resources to providers (WIP - readme and more bindings like this)
+
+### Changed
+
+- Temporarily dropped python 3.14 support because `aiopath` is not yet compatible, the speed is worth it for now
+- Providers by the `opentofu` organization are not displayed, because they are forks and originals should be used
+- Purge from cache doesn't appear (and doesn't work) when the item is not cached
+
 ## [1.5.0] - 2025-10-09
 
 ### Added
 
 - Improved perceived responsiveness during app launch and when loading large providers
-  - Subtitles now inform what is happening in the background
-  - The screen gets refreshed more often, resulting in somewhat working loading indicators
-  - Eliminate initial layout “jumping”
-  - Note: Launch may be slightly slower; changes focus on perceived responsiveness
+    - Subtitles now inform what is happening in the background
+    - The screen gets refreshed more often, resulting in somewhat working loading indicators
+    - Eliminate initial layout “jumping”
+    - Note: Launch may be slightly slower; changes focus on perceived responsiveness
 
 ### Changed
 

@@ -1,8 +1,8 @@
 import json
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Literal
 
+from aiopath import AsyncPath
 from platformdirs import user_cache_path
 
 KIND_TYPE = Literal["resources", "providers"]
@@ -11,37 +11,37 @@ KIND_TYPE = Literal["resources", "providers"]
 @dataclass
 class Bookmarks:
     saved: dict[KIND_TYPE, list[str]] | None = None
-    folder_path: Path = field(default_factory=lambda: user_cache_path("tofuref", ensure_exists=True))
+    folder_path: AsyncPath = field(default_factory=lambda: AsyncPath(user_cache_path("tofuref", ensure_exists=True)))
     filename: str = "bookmarks.json"
 
-    def __post_init__(self):
-        self.load_from_disk()
+    async def async_post_init(self):
+        await self.load_from_disk()
 
     @property
-    def path(self) -> Path:
+    def path(self) -> AsyncPath:
         return self.folder_path / self.filename
 
     def check(self, kind: KIND_TYPE, identifier: str) -> bool:
         return identifier in self.saved[kind]
 
-    def add(self, kind: KIND_TYPE, identifier: str):
+    async def add(self, kind: KIND_TYPE, identifier: str):
         if not self.check(kind, identifier):
             self.saved[kind].append(identifier)
-            self.save_to_disk()
+            await self.save_to_disk()
 
-    def remove(self, kind: KIND_TYPE, identifier: str):
+    async def remove(self, kind: KIND_TYPE, identifier: str):
         if self.check(kind, identifier):
             self.saved[kind].remove(identifier)
-            self.save_to_disk()
+            await self.save_to_disk()
 
-    def save_to_disk(self):
-        self.path.write_text(json.dumps(self.saved))
+    async def save_to_disk(self):
+        await self.path.write_text(json.dumps(self.saved))
 
-    def load_from_disk(self):
-        if not self.path.exists():
+    async def load_from_disk(self):
+        if not await self.path.exists():
             self.saved = {
                 "providers": [],
                 "resources": [],
             }
         else:
-            self.saved = json.loads(self.path.read_text())
+            self.saved = json.loads(await self.path.read_text())

@@ -7,7 +7,7 @@ from textual.content import Content
 
 from tofuref.config import config
 from tofuref.data import emojis
-from tofuref.data.cache import cached_file_path, clear_from_cache
+from tofuref.data.cache import clear_from_cache
 from tofuref.data.helpers import (
     get_registry_api,
 )
@@ -30,7 +30,7 @@ class Resource(Item):
     provider: "Provider"
     type: ResourceType
     _content: str | None = None
-    _cached: bool | None = None
+    cached: bool = False
     _title: str | None = None
     bookmarked: bool = False
     kind: Literal["resources"] = "resources"
@@ -68,12 +68,6 @@ class Resource(Item):
     def endpoint(self) -> str:
         return f"{self.provider.organization}/{self.provider.name}/{self.provider.active_version}/{self.type.value}s/{self.name}.md"
 
-    @property
-    def cached(self) -> bool:
-        if self._cached is None:
-            return cached_file_path(self.endpoint.replace(self.provider.active_version, "*"), glob=True).exists()
-        return self._cached
-
     async def content(self):
         if self._content is None:
             doc_data = await get_registry_api(
@@ -86,10 +80,11 @@ class Resource(Item):
             if self.type == ResourceType.GUIDE:
                 # noinspection PyTypeChecker
                 self._title = doc.metadata["page_title"]
-            self._cached = True
+            self.cached = True
         return self._content
 
-    def clear_from_cache(self) -> None:
+    async def clear_from_cache(self) -> None:
+        # TODO clear all versions?
         if self.cached:
-            clear_from_cache(self.endpoint)
-            self._cached = False
+            await clear_from_cache(self.endpoint)
+            self.cached = False

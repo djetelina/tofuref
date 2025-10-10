@@ -15,7 +15,7 @@ from tofuref import __version__
 from tofuref.config import config
 from tofuref.data import emojis
 from tofuref.data.bookmarks import Bookmarks
-from tofuref.data.cache import cached_file_path, clear_from_cache
+from tofuref.data.cache import clear_from_cache, get_cached_resources
 from tofuref.data.helpers import (
     get_registry_api,
 )
@@ -44,7 +44,7 @@ class Provider(Item):
     guides: list[Resource] = field(default_factory=list)
     log_widget: Any | None = None
     bookmarked: bool = False
-    _cached: bool | None = None
+    cached: bool = False
     kind: Literal["providers"] = "providers"
     _github_stats: dict[str, str] | None = None
 
@@ -95,12 +95,6 @@ class Provider(Item):
         return self.endpoint.replace(self.active_version, "*")
 
     @property
-    def cached(self) -> bool:
-        if self._cached is None:
-            return cached_file_path(self._endpoint_wildcard_version(), glob=True).exists()
-        return self._cached
-
-    @property
     def use_configuration(self) -> str:
         return f"""    {self.name} = {{
       source  = "{self.organization}/{self.name}"
@@ -112,7 +106,7 @@ class Provider(Item):
             doc_data = await get_registry_api(self.endpoint, json=False, log_widget=self.log_widget)
             doc = frontmatter.loads(doc_data)
             self._overview = doc.content
-            self._cached = True
+            self.cached = True
         return self._overview
 
     async def load_resources(self, bookmarks: Bookmarks) -> None:
@@ -128,29 +122,27 @@ class Provider(Item):
         )
         for g in sorted(resource_data["docs"]["guides"], key=lambda x: x["name"]):
             self.resources.append(Resource(g["name"], self, type=ResourceType.GUIDE))
-        if not os.environ.get("PYTEST_VERSION"):
-            await asyncio.sleep(0.1)
         for r in sorted(resource_data["docs"]["resources"], key=lambda x: x["name"]):
             self.resources.append(Resource(r["name"], self, type=ResourceType.RESOURCE))
-        if not os.environ.get("PYTEST_VERSION"):
-            await asyncio.sleep(0.1)
         for d in sorted(resource_data["docs"]["datasources"], key=lambda x: x["name"]):
             self.resources.append(Resource(d["name"], self, type=ResourceType.DATASOURCE))
-        if not os.environ.get("PYTEST_VERSION"):
-            await asyncio.sleep(0.1)
         for f in sorted(resource_data["docs"]["functions"], key=lambda x: x["name"]):
             self.resources.append(Resource(f["name"], self, type=ResourceType.FUNCTION))
-        if not os.environ.get("PYTEST_VERSION"):
-            await asyncio.sleep(0.1)
 
+        cached_resources = await get_cached_resources(self.organization, self.name, self.active_version)
+        preload_content = []
         for resource in self.resources:
             if bookmarks.check("resources", resource.identifying_name):
                 resource.bookmarked = True
+            if f"{resource.type.value}s/{resource.name}" in cached_resources:
+                resource.cached = True
             if resource.cached and resource.type == ResourceType.GUIDE:
                 # Guide titles should override names taken from the filename
                 # But we don't want to cache all of them just to get the titles
                 # so we load them only if they are cached
-                await resource.content()
+                preload_content.append(resource.content())
+
+        await asyncio.gather(*preload_content)
 
         self.sort_resources()
 
@@ -170,12 +162,12 @@ class Provider(Item):
             prefix = ""
         return Content.from_markup(f"{prefix}[dim italic]{self.organization}[/]/{self.name}")
 
-    def clear_from_cache(self) -> None:
+    async def clear_from_cache(self) -> None:
         if self.cached:
-            clear_from_cache(self._endpoint_wildcard_version())
+            await clear_from_cache(self._endpoint_wildcard_version())
             # Also delete overview
-            clear_from_cache(self._endpoint_wildcard_version().replace(".md", ".json"))
-            self._cached = False
+            await clear_from_cache(self._endpoint_wildcard_version().replace(".md", ".json"))
+            self.cached = False
 
     async def github_stats(self):
         # Not the prettiest, but all the http requests and cache handling should be refactored soon

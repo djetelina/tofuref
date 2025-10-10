@@ -25,7 +25,7 @@ jobs:
           - "3.11"
           - "3.12"
           - "3.13"
-          - "3.14"
+#          - "3.14"
 
     steps:
       - uses: actions/checkout@v4
@@ -40,7 +40,7 @@ jobs:
         run: uv run --env-file=tests.env pytest tests -v
 
       - name: Upload snapshot report
-        if: ${{ matrix.python-version == '3.13' }}
+        if: ${{ failure() && startsWith(matrix.python-version, '3.13') }}
         uses: actions/upload-artifact@v4
         with:
           name: snapshot_report_textual
