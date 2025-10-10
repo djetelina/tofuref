@@ -53,6 +53,8 @@ tofuref
 | `ctrl+g`      | open **GitHub** repository for provider                                          |
 | `ctrl+s`      | Show **stats** of provider's github repo                                         |
 
+> Note: The GitHub functionality tries to use your GitHub token (env or `gh` cli) to avoid rate limiting.
+
 #### Focus windows
 
 | keybindings | action                     |
@@ -123,4 +125,32 @@ pipx upgrade tofuref
 
 ## Development notes
 
-`uv run --env-file=tests.env pytest --snapshot-update`
+### Setup
+
+    uv sync (-p 3.14)
+
+### Testing
+
+Run tests:
+
+    uv run --env-file=tests.env pytest
+
+Update snapshots for tests if the diff was expected:
+
+    uv run --env-file=tests.env pytest --snapshot-update
+
+### Undocumented config options
+
+Intended mainly for development.
+
+Force downloading from API to see the first time load experience:
+
+    TOFUREF_DISABLE_CACHE=1 uv run tofuref
+
+Show popups with load times for provider/resource listings:
+
+    TOFUREF_SHOW_LOAD_TIMES=1 uv run tofuref
+
+Or combine those:
+
+    TOFUREF_SHOW_LOAD_TIMES=1 TOFUREF_DISABLE_CACHE=1 uv run tofuref

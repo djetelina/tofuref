@@ -1,12 +1,20 @@
 from datetime import datetime
-from pathlib import Path
 
+from aiopath import AsyncPath
 from platformdirs import user_cache_path
 
 from tofuref.config import config
 
 
-def cached_file_path(endpoint: str, glob: bool = False) -> Path:
+def get_cache_path() -> AsyncPath:
+    """Gets the user cache path converted to AsyncPath"""
+    # This can't be a variable because pytest doesn't like that.
+    # And we leave ensure_exists synchronous, because it doesn't matter really
+    # (The real reason is it's also in the default factory of bookmarks, so who knows what gets called first)
+    return AsyncPath(user_cache_path("tofuref", ensure_exists=True))
+
+
+async def cached_file_path(endpoint: str, glob: bool = False) -> AsyncPath:
     """
     Args:
         endpoint: http endpoint of the registry API
@@ -18,18 +26,19 @@ def cached_file_path(endpoint: str, glob: bool = False) -> Path:
     """
     filename = endpoint.replace("/", "_")
     if glob:
-        matches = list(user_cache_path("tofuref", ensure_exists=True).glob(filename))
+        matches = [p async for p in get_cache_path().glob(filename)]
         if matches:
-            return Path(matches[0])
-    return user_cache_path("tofuref", ensure_exists=True) / filename
+            return AsyncPath(matches[0])
+    return get_cache_path() / filename
 
 
-def save_to_cache(endpoint: str, contents: str) -> None:
-    cached_file = cached_file_path(endpoint)
-    cached_file.write_text(contents)
+async def save_to_cache(endpoint: str, contents: str) -> None:
+    if not config.disable_cache:
+        cached_file = await cached_file_path(endpoint)
+        await cached_file.write_text(contents)
 
 
-def is_provider_index_expired(file: Path) -> bool:
+async def is_provider_index_expired(file: AsyncPath) -> bool:
     """
     Provider index is mutable, we consider it expired after 31 days (unconfigurable for now)
 
@@ -38,18 +47,33 @@ def is_provider_index_expired(file: Path) -> bool:
     """
     timeout = config.index_cache_duration_days * 86400
     now = datetime.now().timestamp()
-    return file == cached_file_path("index.json") and now - file.stat().st_mtime >= timeout
+    return file == await cached_file_path("index.json") and now - (await file.stat()).st_mtime >= timeout
 
 
-def get_from_cache(endpoint: str) -> str | None:
-    cached_file = cached_file_path(endpoint)
-    if not cached_file.exists() or is_provider_index_expired(cached_file):
+async def get_from_cache(endpoint: str) -> str | None:
+    """Loads from cache, unless the provider index is expired or cache is disabled in config"""
+    cached_file = await cached_file_path(endpoint)
+    if not await cached_file.exists() or await is_provider_index_expired(cached_file) or config.disable_cache:
         return None
-    return cached_file.read_text()
+    return await cached_file.read_text()
 
 
-def clear_from_cache(endpoint: str) -> None:
-    cached_file = cached_file_path(endpoint, glob=True)
-    while cached_file.exists():
-        cached_file.unlink()
-        cached_file = cached_file_path(endpoint, glob=True)
+async def clear_from_cache(endpoint: str) -> None:
+    """Removes all cached files (for all versions if given with a wildcard) for a given endpoint"""
+    cached_file = await cached_file_path(endpoint, glob=True)
+    while await cached_file.exists():
+        await cached_file.unlink()
+        # Load another
+        cached_file = await cached_file_path(endpoint, glob=True)
+
+
+async def get_cached_providers() -> list[str]:
+    """For optimized marking of cached providers"""
+    cached = [f.stem async for f in get_cache_path().glob("*_index.json")]
+    return [f"{c.split('_')[0]}/{c.split('_')[1]}" for c in cached]
+
+
+async def get_cached_resources(organization, name, version) -> list[str]:
+    """For optimized marking of cached resources"""
+    cached = [f.stem async for f in get_cache_path().glob(f"{organization}_{name}_{version}_*_*.md")]
+    return [f"{c.split('_')[3]}/{'_'.join(c.split('_')[4:]).split('.')[0]}" for c in cached]

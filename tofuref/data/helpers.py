@@ -21,10 +21,10 @@ async def get_registry_api(endpoint: str, json: bool = True, log_widget: Any | N
     Local cache is used to save/retrieve API responses.
     """
     uri = f"https://api.opentofu.org/registry/docs/providers/{endpoint}"
-    if cached_content := get_from_cache(endpoint):
-        LOGGER.info(f"Using cached file for {endpoint} from {cached_file_path(endpoint)}")
+    if cached_content := await get_from_cache(endpoint):
+        LOGGER.info(f"Using cached file for {endpoint} from {await cached_file_path(endpoint)}")
         if log_widget is not None:
-            log_widget.write(f"Cache hit [cyan]{cached_file_path(endpoint)}[/]")
+            log_widget.write(f"Cache hit [cyan]{await cached_file_path(endpoint)}[/]")
         return jsonlib.loads(cached_content) if json else cached_content
     LOGGER.info(f"Cache miss for {endpoint}")
     LOGGER.debug("Starting async client")
@@ -44,6 +44,6 @@ async def get_registry_api(endpoint: str, json: bool = True, log_widget: Any | N
 
     # Saving as text, because we are loading JSON if desired during cache hit
     LOGGER.info(f"Saving {endpoint} to cache")
-    save_to_cache(endpoint, r.text)
+    await save_to_cache(endpoint, r.text)
 
     return r.json() if json else r.text

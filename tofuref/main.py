@@ -1,8 +1,8 @@
 import asyncio
 import locale
 import logging
-import os
 import sys
+import time
 from collections.abc import Iterable
 from typing import ClassVar
 
@@ -12,7 +12,7 @@ from rich.markdown import Markdown
 from textual import on
 from textual.app import App, ComposeResult, SystemCommand
 from textual.binding import Binding, BindingType
-from textual.containers import Container
+from textual.containers import Center, Container, Middle
 from textual.screen import Screen
 from textual.theme import BUILTIN_THEMES
 from textual.widgets import (
@@ -33,6 +33,7 @@ from tofuref.widgets import (
     ResourcesOptionList,
     SearchInput,
 )
+from tofuref.widgets.start_progress import StartProgress
 
 LOGGER = logging.getLogger(__name__)
 locale.setlocale(locale.LC_ALL, "")
@@ -57,6 +58,7 @@ class TofuRefApp(App):
     ESCAPE_TO_MINIMIZE = False
 
     def __init__(self, *args, **kwargs):
+        self.__start_time: float = time.perf_counter()
         # We are updating config in the tests, we need to reload config
         if "pytest" in sys.modules:
             config.load(reset=True)
@@ -72,15 +74,22 @@ class TofuRefApp(App):
         self.navigation_resources = ResourcesOptionList()
         self.search = SearchInput()
         self.code_block_selector = CodeBlockSelect()
+        self.initial_progress = StartProgress(total=7, show_eta=False, show_percentage=False)
 
         # Internal state
+        self.bookmarks = Bookmarks()
         self.fullscreen_mode = False
         self.providers = {}
-        self.bookmarks = Bookmarks()
         self.active_provider = None
         self.active_resource = None
 
         self.theme = config.theme.ui
+        self.__load_time: float | None = None
+
+        # Outside of tests we can fullscreen sooner to maximize the progress bar during the initial compose,
+        # which prevents flickering and speeds up the load
+        if "pytest" not in sys.modules and self.size.width < config.fullscreen_init_threshold:
+            self.fullscreen_mode = True
 
     def get_system_commands(self, screen: Screen) -> Iterable[SystemCommand]:
         yield from super().get_system_commands(screen)
@@ -89,8 +98,13 @@ class TofuRefApp(App):
     def compose(self) -> ComposeResult:
         # Navigation
         with Container(id="sidebar"), Container(id="navigation"):
+            with Center(), Middle():
+                yield self.initial_progress
             yield self.navigation_providers
             yield self.navigation_resources
+
+        if self.fullscreen_mode:
+            self.screen.maximize(self.initial_progress)
 
         # Main content area
         with Container(id="content"):
@@ -101,46 +115,54 @@ class TofuRefApp(App):
         yield Footer()
 
     async def on_ready(self) -> None:
-        LOGGER.debug("Starting on ready")
-
-        fullscreen_threshold = config.fullscreen_init_threshold
-        if self.size.width < fullscreen_threshold:
+        if "pytest" in sys.modules and self.size.width < config.fullscreen_init_threshold:
             self.fullscreen_mode = True
         if self.fullscreen_mode:
             self.navigation_providers.styles.column_span = 2
             self.navigation_resources.styles.column_span = 2
             self.content_markdown.styles.column_span = 2
-            self.screen.maximize(self.navigation_providers)
 
-        self.navigation_providers.loading = True
-        await self.pause()
-        LOGGER.debug("Starting on ready done, running preload worker")
-        self.app.run_worker(self._preload, name="preload")
+        # Draw the initial layout
+        await self.force_draw(initial=True)
+        self.call_next(self.load_content)
         self.call_later(self.check_for_new_version)
 
-    async def _preload(self) -> None:
-        LOGGER.debug("preload start")
-        self.log_widget.write("Populating providers from the registry API")
-        self.navigation_providers.border_subtitle = "Fetching registry data..."
-        await self.pause()
-        self.providers = await self.navigation_providers.load_index()
-        self.log_widget.write(f"Providers loaded ([cyan bold]{len(self.providers)}[/])")
-        self.navigation_providers.border_subtitle = "Populating providers..."
-        if not os.environ.get("PYTEST_VERSION"):
-            LOGGER.info("Running tests")
-        await self.pause()
+    async def load_content(self) -> None:
+        await self.force_draw(initial=True)
+        await self.load_providers_and_bookmarks()
+        await self.force_draw(initial=True)
         self.navigation_providers.populate()
-        self.navigation_providers.loading = False
+        await self.rearrange_loaded()
+        await self.force_draw(initial=True)
+        if config.show_load_times:
+            self.__load_time = time.perf_counter() - self.__start_time
+            self.notify(f"Loaded in {int(self.__load_time * 1000)}ms", timeout=10)
+
+    async def load_providers_and_bookmarks(self) -> None:
+        self.log_widget.write("Populating providers from the registry API")
+        to_load = [self.navigation_providers.load_index(), self.bookmarks.async_post_init()]
+        self.providers, _ = await asyncio.gather(*to_load)
+        self.log_widget.write(f"Providers loaded ([cyan bold]{len(self.providers)}[/])")
+
+    async def rearrange_loaded(self) -> None:
+        # Start showing providers and resources
+        self.navigation_providers.display = True
+        self.navigation_resources.display = True
+        if self.fullscreen_mode:
+            self.screen.maximize(self.navigation_providers)
+        # Focus the first provider
         self.navigation_providers.focus()
         self.navigation_providers.highlighted = 0
+        # We no longer need the progress bar
+        await self.screen.remove_children([self.query_one("Center")])
         self.log_widget.write(Markdown("---"))
         LOGGER.info("Initial load complete")
 
-    @staticmethod
-    async def pause(seconds=0.01):
+    async def force_draw(self, seconds=0.001, initial=False):
         """Used to yield event loop to textual so that it can render."""
-        # snapshot tests are super unhappy when they should be waiting based on time, so we'll block them
-        if not os.environ.get("PYTEST_VERSION"):
+        if initial:
+            self.initial_progress.advance(1)
+        if "pytest" not in sys.modules:
             await asyncio.sleep(seconds)
 
     async def check_for_new_version(self) -> None:

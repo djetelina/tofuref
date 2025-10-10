@@ -1,6 +1,6 @@
 from tofuref.data.cache import get_from_cache, save_to_cache
 
 
-def test_cache_the_same():
-    save_to_cache("test", "test")
-    assert get_from_cache("test") == "test"
+async def test_cache_the_same():
+    await save_to_cache("test", "test")
+    assert await get_from_cache("test") == "test"

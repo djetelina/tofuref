@@ -13,24 +13,29 @@ class MenuOptionListBase(OptionList):
     async def action_bookmark(self):
         if self.highlighted is None:
             return
-        option = self.get_option_at_index(self.highlighted)
-        res: Item = option.prompt
+        res: Item = self.highlighted_option.prompt
         if not res.bookmarked:
-            self.app.bookmarks.add(res.kind, res.identifying_name)
+            await self.app.bookmarks.add(res.kind, res.identifying_name)
             res.bookmarked = True
-            self.replace_option_prompt_at_index(self.highlighted, option.prompt)
+            self.replace_option_prompt_at_index(self.highlighted, self.highlighted_option.prompt)
             self.app.notify(f"{res.__class__.__name__} {res.display_name} bookmarked", title="Bookmark added")
         else:
-            self.app.bookmarks.remove(res.kind, res.identifying_name)
+            await self.app.bookmarks.remove(res.kind, res.identifying_name)
             res.bookmarked = False
-            self.replace_option_prompt_at_index(self.highlighted, option.prompt)
+            self.replace_option_prompt_at_index(self.highlighted, self.highlighted_option.prompt)
             self.app.notify(f"{res.__class__.__name__} {res.display_name} removed from bookmarks", title="Bookmark removed")
 
     async def action_purge_from_cache(self):
         if self.highlighted is None:
             return
-        option = self.get_option_at_index(self.highlighted)
-        res: Item = option.prompt
-        res.clear_from_cache()
-        self.replace_option_prompt_at_index(self.highlighted, option.prompt)
+        res: Item = self.highlighted_option.prompt
+        await res.clear_from_cache()
+        self.replace_option_prompt_at_index(self.highlighted, self.highlighted_option.prompt)
         self.app.notify(f"{res.__class__.__name__} {res.display_name} purged from cache", title="Cache purged")
+
+    def watch_highlighted(self, highlighted: int | None) -> None:
+        super().watch_highlighted(highlighted)
+        self.refresh_bindings()
+
+    def check_action(self, action: str, parameters: tuple[object, ...]) -> bool:
+        return not (action == "purge_from_cache" and self.highlighted_option and not self.highlighted_option.prompt.cached)

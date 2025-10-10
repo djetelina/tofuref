@@ -6,36 +6,37 @@ from unittest.mock import patch
 import pytest
 from httpx import Response
 from platformdirs import user_config_path
+from pytest_asyncio import fixture as async_fixture
 
 from tofuref.data.bookmarks import Bookmarks
 from tofuref.data.cache import cached_file_path
 
 
-@pytest.fixture(scope="session", autouse=True)
-def clear_provider_index_cache(mock_cache_path: Path):
-    cached_file = cached_file_path("index.json")
-    cached_file.parent.mkdir(parents=True, exist_ok=True)
-    if cached_file.exists():
-        cached_file.unlink()
+@async_fixture(loop_scope="session", autouse=True)
+async def clear_provider_index_cache(mock_cache_path: Path):
+    cached_file = await cached_file_path("index.json")
+    await cached_file.parent.mkdir(parents=True, exist_ok=True)
+    if await cached_file.exists():
+        await cached_file.unlink()
     fallback_file = Path(__file__).parent.parent / "tofuref" / "fallback" / "providers.json"
     shutil.copy(str(fallback_file), str(cached_file))
     print(str(fallback_file))
     yield
-    if cached_file.exists():
-        cached_file.unlink()
+    if await cached_file.exists():
+        await cached_file.unlink()
 
 
 @pytest.fixture(scope="session", autouse=True)
 def config_file():
     """Yeah, let's add argparse for an alternative config file later, please"""
     config_file = user_config_path("tofuref") / "config.toml"
-    backup_config_file = user_config_path("tofuref") / "config.toml.bak"
+    backup_config_file = user_config_path("tofuref") / "config.toml.test.bak"
     moved = False
     if config_file.exists():
         moved = True
         shutil.move(str(config_file), str(backup_config_file))
     yield
-    if moved:
+    if backup_config_file.exists():
         shutil.move(str(backup_config_file), str(config_file))
 
 
@@ -98,10 +99,10 @@ def disable_emoji():
 @pytest.fixture(scope="session", autouse=True)
 def patch_bookmarks():
     class PatchedBookmarks(Bookmarks):
-        def save_to_disk(self):
+        async def save_to_disk(self):
             pass
 
-        def load_from_disk(self):
+        async def load_from_disk(self):
             self.saved = {"providers": [], "resources": []}
 
     with patch("tofuref.data.bookmarks.Bookmarks", PatchedBookmarks) as patched:

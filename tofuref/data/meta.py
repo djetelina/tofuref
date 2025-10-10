@@ -34,5 +34,5 @@ class Item(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def clear_from_cache(self) -> None:
+    async def clear_from_cache(self) -> None:
         raise NotImplementedError

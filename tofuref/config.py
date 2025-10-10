@@ -20,6 +20,8 @@ class Config(BaseConfig):
     http_request_timeout: float = 3.0
     index_cache_duration_days: int = 31
     fullscreen_init_threshold: int = 125
+    show_load_times: bool = False
+    disable_cache: bool = False
 
 
 config = Config.init(app_name="tofuref")

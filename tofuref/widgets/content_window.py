@@ -35,11 +35,12 @@ Changelog: https://github.com/djetelina/tofuref/blob/main/CHANGELOG.md
 
 ## Quick start
 
-1. Press `s` or `/` to search providers and resources.
-2. Use arrow keys (or VIM `j`/`k`) to select a provider, then a resource.
-3. View rich docs in this window. Press `t` to toggle the Table of Contents.
-4. Press `y` (or `u`) to copy code blocks — pick the exact snippet you need.
-5. Press `B` to open the current page in your browser.
+1. Use `p`, `r` and `c` to navigate between three main widgets.
+2. Press `s` or `/` to search providers and resources.
+3. Use arrow keys (or VIM `j`/`k`) to select a provider, then a resource.
+4. View rich docs in this window. Press `t` to toggle the Table of Contents.
+5. Press `y` (or `u`) to copy code blocks — pick the exact snippet you need.
+6. Press `B` to open the current page in your browser.
 
 Tip: Use `b` to bookmark frequently used items and prioritize them in future sort orders.
 
