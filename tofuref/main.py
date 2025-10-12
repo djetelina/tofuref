@@ -3,37 +3,28 @@ import locale
 import logging
 import sys
 import time
-from collections.abc import Iterable
 from typing import ClassVar
 
 import httpx
 from packaging.version import Version
-from rich.markdown import Markdown
 from textual import on
-from textual.app import App, ComposeResult, SystemCommand
+from textual.app import App, ComposeResult
 from textual.binding import Binding, BindingType
 from textual.containers import Center, Container, Middle
-from textual.screen import Screen
 from textual.theme import BUILTIN_THEMES
 from textual.widgets import (
     Footer,
     Input,
     OptionList,
     Select,
+    TabbedContent,
+    TabPane,
 )
 
 from tofuref import __version__
 from tofuref.config import config
 from tofuref.data.bookmarks import Bookmarks
-from tofuref.widgets import (
-    CodeBlockSelect,
-    ContentWindow,
-    CustomRichLog,
-    ProvidersOptionList,
-    ResourcesOptionList,
-    SearchInput,
-)
-from tofuref.widgets.start_progress import StartProgress
+from tofuref.widgets import CodeBlockSelect, ContentWindow, Logo, ProvidersOptionList, ResourcesOptionList, SearchInput, StartProgress, Status
 
 LOGGER = logging.getLogger(__name__)
 locale.setlocale(locale.LC_ALL, "")
@@ -50,7 +41,6 @@ class TofuRefApp(App):
         Binding("p", "providers", "Providers", show=False),
         Binding("r", "resources", "Resources", show=False),
         Binding("c", "content", "Content", show=False),
-        Binding("f", "fullscreen", "Fullscreen Mode"),
         Binding("ctrl+l", "log", "Show Log", show=False),
         Binding("q", "quit", "Quit"),
     ]
@@ -68,7 +58,6 @@ class TofuRefApp(App):
 
         super().__init__(*args, **kwargs)
         # Widgets for easier reference, they could be replaced by query method
-        self.log_widget = CustomRichLog()
         self.content_markdown = ContentWindow()
         self.navigation_providers = ProvidersOptionList()
         self.navigation_resources = ResourcesOptionList()
@@ -78,50 +67,58 @@ class TofuRefApp(App):
 
         # Internal state
         self.bookmarks = Bookmarks()
-        self.fullscreen_mode = False
         self.providers = {}
-        self.active_provider = None
-        self.active_resource = None
+        self._active_provider = None
+        self._active_resource = None
 
         self.theme = config.theme.ui
         self.__load_time: float | None = None
 
-        # Outside of tests we can fullscreen sooner to maximize the progress bar during the initial compose,
-        # which prevents flickering and speeds up the load
-        if "pytest" not in sys.modules and self.size.width < config.fullscreen_init_threshold:
-            self.fullscreen_mode = True
+    @property
+    def active_provider(self):
+        return self._active_provider
 
-    def get_system_commands(self, screen: Screen) -> Iterable[SystemCommand]:
-        yield from super().get_system_commands(screen)
-        yield SystemCommand("Log", "Toggle log widget (^l)", self.action_log)
+    @active_provider.setter
+    def active_provider(self, provider):
+        status = self.query_one("Status")
+        status.provider.content = provider.display_name
+        status.version.content = provider.active_version
+        status.resource.content = "Overview"
+        self._active_provider = provider
+
+    @property
+    def active_resource(self):
+        return self._active_resource
+
+    @active_resource.setter
+    def active_resource(self, resource):
+        self.query_one("Status").resource.content = f"{resource.provider.name}_{resource.name}"
+        self._active_resource = resource
 
     def compose(self) -> ComposeResult:
         # Navigation
-        with Container(id="sidebar"), Container(id="navigation"):
+        with Container(id="header"):
+            yield Status()
+            yield Logo()
+
+        with Container(id="navigation"):
             with Center(), Middle():
                 yield self.initial_progress
-            yield self.navigation_providers
-            yield self.navigation_resources
+            with TabbedContent():
+                with TabPane("Providers"):
+                    yield self.navigation_providers
+                with TabPane("Resources"):
+                    yield self.navigation_resources
 
-        if self.fullscreen_mode:
-            self.screen.maximize(self.initial_progress)
+        self.screen.maximize(self.initial_progress)
 
         # Main content area
         with Container(id="content"):
             yield self.content_markdown
 
-        yield self.log_widget
-
         yield Footer()
 
     async def on_ready(self) -> None:
-        if "pytest" in sys.modules and self.size.width < config.fullscreen_init_threshold:
-            self.fullscreen_mode = True
-        if self.fullscreen_mode:
-            self.navigation_providers.styles.column_span = 2
-            self.navigation_resources.styles.column_span = 2
-            self.content_markdown.styles.column_span = 2
-
         # Draw the initial layout
         await self.force_draw(initial=True)
         self.call_next(self.load_content)
@@ -139,23 +136,19 @@ class TofuRefApp(App):
             self.notify(f"Loaded in {int(self.__load_time * 1000)}ms", timeout=10)
 
     async def load_providers_and_bookmarks(self) -> None:
-        self.log_widget.write("Populating providers from the registry API")
         to_load = [self.navigation_providers.load_index(), self.bookmarks.async_post_init()]
         self.providers, _ = await asyncio.gather(*to_load)
-        self.log_widget.write(f"Providers loaded ([cyan bold]{len(self.providers)}[/])")
 
     async def rearrange_loaded(self) -> None:
         # Start showing providers and resources
         self.navigation_providers.display = True
         self.navigation_resources.display = True
-        if self.fullscreen_mode:
-            self.screen.maximize(self.navigation_providers)
+        self.screen.minimize()
         # Focus the first provider
         self.navigation_providers.focus()
         self.navigation_providers.highlighted = 0
         # We no longer need the progress bar
         await self.screen.remove_children([self.query_one("Center")])
-        self.log_widget.write(Markdown("---"))
         LOGGER.info("Initial load complete")
 
     async def force_draw(self, seconds=0.001, initial=False):
@@ -197,37 +190,14 @@ class TofuRefApp(App):
             self.copy_to_clipboard(to_copy)
             self.notify(to_copy, title="Copied to clipboard", timeout=10)
 
-    def action_log(self) -> None:
-        self.log_widget.display = not self.log_widget.display
-
     def action_providers(self) -> None:
-        if self.fullscreen_mode:
-            self.screen.maximize(self.navigation_providers)
         self.navigation_providers.focus()
 
     def action_resources(self) -> None:
-        if self.fullscreen_mode:
-            self.screen.maximize(self.navigation_resources)
         self.navigation_resources.focus()
 
     def action_content(self) -> None:
-        if self.fullscreen_mode:
-            self.screen.maximize(self.content_markdown)
         self.content_markdown.document.focus()
-
-    def action_fullscreen(self) -> None:
-        if self.fullscreen_mode:
-            self.fullscreen_mode = False
-            self.navigation_providers.styles.column_span = 1
-            self.navigation_resources.styles.column_span = 1
-            self.content_markdown.styles.column_span = 1
-            self.screen.minimize()
-        else:
-            self.fullscreen_mode = True
-            self.navigation_providers.styles.column_span = 2
-            self.navigation_resources.styles.column_span = 2
-            self.content_markdown.styles.column_span = 2
-            self.screen.maximize(self.screen.focused)
 
     async def action_version(self) -> None:
         if self.active_provider is None:
@@ -254,7 +224,9 @@ class TofuRefApp(App):
     async def change_provider_version(self, event: Select.Changed) -> None:
         if event.value != self.active_provider.active_version:
             self.active_provider.active_version = event.value
+            self.query_one("Status").version.content = event.value
             await self.navigation_resources.load_provider_resources(self.active_provider)
+            # TODO open the resource that was selected before version change
             await self.navigation_resources.remove_children("#version-select")
 
     @on(Input.Changed, "#search")

@@ -1,70 +1,41 @@
 Screen {
     layout: grid;
     grid-size: 2;
-    grid-columns: 4fr 5fr;
-    grid-rows: 4fr 4fr;
+    grid-columns: 1fr 3fr;
+    grid-rows: 1fr;
     layers: top normal;
-}
-
-#windows {
-    column-span: 2;
-}
-
-#sidebar {
-    height: 100%;
 }
 
 #navigation {
     layout: grid;
-    grid-size: 2;
-    grid-columns: 2fr 3fr;
+    grid-size: 1;
+    grid-columns: 1fr;
     grid-rows: 1fr;
-}
-
-#log {
-    width: 100%;
     height: 100%;
-    column-span: 2;
 }
 
 .bordered {
     border: $border-style $primary;
 }
 
-.bordered:focus {
+.bordered:focus,
+.bordered:focus-within {
     border: $border-style $accent;
 }
 
-.content {
-    height: 100%;
+TabbedContent {
+    border-left: $border-style $primary;
+    border-right: $border-style $primary;
 }
 
-.nav-selector {
-    height: 100%;
+TabbedContent:focus-within {
+    border-left: $border-style $accent;
+    border-right: $border-style $accent;
 }
 
-MarkdownViewer {
-    & > MarkdownTableOfContents {
-        dock:right;
-        border: $border-style $primary;
-        color: $foreground;
-        background: $surface;
-    }
-}
-
-MarkdownTableOfContents {
-    &:focus-within {
-        border: $border-style $accent;
-        color: $foreground;
-        background: $surface;
-        background-tint: $foreground 5%;
-    }
-}
-
-MarkdownTableOfContents > Tree {
-    background: $surface;
-}
-
-Center {
+#header {
+    dock: top;
+    height: 3;
     column-span: 2;
+    layout: horizontal;
 }

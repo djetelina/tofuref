@@ -16,13 +16,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Check for cached doesn't happen for every single entry
     - Loading indicator on startup to let things load faster in the background
     - Config options for loading times notifications and for ignoring cache, mainly for development purposes
-- Backspace/left arrow now take you from resources to providers (WIP - readme and more bindings like this)
+- Backspace and left arrow to go back up a level (content → resources → providers)
+- Header with status bar, project links and a logo
 
 ### Changed
 
-- Temporarily dropped python 3.14 support because `aiopath` is not yet compatible, the speed is worth it for now
+- Redesigned layout
 - Providers by the `opentofu` organization are not displayed, because they are forks and originals should be used
 - Purge from cache doesn't appear (and doesn't work) when the item is not cached
+- Code block selection is now shown in the content window, not as a maximized window
+
+### Fixed
+
+- When exiting the Table of Contents, the document will no longer scroll to the top
+- Copy code blocks window now disappears when it loses focus
+- tofuref will try to strip long documents to prevent from freezing, target configurable by `markdown_length_target` (default 40 000)
+  - For example, `kubernetes_deployment_v1` document is over 170k characters long with many different elements
+    that are demanding for underlying libraries to process. For now we're stripping based on heading for
+    nested sections, with less nested sections being stripped last.
+
+### Removed
+
+- Temporarily dropped python 3.14 support because `aiopath` is not yet compatible, the speed is worth it for now
+- Fullscreen mode, redesigned layout should be good even on narrow viewports
+- Log widget, if need be a log file might be added later
+- Subtitles moved to the header from subtitles in the border
 
 ## [1.5.0] - 2025-10-09
 

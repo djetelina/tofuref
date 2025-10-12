@@ -25,11 +25,10 @@ class ProvidersOptionList(MenuOptionListBase):
         super().__init__(
             name="Providers",
             id="nav-provider",
-            classes="nav-selector bordered",
+            classes="nav-selector",
             **kwargs,
         )
         self.display = False
-        self.border_title = "Providers"
         self.fallback_providers_file = Path(__file__).resolve().parent.parent / "fallback" / "providers.json"
 
     def populate(
@@ -45,10 +44,7 @@ class ProvidersOptionList(MenuOptionListBase):
     async def load_index(self) -> dict[str, Provider]:
         LOGGER.debug("Loading providers")
 
-        data = await get_registry_api(
-            "index.json",
-            log_widget=self.app.log_widget,
-        )
+        data = await get_registry_api("index.json")
         await self.app.force_draw(initial=True)
         if not data:
             data = json.loads(self.fallback_providers_file.read_text())
@@ -81,7 +77,6 @@ class ProvidersOptionList(MenuOptionListBase):
 
         for provider_json in data["providers"]:
             provider = Provider.from_json(provider_json)
-            provider.log_widget = self.app.log_widget
 
             filter_in = (
                 provider.versions,
@@ -102,11 +97,11 @@ class ProvidersOptionList(MenuOptionListBase):
 
         provider_selected = cast(Provider, option.prompt)
         self.app.active_provider = provider_selected
-        if self.app.fullscreen_mode:
-            self.screen.maximize(self.app.navigation_resources)
 
         await self.app.force_draw()
         await self.app.navigation_resources.load_provider_resources(provider_selected)
+
+        self.app.navigation_resources.focus()
 
         await self.app.force_draw()
         self.replace_option_prompt_at_index(self.highlighted, option.prompt)

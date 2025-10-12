@@ -5,7 +5,7 @@ import shutil
 import subprocess
 from asyncio import create_subprocess_shell
 from dataclasses import dataclass, field
-from typing import Any, Literal
+from typing import Literal
 
 import frontmatter
 import httpx
@@ -42,7 +42,6 @@ class Provider(Item):
     datasources: list[Resource] = field(default_factory=list)
     functions: list[Resource] = field(default_factory=list)
     guides: list[Resource] = field(default_factory=list)
-    log_widget: Any | None = None
     bookmarked: bool = False
     cached: bool = False
     kind: Literal["providers"] = "providers"
@@ -103,7 +102,7 @@ class Provider(Item):
 
     async def overview(self) -> str:
         if self._overview is None:
-            doc_data = await get_registry_api(self.endpoint, json=False, log_widget=self.log_widget)
+            doc_data = await get_registry_api(self.endpoint, json=False)
             doc = frontmatter.loads(doc_data)
             self._overview = doc.content
             self.cached = True
@@ -116,10 +115,7 @@ class Provider(Item):
 
     async def reload_resources(self, bookmarks: Bookmarks) -> None:
         self.resources = []
-        resource_data = await get_registry_api(
-            f"{self.organization}/{self.name}/{self.active_version}/index.json",
-            log_widget=self.log_widget,
-        )
+        resource_data = await get_registry_api(f"{self.organization}/{self.name}/{self.active_version}/index.json")
         for g in sorted(resource_data["docs"]["guides"], key=lambda x: x["name"]):
             self.resources.append(Resource(g["name"], self, type=ResourceType.GUIDE))
         for r in sorted(resource_data["docs"]["resources"], key=lambda x: x["name"]):

@@ -10,6 +10,21 @@ from tofuref.widgets.keybindings import BOOKMARK, CLEAR_CACHE, VIM_OPTION_LIST_N
 class MenuOptionListBase(OptionList):
     BINDINGS: ClassVar[list[BindingType]] = [*OptionList.BINDINGS, *VIM_OPTION_LIST_NAVIGATE, BOOKMARK, CLEAR_CACHE]
 
+    DEFAULT_CSS = """
+    MenuOptionListBase {
+        border: none;
+        border-bottom: blank $primary;
+        height: 1fr;
+        background: $surface;
+    }
+
+    MenuOptionListBase:focus {
+        border: none;
+        border-bottom: blank $accent;
+        scrollbar-color: $primary-darken-1;
+    }
+    """
+
     async def action_bookmark(self):
         if self.highlighted is None:
             return

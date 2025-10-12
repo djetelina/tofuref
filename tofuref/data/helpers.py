@@ -1,6 +1,5 @@
 import json as jsonlib
 import logging
-from typing import Any
 
 import httpx
 
@@ -13,7 +12,7 @@ LOGGER = logging.getLogger(__name__)
 CODEBLOCK_REGEX = r"^```([a-z]+)\n([\s\S]*?)^```"
 
 
-async def get_registry_api(endpoint: str, json: bool = True, log_widget: Any | None = None) -> dict[str, dict] | str:
+async def get_registry_api(endpoint: str, json: bool = True) -> dict[str, dict] | str:
     """
     Sends GET request to opentofu providers registry to a given endpoint
     and returns the response either as a JSON or as a string. It also "logs" the request.
@@ -23,8 +22,6 @@ async def get_registry_api(endpoint: str, json: bool = True, log_widget: Any | N
     uri = f"https://api.opentofu.org/registry/docs/providers/{endpoint}"
     if cached_content := await get_from_cache(endpoint):
         LOGGER.info(f"Using cached file for {endpoint} from {await cached_file_path(endpoint)}")
-        if log_widget is not None:
-            log_widget.write(f"Cache hit [cyan]{await cached_file_path(endpoint)}[/]")
         return jsonlib.loads(cached_content) if json else cached_content
     LOGGER.info(f"Cache miss for {endpoint}")
     LOGGER.debug("Starting async client")
@@ -35,12 +32,7 @@ async def get_registry_api(endpoint: str, json: bool = True, log_widget: Any | N
             LOGGER.debug("Request sent, response received")
         except Exception as e:
             LOGGER.error("Something went wrong", exc_info=e)
-            if log_widget is not None:
-                log_widget.write(f"Something went wrong: {e}")
             return ""
-
-    if log_widget is not None:
-        log_widget.write(f"GET [cyan]{endpoint}[/] [bold]{r.status_code}[/]")
 
     # Saving as text, because we are loading JSON if desired during cache hit
     LOGGER.info(f"Saving {endpoint} to cache")
