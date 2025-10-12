@@ -124,17 +124,21 @@ pipx upgrade tofuref
 
 ### Setup
 
-    uv sync (-p 3.14)
+    just init
 
 ### Testing
 
 Run tests:
 
-    uv run --env-file=tests.env pytest
+    just test
 
 Update snapshots for tests if the diff was expected:
 
-    uv run --env-file=tests.env pytest --snapshot-update
+    just test-update
+
+### Running
+
+    just run
 
 ### Undocumented config options
 
