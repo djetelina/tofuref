@@ -70,11 +70,7 @@ class Resource(Item):
 
     async def content(self):
         if self._content is None:
-            doc_data = await get_registry_api(
-                self.endpoint,
-                json=False,
-                log_widget=self.provider.log_widget,
-            )
+            doc_data = await get_registry_api(self.endpoint, json=False)
             doc = frontmatter.loads(doc_data)
             self._content = doc.content
             if self.type == ResourceType.GUIDE:

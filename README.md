@@ -49,7 +49,6 @@ tofuref
 | `q`, `ctrl+q` | **quit** tofuref                                                                 |
 | `t`           | toggle **table of contents** from content window                                 |
 | `B`           | from content window, open active page in browser                                 |
-| `ctrl+l`      | display **log** window                                                           |
 | `ctrl+g`      | open **GitHub** repository for provider                                          |
 | `ctrl+s`      | Show **stats** of provider's github repo                                         |
 
@@ -57,14 +56,14 @@ tofuref
 
 #### Focus windows
 
-| keybindings | action                     |
-|-------------|----------------------------|
-| `tab`       | focus next window          |
-| `shift+tab` | focus previous window      |
-| `p`         | focus **providers** window |
-| `r`         | focus **resources** window |
-| `c`         | focus **content** window   |
-| `f`         | toggle **fullscreen** mode |
+| keybindings               | action                     |
+|---------------------------|----------------------------|
+| `tab`                     | focus next window          |
+| `shift+tab`               | focus previous window      |
+| `p`                       | focus **providers** window |
+| `r`                       | focus **resources** window |
+| `c`                       | focus **content** window   |
+| `backspace`, `left arrow` | focus previous window      |
 
 ### Navigate in a window
 
@@ -87,11 +86,11 @@ Config file locations:
 
 Put these as simple key=value in your config.toml.
 
-| name                      | description                                                                     | type  | default | env                                 |
-|---------------------------|---------------------------------------------------------------------------------|-------|---------|-------------------------------------|
-| http_request_timeout      | Timeout for all http requests (in seconds)                                      | float | 3.0     | `TOFUREF_HTTP_REQUEST_TIMEOUT`      |
-| index_cache_duration_days | How long the provider index should be cached for (in days)                      | int   | 31      | `TOFUREF_INDEX_CACHE_DURATION_DAYS` |
-| fullscreen_init_threshold | Threshold of terminal width under which tofuref should start in fullscreen mode | int   | 125     | `TOFUREF_FULLSCREEN_INIT_THRESHOLD` |
+| name                      | description                                                       | type  | default | env                                 |
+|---------------------------|-------------------------------------------------------------------|-------|---------|-------------------------------------|
+| http_request_timeout      | Timeout for all http requests (in seconds)                        | float | 3.0     | `TOFUREF_HTTP_REQUEST_TIMEOUT`      |
+| index_cache_duration_days | How long the provider index should be cached for (in days)        | int   | 31      | `TOFUREF_INDEX_CACHE_DURATION_DAYS` |
+| markdown_length_target    | Target markdown length (in characters) to keep tofuref responsive | int   | 40_000  | `TOFUREF_MARKDOWN_LENGTH_TARGET`    |
 
 #### Theme
 
@@ -109,8 +108,6 @@ These options belong to a toml section, `[theme]`.
 Author's configuration:
 
 ```toml
-fullscreen_init_threshold = 160
-
 [theme]
 ui = "dracula"
 codeblocks = "dracula"

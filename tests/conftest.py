@@ -40,6 +40,13 @@ def config_file():
         shutil.move(str(backup_config_file), str(config_file))
 
 
+@pytest.fixture(scope="session", autouse=True)
+def set_dracula_theme():
+    os.environ["TOFUREF_THEME_UI"] = "dracula"
+    yield
+    os.environ.pop("TOFUREF_THEME_UI")
+
+
 @pytest.fixture(scope="session")
 def mock_cache_path():
     cache_dir = Path("__tests_cache__")
