@@ -59,6 +59,7 @@ def mock_cache_path():
     with patch("tofuref.data.cache.user_cache_path", side_effect=mock_user_cache_path):
         yield cache_dir
     for file in cache_dir.glob("*"):
+        file.open()
         file.unlink()
     cache_dir.rmdir()
 
