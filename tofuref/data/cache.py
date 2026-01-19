@@ -1,20 +1,20 @@
 from datetime import datetime
 
-from aiopath import AsyncPath
+from anyio import Path
 from platformdirs import user_cache_path
 
 from tofuref.config import config
 
 
-def get_cache_path() -> AsyncPath:
-    """Gets the user cache path converted to AsyncPath"""
+def get_cache_path() -> Path:
+    """Gets the user cache path converted to Path"""
     # This can't be a variable because pytest doesn't like that.
     # And we leave ensure_exists synchronous, because it doesn't matter really
     # (The real reason is it's also in the default factory of bookmarks, so who knows what gets called first)
-    return AsyncPath(user_cache_path("tofuref", ensure_exists=True))
+    return Path(user_cache_path("tofuref", ensure_exists=True))
 
 
-async def cached_file_path(endpoint: str, glob: bool = False) -> AsyncPath:
+async def cached_file_path(endpoint: str, glob: bool = False) -> Path:
     """
     Args:
         endpoint: http endpoint of the registry API
@@ -28,7 +28,7 @@ async def cached_file_path(endpoint: str, glob: bool = False) -> AsyncPath:
     if glob:
         matches = [p async for p in get_cache_path().glob(filename)]
         if matches:
-            return AsyncPath(matches[0])
+            return Path(matches[0])
     return get_cache_path() / filename
 
 
@@ -38,7 +38,7 @@ async def save_to_cache(endpoint: str, contents: str) -> None:
         await cached_file.write_text(contents)
 
 
-async def is_provider_index_expired(file: AsyncPath) -> bool:
+async def is_provider_index_expired(file: Path) -> bool:
     """
     Provider index is mutable, we consider it expired after 31 days (unconfigurable for now)
 
