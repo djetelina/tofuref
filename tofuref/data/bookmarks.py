@@ -2,7 +2,7 @@ import json
 from dataclasses import dataclass, field
 from typing import Literal
 
-from aiopath import AsyncPath
+from anyio import Path
 from platformdirs import user_cache_path
 
 KIND_TYPE = Literal["resources", "providers"]
@@ -11,14 +11,14 @@ KIND_TYPE = Literal["resources", "providers"]
 @dataclass
 class Bookmarks:
     saved: dict[KIND_TYPE, list[str]] | None = None
-    folder_path: AsyncPath = field(default_factory=lambda: AsyncPath(user_cache_path("tofuref", ensure_exists=True)))
+    folder_path: Path = field(default_factory=lambda: Path(user_cache_path("tofuref", ensure_exists=True)))
     filename: str = "bookmarks.json"
 
     async def async_post_init(self):
         await self.load_from_disk()
 
     @property
-    def path(self) -> AsyncPath:
+    def path(self) -> Path:
         return self.folder_path / self.filename
 
     def check(self, kind: KIND_TYPE, identifier: str) -> bool:
