@@ -28,8 +28,8 @@ TUI for OpenTofu provider registry.
 # Platform independent
 pipx install tofuref
 
-# Arch based distros
-yay -S tofuref-bin
+# From AUR
+yay -S tofuref
 ```
 
 ## Usage
