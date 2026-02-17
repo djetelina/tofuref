@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Restored visible search popup in providers/resources by mounting search as an overlay on the active tab pane (Textual 7 compatibility).
+
 ## [1.7.0] - 2026-01-19
 
 ### Added

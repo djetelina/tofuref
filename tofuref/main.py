@@ -70,6 +70,7 @@ class TofuRefApp(App):
         self.providers = {}
         self._active_provider = None
         self._active_resource = None
+        self._search_target: ProvidersOptionList | ResourcesOptionList | None = None
 
         self.theme = config.theme.ui
         self.__load_time: float | None = None
@@ -164,19 +165,36 @@ class TofuRefApp(App):
         if version < newest_version:
             self.notify(f"✨ Version {newest_version} is available!\n[dim]Update now for the latest improvements[/dim]", timeout=20)
 
+    def _focused_search_target(self) -> ProvidersOptionList | ResourcesOptionList | None:
+        for searchable in (self.navigation_providers, self.navigation_resources):
+            if searchable.has_focus:
+                return searchable
+        return None
+
+    def _close_search(self) -> None:
+        if self.search.has_parent:
+            self.search.remove()
+        self._search_target = None
+
     def action_search(self) -> None:
         """Focus the search input."""
-        if self.search.has_parent:
-            self.search.parent.remove_children([self.search])
-        for searchable in [self.navigation_providers, self.navigation_resources]:
-            if searchable.has_focus:
-                self.search.value = ""
-                searchable.mount(self.search)
-                self.search.focus()
-                self.search.offset = searchable.offset + (  # noqa: RUF005
-                    0,
-                    searchable.size.height - 3,
-                )
+        searchable = self._focused_search_target() or self._search_target
+        if searchable is None:
+            return
+
+        self._close_search()
+        self._search_target = searchable
+
+        search_host = searchable.parent
+        if not isinstance(search_host, TabPane):
+            return
+
+        self.search.value = ""
+        self.search.styles.position = "absolute"
+        self.search.styles.layer = "top"
+        search_host.mount(self.search)
+        self.search.offset = searchable.offset + (0, max(0, searchable.size.height - 3))  # noqa: RUF005
+        self.search.focus()
 
     async def action_use(self) -> None:
         if not self.content_markdown.document.has_focus:
@@ -232,12 +250,13 @@ class TofuRefApp(App):
     @on(Input.Changed, "#search")
     def search_input_changed(self, event: Input.Changed) -> None:
         query = event.value.strip()
-        if self.search.parent == self.navigation_providers:
+        search_target = self._search_target
+        if search_target == self.navigation_providers:
             if not query:
                 self.navigation_providers.populate()
             else:
                 self.navigation_providers.populate([v for p, v in self.providers.items() if query in p])
-        elif self.search.parent == self.navigation_resources:
+        elif search_target == self.navigation_resources and self.active_provider:
             if not query:
                 self.navigation_resources.populate(
                     self.active_provider,
@@ -249,10 +268,13 @@ class TofuRefApp(App):
                 )
 
     @on(Input.Submitted, "#search")
-    def search_input_submitted(self, event: Input.Submitted) -> None:
-        event.control.parent.focus()
-        event.control.parent.highlighted = 0
-        event.control.parent.remove_children([event.control])
+    def search_input_submitted(self, _event: Input.Submitted) -> None:
+        search_target = self._search_target
+        if search_target is not None:
+            search_target.focus()
+            if search_target.option_count > 0:
+                search_target.highlighted = 0
+        self._close_search()
 
     @on(OptionList.OptionSelected)
     async def option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
