@@ -1051,6 +1051,7 @@ name = "tofuref"
 source = { editable = "." }
 dependencies = [
     { name = "anyio" },
+    { name = "click" },
     { name = "httpx" },
     { name = "packaging" },
     { name = "platformdirs" },
@@ -1073,6 +1074,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "anyio", specifier = ">=4.12.1" },
+    { name = "click", specifier = ">=8.1.0" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "packaging", specifier = ">=25.0" },
     { name = "platformdirs", specifier = ">=4.5.1" },

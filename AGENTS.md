@@ -58,10 +58,8 @@
   - `uv run --env-file=tests.env pytest`
 - One target:
   - `uv run --env-file=tests.env pytest tests/test_provider.py::test_provider_use -v`
-- Lint:
-  - `uv run ruff check .`
-- Format:
-  - `uv run ruff format .`
+- Format & Lint:
+  - `just check`
 
 ## CI Awareness
 - CI runs Ruff and pytest workflows in GitHub Actions.

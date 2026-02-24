@@ -18,7 +18,7 @@ TUI for OpenTofu provider registry.
 * Browse all provider versions
 * Bookmark frequently used providers and resources
 * Cache visited providers and resources
-* If the markdown viewer is not sufficient for you, quickly open the resource in your web browser
+* If the Markdown viewer is not enough for you, quickly open the resource in your web browser
 * Check provider stats to see if they are production ready based on stars and forks
 * Configurable look to match the rest of your system
 
@@ -38,6 +38,15 @@ Run the application:
 
 ```bash
 tofuref
+```
+
+or jump straight to the desired resource (`-r`) or data source (`d`).
+
+```bash
+tofuref -r keycloak_user
+tofuref -d github_actions_environment_secrets
+tofuref --resource keycloak_user --provider mrparkers/keycloak
+tofuref -r user -p mrparkers/keycloak
 ```
 
 ### Controls

@@ -5,6 +5,7 @@ import sys
 import time
 from typing import ClassVar
 
+import click
 import httpx
 from packaging.version import Version
 from textual import on
@@ -24,10 +25,51 @@ from textual.widgets import (
 from tofuref import __version__
 from tofuref.config import config
 from tofuref.data.bookmarks import Bookmarks
-from tofuref.widgets import CodeBlockSelect, ContentWindow, Logo, ProvidersOptionList, ResourcesOptionList, SearchInput, StartProgress, Status
+from tofuref.data.providers import Provider
+from tofuref.data.resources import ResourceType
+from tofuref.startup import StartupTarget, find_best_provider
+from tofuref.widgets import (
+    CodeBlockSelect,
+    ContentWindow,
+    Logo,
+    ProvidersOptionList,
+    ResourcesOptionList,
+    SearchInput,
+    StartProgress,
+    Status,
+)
 
 LOGGER = logging.getLogger(__name__)
 locale.setlocale(locale.LC_ALL, "")
+
+
+def _parse_lookup_resource(lookup: str) -> tuple[str | None, str | None]:
+    if "_" not in lookup:
+        return None, lookup
+
+    prefix, resource = lookup.split("_", 1)
+    return prefix, resource
+
+
+async def resolve_lookup(app: "TofuRefApp", lookup: str, is_data: bool = False) -> None:
+    provider_prefix, item_name = _parse_lookup_resource(lookup)
+    if not provider_prefix:
+        app.notify(f"Invalid lookup format: '{lookup}'. Use 'provider_resource' or 'provider_data' format.", severity="warning")
+        return
+
+    provider = find_best_provider(provider_prefix, app.providers.values())
+    if provider is None:
+        app.notify(f"No provider found matching '{provider_prefix}'", severity="warning")
+        return
+
+    await app._navigate_to_provider(provider.display_name)
+
+    if item_name:
+        item_name = item_name.lower()
+        if is_data:
+            await app._navigate_to_data(item_name)
+        else:
+            await app._navigate_to_resource(item_name)
 
 
 class TofuRefApp(App):
@@ -47,7 +89,9 @@ class TofuRefApp(App):
     TITLE = "TofuRef - OpenTofu Provider Reference"
     ESCAPE_TO_MINIMIZE = False
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, startup: StartupTarget | None = None, **kwargs):
+        self.startup = startup or StartupTarget()
+
         self.__start_time: float = time.perf_counter()
         # We are updating config in the tests, we need to reload config
         if "pytest" in sys.modules:
@@ -106,9 +150,9 @@ class TofuRefApp(App):
             with Center(), Middle():
                 yield self.initial_progress
             with TabbedContent():
-                with TabPane("Providers"):
+                with TabPane("Providers", id="providers-tab"):
                     yield self.navigation_providers
-                with TabPane("Resources"):
+                with TabPane("Resources", id="resources-tab"):
                     yield self.navigation_resources
 
         self.screen.maximize(self.initial_progress)
@@ -151,6 +195,38 @@ class TofuRefApp(App):
         # We no longer need the progress bar
         await self.screen.remove_children([self.query_one("Center")])
         LOGGER.info("Initial load complete")
+
+        target = self.startup
+        if target.provider is not None:
+            await self._navigate_to_provider(target.provider)
+            if target.resource is not None:
+                resource = target.resource
+                if "_" in resource:
+                    _, resource = resource.split("_", 1)
+                await self._navigate_to_resource(resource)
+            if target.data is not None:
+                data = target.data
+                if "_" in data:
+                    _, data = data.split("_", 1)
+                await self._navigate_to_data(data)
+        else:
+            if target.resource is not None:
+                if "_" in target.resource:
+                    await resolve_lookup(self, target.resource)
+                else:
+                    self.notify(
+                        "No provider specified. Use 'provider_resource' format (e.g., 'github_repository') or provide --provider explicitly.",
+                        severity="warning",
+                    )
+            if target.data is not None:
+                if "_" in target.data:
+                    await resolve_lookup(self, target.data, is_data=True)
+                else:
+                    self.notify(
+                        "No provider specified. Use 'provider_data' format (e.g., 'github_actions_environment_secrets') "
+                        "or provide --provider explicitly.",
+                        severity="warning",
+                    )
 
     async def force_draw(self, seconds=0.001, initial=False):
         """Used to yield event loop to textual so that it can render."""
@@ -264,7 +340,7 @@ class TofuRefApp(App):
             else:
                 self.navigation_resources.populate(
                     self.active_provider,
-                    [r for r in self.active_provider.resources if query in r.name],
+                    [r for r in (self.active_provider.resources + self.active_provider.datasources) if query in r.name],
                 )
 
     @on(Input.Submitted, "#search")
@@ -280,6 +356,40 @@ class TofuRefApp(App):
     async def option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
         await event.control.on_option_selected(event.option)
 
+    async def _navigate_to_provider(self, provider_name: str) -> None:
+        provider_name = provider_name.lower()
+        for idx, provider in enumerate(self.navigation_providers.options):
+            if provider.prompt.display_name.lower() == provider_name:
+                self.navigation_providers.highlighted = idx
+                option = self.navigation_providers.get_option_at_index(idx)
+                await self.navigation_providers.on_option_selected(option)
+                return
+        self.notify(f"Provider '{provider_name}' not found", severity="warning")
+
+    async def _navigate_to_item(self, item_name: str, item_type: str) -> None:
+        item_name = item_name.lower()
+        if self.active_provider is None:
+            self.notify(f"No provider selected, cannot navigate to {item_type}", severity="warning")
+            return
+
+        self.query_one(TabbedContent).active = "resources-tab"
+        self.navigation_resources.populate(self.active_provider)
+        for idx, option in enumerate(self.navigation_resources.options):
+            prompt = option.prompt
+            if prompt.name.lower() == item_name and (
+                prompt.type == ResourceType.DATASOURCE if item_type == "data" else prompt.type == ResourceType.RESOURCE
+            ):
+                self.navigation_resources.highlighted = idx
+                await self.navigation_resources.on_option_selected(option)
+                return
+        self.notify(f"{item_type.capitalize()} '{item_name}' not found", severity="warning")
+
+    async def _navigate_to_resource(self, resource_name: str) -> None:
+        await self._navigate_to_item(resource_name, "resource")
+
+    async def _navigate_to_data(self, data_name: str) -> None:
+        await self._navigate_to_item(data_name, "data")
+
 
 async def get_current_pypi_version() -> Version:
     async with httpx.AsyncClient(headers={"User-Agent": f"tofuref v{__version__}"}) as client:
@@ -291,8 +401,26 @@ async def get_current_pypi_version() -> Version:
 
 
 def main() -> None:
-    LOGGER.debug("Starting tofuref")
-    TofuRefApp().run()
+    @click.command()
+    @click.option("-p", "--provider", help="Provider to open on startup (e.g., 'integrations/github')")
+    @click.option(
+        "-r",
+        "--resource",
+        help="Resource to open on startup. Use 'provider_resource' format (e.g., 'github_repository') "
+        "to auto-resolve provider, or just 'resource_name' with --provider",
+    )
+    @click.option(
+        "-d",
+        "--data",
+        help="Data source to open on startup. Use 'provider_data' format (e.g., 'github_actions_environment_secrets') "
+        "to auto-resolve provider, or just 'data_source_name' with --provider",
+    )
+    def cli(provider: str | None, resource: str | None, data: str | None) -> None:
+        target = StartupTarget(provider=provider, resource=resource, data=data)
+        LOGGER.debug("Starting tofuref with %s", target)
+        TofuRefApp(startup=target).run()
+
+    cli()
 
 
 if __name__ == "__main__":

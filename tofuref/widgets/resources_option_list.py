@@ -32,7 +32,7 @@ class ResourcesOptionList(MenuOptionListBase):
             return
 
         if resources is None:
-            self.add_options(provider.resources)
+            self.add_options(provider.resources + provider.datasources)
         else:
             self.add_options(resources)
 
