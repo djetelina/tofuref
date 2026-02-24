@@ -83,10 +83,16 @@ def mock_http_requests():
             "https://api.opentofu.org/registry/docs/providers/integrations/github/v6.6.0/index.md": responses_dir / "github_660_index.md",
             "https://api.opentofu.org/registry/docs/providers/integrations/github/v6.5.0/index.json": responses_dir / "github_650_index.json",
             "https://api.opentofu.org/registry/docs/providers/integrations/github/v6.5.0/index.md": responses_dir / "github_650_index.md",
-            "https://api.opentofu.org/registry/docs/providers/integrations/github/v6.6.0/resources/actions_environment_secret.md": responses_dir
-            / "github_action_env_secret.md",
-            "https://api.opentofu.org/registry/docs/providers/integrations/github/v6.6.0/resources/membership.md": responses_dir
+            (
+                "https://api.opentofu.org/registry/docs/providers/integrations/github/v6.6.0/resources/actions_environment_secret.md"
+            ): responses_dir / "github_action_env_secret.md",
+            (
+                "https://api.opentofu.org/registry/docs/providers/integrations/github/v6.6.0/datasources/actions_environment_secrets.md"
+            ): responses_dir / "github_actions_environment_secrets.md",
+            ("https://api.opentofu.org/registry/docs/providers/integrations/github/v6.6.0/resources/membership.md"): responses_dir
             / "github_membership.md",
+            ("https://api.opentofu.org/registry/docs/providers/integrations/github/v6.6.0/resources/repository.md"): responses_dir
+            / "github_repository.md",
             "https://api.github.com/repos/hashicorp/terraform-provider-aws": responses_dir / "github_repo_provider_aws.json",
         }
 
@@ -111,7 +117,11 @@ def patch_bookmarks():
             pass
 
         async def load_from_disk(self):
-            self.saved = {"providers": [], "resources": []}
+            self.saved = {"providers": [], "resources": [], "datasources": []}
+
+        def __init__(self):
+            super().__init__()
+            self.saved = {"providers": [], "resources": [], "datasources": []}
 
     with patch("tofuref.data.bookmarks.Bookmarks", PatchedBookmarks) as patched:
         yield patched

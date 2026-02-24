@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- CLI startup targeting: `--provider/-p`, `--resource/-r`, and `--data/-d` all honor the `provider_resource`/`provider_data` naming scheme to auto-resolve providers and focus the exact resource or datasource at launch.
+
 ### Fixed
 
-- Restored visible search popup in providers/resources by mounting search as an overlay on the active tab pane (Textual 7 compatibility).
+- Fixed search window visibility (Textual 7 compatibility).
 
 ## [1.7.0] - 2026-01-19
 
