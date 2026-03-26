@@ -126,3 +126,7 @@ def test_clear_from_cache(snap_compare, clear_mock_cache):
 
 def test_stats(snap_compare, clear_mock_cache):
     assert snap_compare(APP_PATH, press=["ctrl+s"])
+
+
+def test_fuzzy_search_resources(snap_compare):
+    assert snap_compare(APP_PATH, press=[*SEARCH_GITHUB, "enter", "enter", "/", "a", "c", "t", "s", "e", "c"])

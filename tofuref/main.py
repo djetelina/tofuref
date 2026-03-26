@@ -12,6 +12,7 @@ from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding, BindingType
 from textual.containers import Center, Container, Middle
+from textual.fuzzy import Matcher
 from textual.theme import BUILTIN_THEMES
 from textual.widgets import (
     Footer,
@@ -330,12 +331,24 @@ class TofuRefApp(App):
         if search_target == self.navigation_providers:
             if not query:
                 self.navigation_providers.populate()
+            elif config.fuzzy_search:
+                matcher = Matcher(query)
+                scored = [(v, matcher.match(p)) for p, v in self.providers.items()]
+                self.navigation_providers.populate([v for v, s in sorted(scored, key=lambda x: x[1], reverse=True) if s > 0])
             else:
                 self.navigation_providers.populate([v for p, v in self.providers.items() if query in p])
         elif search_target == self.navigation_resources and self.active_provider:
             if not query:
                 self.navigation_resources.populate(
                     self.active_provider,
+                )
+            elif config.fuzzy_search:
+                matcher = Matcher(query)
+                all_items = self.active_provider.resources + self.active_provider.datasources
+                scored = [(r, matcher.match(r.name)) for r in all_items]
+                self.navigation_resources.populate(
+                    self.active_provider,
+                    [r for r, s in sorted(scored, key=lambda x: x[1], reverse=True) if s > 0],
                 )
             else:
                 self.navigation_resources.populate(

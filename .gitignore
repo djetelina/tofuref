@@ -50,3 +50,4 @@ __pypackages__/
 
 snapshot_report.html
 __tests_cache__/
+uv.lock

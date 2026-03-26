@@ -20,6 +20,7 @@ class Config(BaseConfig):
     http_request_timeout: float = 3.0
     index_cache_duration_days: int = 31
     markdown_length_target: int = 40_000
+    fuzzy_search: bool = True
 
     # Undocumented, for development and experimentation
     show_load_times: bool = False
