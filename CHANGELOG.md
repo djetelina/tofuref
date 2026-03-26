@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-03-26
+
 ### Added
 
 - Fuzzy search for providers and resources, enabled by default (configurable via `fuzzy_search` option). Results are sorted by relevance.
