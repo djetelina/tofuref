@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Fuzzy search for providers and resources, enabled by default (configurable via `fuzzy_search` option). Results are sorted by relevance.
 - CLI startup targeting: `--provider/-p`, `--resource/-r`, and `--data/-d` all honor the `provider_resource`/`provider_data` naming scheme to auto-resolve providers and focus the exact resource or datasource at launch.
 
 ### Fixed
