@@ -1,57 +1,45 @@
+<div align="center">
+
 # tofuref
 
 [![PyPI - Version](https://img.shields.io/pypi/v/tofuref)](https://pypi.org/project/tofuref/)
+[![AUR - Version](https://img.shields.io/aur/version/tofuref)](https://aur.archlinux.org/packages/tofuref)
 ![PyPI - License](https://img.shields.io/pypi/l/tofuref)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/tofuref)
 ![GitHub Repo stars](https://img.shields.io/github/stars/DJetelina/tofuref?style=flat&logo=github)
 
-TUI for OpenTofu provider registry.
+A terminal UI for browsing the OpenTofu provider registry. Search providers and resources, read docs, copy `required_providers` blocks and code snippets — all without leaving the terminal.
 
 ![Screenshot](https://github.com/djetelina/tofuref/blob/main/tests/__snapshots__/test_snapshots/test_welcome.svg?raw=true)
 
-## Features
-
-* Keyboard first navigation
-* Searchable index of providers and resources
-* Copy blocks for your `required_providers`
-* Copy snippets from the docs
-* Browse all provider versions
-* Bookmark frequently used providers and resources
-* Cache visited providers and resources
-* If the Markdown viewer is not enough for you, quickly open the resource in your web browser
-* Check provider stats to see if they are production ready based on stars and forks
-* Configurable look to match the rest of your system
+</div>
 
 ## Installation
 
 ```bash
-# Platform independent
 pipx install tofuref
 
-# From AUR
+# or from AUR
 yay -S tofuref
 ```
 
 ## Usage
 
-Run the application:
-
 ```bash
 tofuref
 ```
 
-or jump straight to the desired resource (`-r`) or data source (`d`).
+Jump straight to a resource (`-r`) or data source (`-d`):
 
 ```bash
 tofuref -r keycloak_user
 tofuref -d github_actions_environment_secrets
-tofuref --resource keycloak_user --provider mrparkers/keycloak
 tofuref -r user -p mrparkers/keycloak
 ```
 
-### Controls
+<details>
+<summary><strong>Controls</strong></summary>
 
-#### Actions
+### Actions
 
 | keybindings   | action                                                                           |
 |---------------|----------------------------------------------------------------------------------|
@@ -67,7 +55,7 @@ tofuref -r user -p mrparkers/keycloak
 
 > Note: The GitHub functionality tries to use your GitHub token (env or `gh` cli) to avoid rate limiting.
 
-#### Focus windows
+### Focus windows
 
 | keybindings               | action                     |
 |---------------------------|----------------------------|
@@ -84,7 +72,10 @@ Navigate with arrows/page up/page down/home/end or your mouse.
 
 VIM keybindings should be also supported in a limited capacity.
 
-### Configuration
+</details>
+
+<details>
+<summary><strong>Configuration</strong></summary>
 
 Default configuration can be overridden by a config file,
 which can be overridden with env variables.
@@ -95,7 +86,7 @@ Config file locations:
 * macOS: `~/Library/Application Support"/tofuref/config.toml`
 * Windows: `%USERPROFILE%\AppData\Local\tofuref\tofuref\config.toml`
 
-#### General
+### General
 
 Put these as simple key=value in your config.toml.
 
@@ -105,7 +96,7 @@ Put these as simple key=value in your config.toml.
 | index_cache_duration_days | How long the provider index should be cached for (in days)        | int   | 31      | `TOFUREF_INDEX_CACHE_DURATION_DAYS` |
 | markdown_length_target    | Target markdown length (in characters) to keep tofuref responsive | int   | 40_000  | `TOFUREF_MARKDOWN_LENGTH_TARGET`    |
 
-#### Theme
+### Theme
 
 These options belong to a toml section, `[theme]`.
 
@@ -116,7 +107,7 @@ These options belong to a toml section, `[theme]`.
 | borders_style | The borders to use for windows, list and showcase of available [here](https://textual.textualize.io/styles/border/#all-border-types) | string | ascii                                 | `TOFUREF_THEME_BORDERS_STYLE` |
 | emoji         | Whether to display emojis or letters as icons                                                                                        | bool   | true                                  | `TOFUREF_THEME_EMOJI`         |
 
-#### Example file
+### Example file
 
 Author's configuration:
 
@@ -127,13 +118,16 @@ codeblocks = "dracula"
 borders_style = "vkey"
 ```
 
+</details>
+
 ## Upgrade
 
 ```bash
 pipx upgrade tofuref
 ```
 
-## Development notes
+<details>
+<summary><strong>Development</strong></summary>
 
 ### Setup
 
@@ -168,3 +162,5 @@ Show popups with load times for provider/resource listings:
 Or combine those:
 
     TOFUREF_SHOW_LOAD_TIMES=1 TOFUREF_DISABLE_CACHE=1 uv run tofuref
+
+</details>

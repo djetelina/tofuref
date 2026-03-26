@@ -6,7 +6,6 @@ on:
       - 'tests/**'
       - 'helpers/**'
       - 'pyproject.toml'
-      - 'uv.lock'
 
 permissions:
   contents: read # needed for actions/checkout
