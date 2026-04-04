@@ -4,6 +4,7 @@
 
 [![PyPI - Version](https://img.shields.io/pypi/v/tofuref)](https://pypi.org/project/tofuref/)
 [![AUR - Version](https://img.shields.io/aur/version/tofuref)](https://aur.archlinux.org/packages/tofuref)
+[![Homebrew](https://img.shields.io/github/v/release/djetelina/homebrew-tap?filter=tofuref-*&label=brew)](https://github.com/djetelina/homebrew-tap)
 ![PyPI - License](https://img.shields.io/pypi/l/tofuref)
 ![GitHub Repo stars](https://img.shields.io/github/stars/DJetelina/tofuref?style=flat&logo=github)
 
