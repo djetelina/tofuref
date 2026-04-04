@@ -40,6 +40,16 @@ tofuref -d github_actions_environment_secrets
 tofuref -r user -p mrparkers/keycloak
 ```
 
+## Star History
+
+<a href="https://www.star-history.com/?repos=djetelina%2Ftofuref&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=djetelina/tofuref&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=djetelina/tofuref&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=djetelina/tofuref&type=date&legend=top-left" />
+ </picture>
+</a>
+
 <details>
 <summary><strong>Controls</strong></summary>
 
