@@ -18,6 +18,9 @@ A terminal UI for browsing the OpenTofu provider registry. Search providers and 
 ```bash
 pipx install tofuref
 
+# or with Homebrew
+brew install djetelina/tap/tofuref
+
 # or from AUR
 yay -S tofuref
 ```
