@@ -2,6 +2,7 @@
 
 # tofuref
 
+[![opentrend.dev reach](https://opentrend.dev/badge/djetelina/tofuref/reach.svg)](https://opentrend.dev/)
 [![PyPI - Version](https://img.shields.io/pypi/v/tofuref)](https://pypi.org/project/tofuref/)
 [![AUR - Version](https://img.shields.io/aur/version/tofuref)](https://aur.archlinux.org/packages/tofuref)
 [![Homebrew](https://img.shields.io/github/v/release/djetelina/homebrew-tap?filter=tofuref-*&label=brew)](https://github.com/djetelina/homebrew-tap)
