@@ -21,7 +21,7 @@ class Status(Container):
     DEFAULT_CSS = """
     Status {
         layout: horizontal;
-        background: $surface;
+        background: $background;
         column-span: 1;
         height: 3;
         border: round $accent;

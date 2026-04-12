@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.1] - 2026-04-12
+
+### Changed
+
+- Replaced `$surface` with `$background` across most widgets.
+  - When a color matches the terminal background, it's able to respect the terminal's opacity.
+    `$background` very likely dose if theming is consistent for the system.
+
+### Fixed
+
+- Fixed version picker visibility by mounting on TabPane parent with an overlay layer.
+- The version picker now closes after selecting any version, including the already-active one.
+- Version picker preserves highlighted resource after switching versions.
+- `cltr+f` and `ctlr+b` now do what they say they should, not the opposite
+
 ## [1.8.0] - 2026-03-26
 
 ### Added
