@@ -33,6 +33,11 @@ TabbedContent:focus-within {
     border-right: $border-style $accent;
 }
 
+LoadingIndicator {
+    background: $background;
+}
+
+
 #header {
     dock: top;
     height: 3;

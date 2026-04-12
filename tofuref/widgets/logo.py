@@ -8,7 +8,7 @@ class Logo(Static):
     Logo {
         column-span: 1;
         width: auto;
-        background: $surface;
+        background: $background;
     }
     """
 

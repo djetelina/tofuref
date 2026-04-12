@@ -15,7 +15,7 @@ class MenuOptionListBase(OptionList):
         border: none;
         border-bottom: blank $primary;
         height: 1fr;
-        background: $surface;
+        background: $background;
     }
 
     MenuOptionListBase:focus {

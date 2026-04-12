@@ -12,6 +12,7 @@ from tofuref.widgets import keybindings
 class ContentWindow(MarkdownViewer):
     DEFAULT_CSS = """
     ContentWindow {
+        background: $background;
         border-left: $border-style $primary;
         border-right: $border-style $primary;
         scrollbar-color: $primary-darken-2;
@@ -20,10 +21,10 @@ class ContentWindow(MarkdownViewer):
             border-left: $border-style $primary;
             border-right: $border-style $primary;
             color: $foreground;
-            background: $surface;
+            background: $background;
             &:focus-within {
                 color: $foreground;
-                background: $surface;
+                background: $background;
                 background-tint: $foreground 5%;
                 border-left: $border-style $accent;
                 border-right: $border-style $accent;
@@ -35,7 +36,7 @@ class ContentWindow(MarkdownViewer):
             scrollbar-color: $primary;
         }
         & >MarkdownTableOfContents > Tree {
-            background: $surface;
+            background: $background;
         }
     }
 """
@@ -43,8 +44,8 @@ class ContentWindow(MarkdownViewer):
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("k", "scroll_up", "Scroll Up", show=False),
         Binding("j", "scroll_down", "Scroll Down", show=False),
-        Binding("ctrl+f", "page_up", "Page Up", show=False),
-        Binding("ctrl+b", "page_down", "Page Down", show=False),
+        Binding("ctrl+f", "page_down", "Page Down", show=False),
+        Binding("ctrl+b", "page_up", "Page Up", show=False),
         Binding("G", "scroll_end", "Bottom", show=False),
         Binding("u", "yank", "Copy code blocks", show=False),
         Binding("y", "yank", "Copy code blocks"),

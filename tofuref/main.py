@@ -26,7 +26,6 @@ from textual.widgets import (
 from tofuref import __version__
 from tofuref.config import config
 from tofuref.data.bookmarks import Bookmarks
-from tofuref.data.providers import Provider
 from tofuref.data.resources import ResourceType
 from tofuref.startup import StartupTarget, find_best_provider
 from tofuref.widgets import (
@@ -302,8 +301,10 @@ class TofuRefApp(App):
                 severity="warning",
             )
             return
-        if self.navigation_resources.children:
-            await self.navigation_resources.remove_children("#version-select")
+        resources_tab = self.navigation_resources.parent
+        existing = resources_tab.query("#version-select")
+        if existing:
+            await resources_tab.remove_children("#version-select")
         else:
             version_select = Select.from_values(
                 (v["id"] for v in self.active_provider.versions),
@@ -312,17 +313,28 @@ class TofuRefApp(App):
                 value=self.active_provider.active_version,
                 id="version-select",
             )
-            await self.navigation_resources.mount(version_select)
+            version_select.styles.layer = "top"
+            await resources_tab.mount(version_select)
+            version_select.watch(version_select, "expanded", self._on_version_select_expanded, init=False)
             version_select.action_show_overlay()
 
     @on(Select.Changed, "#version-select")
     async def change_provider_version(self, event: Select.Changed) -> None:
         if event.value != self.active_provider.active_version:
+            previous = self.navigation_resources.highlighted_option.prompt if self.navigation_resources.highlighted is not None else None
             self.active_provider.active_version = event.value
             self.query_one("Status").version.content = event.value
             await self.navigation_resources.load_provider_resources(self.active_provider)
-            # TODO open the resource that was selected before version change
-            await self.navigation_resources.remove_children("#version-select")
+            if previous:
+                for idx, option in enumerate(self.navigation_resources.options):
+                    if option.prompt.name == previous.name and option.prompt.type == previous.type:
+                        self.navigation_resources.highlighted = idx
+                        break
+
+    async def _on_version_select_expanded(self, expanded: bool) -> None:
+        if not expanded:
+            await self.navigation_resources.parent.remove_children("#version-select")
+            self.navigation_resources.focus()
 
     @on(Input.Changed, "#search")
     def search_input_changed(self, event: Input.Changed) -> None:

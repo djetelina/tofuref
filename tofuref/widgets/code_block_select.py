@@ -16,6 +16,9 @@ class CodeBlockSelect(OptionList):
         column-span: 2;
         width: 1fr;
         height: 100%;
+        &:focus {
+            background-tint: initial;
+        }
     }
     """
 
